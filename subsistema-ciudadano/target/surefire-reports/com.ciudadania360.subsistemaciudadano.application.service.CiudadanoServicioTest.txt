@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.ciudadania360.subsistemaciudadano.application.service.CiudadanoServicioTest
+-------------------------------------------------------------------------------
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.526 s - in com.ciudadania360.subsistemaciudadano.application.service.CiudadanoServicioTest

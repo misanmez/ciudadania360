@@ -1,0 +1,52 @@
+package com.ciudadania360.subsistemaciudadano.domain.handler;
+
+import com.ciudadania360.subsistemaciudadano.domain.entity.Interaccion;
+import com.ciudadania360.subsistemaciudadano.domain.repository.InteraccionRepositorio;
+import org.springframework.stereotype.Component;
+import java.util.List;
+import java.util.UUID;
+
+@Component
+public class InteraccionHandler {
+    private final InteraccionRepositorio repositorio;
+
+    public InteraccionHandler(InteraccionRepositorio repositorio) {
+        this.repositorio = repositorio;
+    }
+
+    public List<Interaccion> obtenerTodos() {
+        return repositorio.findAll();
+    }
+
+    public Interaccion obtenerPorId(UUID id) {
+        return repositorio.findById(id).orElseThrow(() -> new RuntimeException("Interaccion no encontrado"));
+    }
+
+    public Interaccion crear(Interaccion e) {
+        return repositorio.save(e);
+    }
+
+    public Interaccion actualizar(UUID id, Interaccion cambios) {
+        // Obtener la entidad existente
+        Interaccion existente = repositorio.findById(id)
+                .orElseThrow(() -> new RuntimeException("Interaccion no encontrado"));
+
+        // Aplicar cambios a los campos modificables
+        existente.setSolicitud(cambios.getSolicitud());
+        existente.setCiudadano(cambios.getCiudadano());
+        existente.setCanal(cambios.getCanal());
+        existente.setFecha(cambios.getFecha());
+        existente.setAgente(cambios.getAgente());
+        existente.setMensaje(cambios.getMensaje());
+        existente.setAdjuntoUri(cambios.getAdjuntoUri());
+        existente.setVisibilidad(cambios.getVisibilidad());
+
+        // Guardar la entidad modificada
+        return repositorio.save(existente);
+    }
+
+
+    public void eliminar(UUID id) {
+        repositorio.deleteById(id);
+    }
+}

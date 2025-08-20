@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.ciudadania360.subsistematramitacion.application.service.CarpetaServicioTest
+-------------------------------------------------------------------------------
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.106 s - in com.ciudadania360.subsistematramitacion.application.service.CarpetaServicioTest

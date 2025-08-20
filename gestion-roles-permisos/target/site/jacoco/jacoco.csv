@@ -1,0 +1,13 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+gestion-roles-permisos,com.ciudadania360.gestionrolespermisos.domain.handler,UsuarioRolHandler,8,46,1,1,0,6,2,6,1,6
+gestion-roles-permisos,com.ciudadania360.gestionrolespermisos.domain.handler,PermisoHandler,8,46,1,1,0,6,2,6,1,6
+gestion-roles-permisos,com.ciudadania360.gestionrolespermisos.domain.handler,RolHandler,8,46,1,1,0,6,2,6,1,6
+gestion-roles-permisos,com.ciudadania360.gestionrolespermisos.controller,PermisoController,0,33,0,0,0,7,0,6,0,6
+gestion-roles-permisos,com.ciudadania360.gestionrolespermisos.controller,RolController,0,33,0,0,0,7,0,6,0,6
+gestion-roles-permisos,com.ciudadania360.gestionrolespermisos.controller,UsuarioRolController,0,33,0,0,0,7,0,6,0,6
+gestion-roles-permisos,com.ciudadania360.gestionrolespermisos.application.service,RolServicio,0,31,0,0,0,6,0,6,0,6
+gestion-roles-permisos,com.ciudadania360.gestionrolespermisos.application.service,UsuarioRolServicio,0,31,0,0,0,6,0,6,0,6
+gestion-roles-permisos,com.ciudadania360.gestionrolespermisos.application.service,PermisoServicio,0,31,0,0,0,6,0,6,0,6
+gestion-roles-permisos,com.ciudadania360.gestionrolespermisos,GestionRolesPermisosApplication,8,0,0,0,3,0,2,0,2,0
+gestion-roles-permisos,com.ciudadania360.gestionrolespermisos.config,SecurityConfig,51,0,0,0,8,0,5,0,5,0
+gestion-roles-permisos,com.ciudadania360.gestionrolespermisos.config,OpenApiConfig,15,0,0,0,2,0,2,0,2,0

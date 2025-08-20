@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="gestion-roles-permisos" />
+        <module name="shared" />
+        <module name="subsistema-comunicaciones" />
+        <module name="subsistema-informacion" />
+        <module name="subsistema-ciudadano" />
+        <module name="subsistema-tramitacion" />
+        <module name="subsistema-videoconferencia" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="microlito-analitica" target="17" />
+      <module name="microlito-ciudadano" target="17" />
+      <module name="microlito-comunicaciones" target="17" />
+      <module name="microlito-documental" target="17" />
+      <module name="microlito-informacion" target="17" />
+      <module name="microlito-tramitacion" target="17" />
+      <module name="microlito-videoconferencia" target="17" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="ciudadania360" options="-parameters" />
+      <module name="gestion-roles-permisos" options="-parameters" />
+      <module name="microlito-analitica" options="-parameters" />
+      <module name="microlito-ciudadano" options="-parameters" />
+      <module name="microlito-comunicaciones" options="-parameters" />
+      <module name="microlito-documental" options="-parameters" />
+      <module name="microlito-informacion" options="-parameters" />
+      <module name="microlito-tramitacion" options="-parameters" />
+      <module name="microlito-videoconferencia" options="-parameters" />
+      <module name="shared" options="-parameters" />
+      <module name="subsistema-ciudadano" options="-parameters" />
+      <module name="subsistema-comunicaciones" options="-parameters" />
+      <module name="subsistema-informacion" options="-parameters" />
+      <module name="subsistema-tramitacion" options="-parameters" />
+      <module name="subsistema-videoconferencia" options="-parameters" />
+    </option>
+  </component>
+</project>
