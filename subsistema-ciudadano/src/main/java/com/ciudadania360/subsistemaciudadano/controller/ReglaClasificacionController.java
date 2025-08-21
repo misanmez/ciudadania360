@@ -1,7 +1,7 @@
 package com.ciudadania360.subsistemaciudadano.controller;
 
-import com.ciudadania360.subsistemaciudadano.application.dto.ReglaClasificacionRequest;
-import com.ciudadania360.subsistemaciudadano.application.dto.ReglaClasificacionResponse;
+import com.ciudadania360.subsistemaciudadano.application.dto.reglaclasificacion.ReglaClasificacionRequest;
+import com.ciudadania360.subsistemaciudadano.application.dto.reglaclasificacion.ReglaClasificacionResponse;
 import com.ciudadania360.subsistemaciudadano.application.service.ReglaClasificacionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

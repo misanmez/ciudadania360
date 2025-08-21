@@ -23,7 +23,7 @@ public class ClasificacionHandler {
 
     public Clasificacion get(UUID id) {
 <span class="fc" id="L25">        return repo.findById(id)</span>
-<span class="fc" id="L26">                .orElseThrow(() -&gt; new NoSuchElementException(&quot;Clasificación no encontrada&quot;));</span>
+<span class="pc" id="L26">                .orElseThrow(() -&gt; new NoSuchElementException(&quot;Clasificación no encontrada&quot;));</span>
     }
 
     public Clasificacion create(Clasificacion e) {

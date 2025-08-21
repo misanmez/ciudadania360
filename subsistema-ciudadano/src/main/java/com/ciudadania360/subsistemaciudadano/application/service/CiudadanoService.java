@@ -1,7 +1,7 @@
 package com.ciudadania360.subsistemaciudadano.application.service;
 
-import com.ciudadania360.subsistemaciudadano.application.dto.CiudadanoRequest;
-import com.ciudadania360.subsistemaciudadano.application.dto.CiudadanoResponse;
+import com.ciudadania360.subsistemaciudadano.application.dto.ciudadano.CiudadanoRequest;
+import com.ciudadania360.subsistemaciudadano.application.dto.ciudadano.CiudadanoResponse;
 import com.ciudadania360.subsistemaciudadano.application.mapper.CiudadanoMapper;
 import com.ciudadania360.subsistemaciudadano.domain.entity.Ciudadano;
 import com.ciudadania360.subsistemaciudadano.domain.handler.CiudadanoHandler;

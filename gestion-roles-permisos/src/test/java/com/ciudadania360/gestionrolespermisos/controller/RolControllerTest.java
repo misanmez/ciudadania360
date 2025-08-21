@@ -1,85 +1,79 @@
 package com.ciudadania360.gestionrolespermisos.controller;
 
-import com.ciudadania360.gestionrolespermisos.application.service.RolServicio;
-import com.ciudadania360.gestionrolespermisos.domain.entity.Rol;
+import com.ciudadania360.gestionrolespermisos.application.dto.rol.RolRequest;
+import com.ciudadania360.gestionrolespermisos.application.dto.rol.RolResponse;
+import com.ciudadania360.gestionrolespermisos.application.service.RolService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.List;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@WebMvcTest(RolController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class RolControllerTest {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired
+    private MockMvc mvc;
+
+    @MockBean
+    private RolService rolService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Test
     void listAndCreate() throws Exception {
-        RolServicio svc = mock(RolServicio.class);
-        Rol e = Rol.builder()
+        RolResponse sample = RolResponse.builder()
                 .id(UUID.randomUUID())
-                .codigo("AGENTE_TRAMITACION")
-                .nombre("Nombre del Rol")
-                .descripcion("Descripción del Rol")
-                .nivel("ADMIN")
-                .activo(true)
+                .nombre("ADMIN")
+                .descripcion("Administrador del sistema")
                 .build();
 
-        when(svc.list()).thenReturn(List.of(e));
-        when(svc.create(any())).thenReturn(e);
-        when(svc.get(e.getId())).thenReturn(e);
-        when(svc.update(eq(e.getId()), any())).thenReturn(e);
-
-        RolController controller = new RolController(svc);
-        MockMvc mvc = MockMvcBuilders.standaloneSetup(controller).build();
+        when(rolService.list()).thenReturn(List.of(sample));
+        when(rolService.create(any(RolRequest.class))).thenReturn(sample);
+        when(rolService.update(eq(sample.getId()), any(RolRequest.class))).thenReturn(sample);
 
         // LIST
-        mvc.perform(get("/api/rols"))
+        mvc.perform(get("/api/roles"))
                 .andExpect(status().isOk());
 
         // CREATE
-        Rol newRol = Rol.builder()
-                .codigo("NUEVO_ROL")
-                .nombre("Nombre del Rol")
-                .descripcion("Descripción del Rol")
-                .nivel("AGENTE")
-                .activo(true)
+        RolRequest newRol = RolRequest.builder()
+                .nombre("USER")
+                .descripcion("Usuario normal")
                 .build();
 
-        mvc.perform(post("/api/rols")
+        mvc.perform(post("/api/roles")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(newRol)))
                 .andExpect(status().isCreated());
 
-        // GET BY ID
-        mvc.perform(get("/api/rols/" + e.getId()))
-                .andExpect(status().isOk());
-
         // UPDATE
-        Rol updatedRol = Rol.builder()
-                .codigo("ROL_ACTUALIZADO")
-                .nombre("Nombre del Rol Actualizado")
-                .descripcion("Descripción del Rol Actualizada")
-                .nivel("ADMIN")
-                .activo(true)
+        RolRequest updatedRol = RolRequest.builder()
+                .nombre("SUPERUSER")
+                .descripcion("Usuario con permisos extendidos")
                 .build();
 
-        mvc.perform(put("/api/rols/" + e.getId())
+        mvc.perform(put("/api/roles/" + sample.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updatedRol)))
                 .andExpect(status().isOk());
 
         // DELETE
-        mvc.perform(delete("/api/rols/" + e.getId()))
+        mvc.perform(delete("/api/roles/" + sample.getId()))
                 .andExpect(status().isNoContent());
     }
 }

@@ -1,8 +1,8 @@
 package com.ciudadania360.subsistemaciudadano.application.mapper;
 
 import com.ciudadania360.subsistemaciudadano.domain.entity.ReglaClasificacion;
-import com.ciudadania360.subsistemaciudadano.application.dto.ReglaClasificacionRequest;
-import com.ciudadania360.subsistemaciudadano.application.dto.ReglaClasificacionResponse;
+import com.ciudadania360.subsistemaciudadano.application.dto.reglaclasificacion.ReglaClasificacionRequest;
+import com.ciudadania360.subsistemaciudadano.application.dto.reglaclasificacion.ReglaClasificacionResponse;
 import org.mapstruct.*;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)

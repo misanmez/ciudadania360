@@ -1,7 +1,7 @@
 package com.ciudadania360.subsistemaciudadano.application.mapper;
 
-import com.ciudadania360.subsistemaciudadano.application.dto.SolicitudRequest;
-import com.ciudadania360.subsistemaciudadano.application.dto.SolicitudResponse;
+import com.ciudadania360.subsistemaciudadano.application.dto.solicitud.SolicitudRequest;
+import com.ciudadania360.subsistemaciudadano.application.dto.solicitud.SolicitudResponse;
 import com.ciudadania360.subsistemaciudadano.domain.entity.Solicitud;
 import com.ciudadania360.subsistemaciudadano.domain.entity.Ciudadano;
 import com.ciudadania360.subsistemaciudadano.domain.entity.Clasificacion;

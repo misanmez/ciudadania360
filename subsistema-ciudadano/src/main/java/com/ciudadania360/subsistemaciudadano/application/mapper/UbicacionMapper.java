@@ -1,8 +1,8 @@
 package com.ciudadania360.subsistemaciudadano.application.mapper;
 
 import com.ciudadania360.subsistemaciudadano.domain.entity.Ubicacion;
-import com.ciudadania360.subsistemaciudadano.application.dto.UbicacionRequest;
-import com.ciudadania360.subsistemaciudadano.application.dto.UbicacionResponse;
+import com.ciudadania360.subsistemaciudadano.application.dto.ubicacion.UbicacionRequest;
+import com.ciudadania360.subsistemaciudadano.application.dto.ubicacion.UbicacionResponse;
 import org.mapstruct.*;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)

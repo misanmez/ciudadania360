@@ -1,34 +1,41 @@
 package com.ciudadania360.gestionrolespermisos.controller;
 
-import com.ciudadania360.gestionrolespermisos.application.service.RolServicio;
-import com.ciudadania360.gestionrolespermisos.domain.entity.Rol;
+import com.ciudadania360.gestionrolespermisos.application.dto.rol.RolRequest;
+import com.ciudadania360.gestionrolespermisos.application.dto.rol.RolResponse;
+import com.ciudadania360.gestionrolespermisos.application.service.RolService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.*;
+
+import java.util.List;
+import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/rols")
+@RequestMapping("/api/roles")
+@RequiredArgsConstructor
 public class RolController {
-    private final RolServicio service;
-    public RolController(RolServicio service) { this.service = service; }
+
+    private final RolService rolService;
 
     @GetMapping
-    public List<Rol> list() { return service.list(); }
-
-    @GetMapping("/{id}")
-    public Rol get(@PathVariable("id") UUID id) { return service.get(id); }
+    public List<RolResponse> list() {
+        return rolService.list();
+    }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Rol create(@RequestBody Rol e) { return service.create(e); }
-
+    public ResponseEntity<RolResponse> create(@RequestBody RolRequest request) {
+        RolResponse created = rolService.create(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
     @PutMapping("/{id}")
-    public Rol update(@PathVariable("id") UUID id, @RequestBody Rol e) { return service.update(id, e); }
+    public RolResponse update(@PathVariable UUID id, @RequestBody RolRequest request) {
+        return rolService.update(id, request);
+    }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable("id") UUID id) {
-        service.delete(id);
-        return ResponseEntity.noContent().build();
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable UUID id) {
+        rolService.delete(id);
     }
 }

@@ -26,9 +26,11 @@
     <flyway-core.version>10.20.1</flyway-core.version>
     <flyway-database-postgresql.version>10.20.1</flyway-database-postgresql.version>
 
-    <!-- 🔑 Versiones de MapStruct y Lombok -->
+    <!-- Versiones comunes -->
     <mapstruct.version>1.5.5.Final</mapstruct.version>
     <lombok.version>1.18.32</lombok.version>
+    <springdoc.version>2.5.0</springdoc.version>
+    <swagger-core.version>2.2.22</swagger-core.version>
 
     <maven.compiler.parameters>true</maven.compiler.parameters>
   </properties>
@@ -67,12 +69,45 @@
         <artifactId>mapstruct-processor</artifactId>
         <version>${mapstruct.version}</version>
       </dependency>
+
+      <!-- Lombok -->
+      <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>${lombok.version}</version>
+      </dependency>
+
+      <!-- Springdoc OpenAPI -->
+      <dependency>
+        <groupId>org.springdoc</groupId>
+        <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+        <version>${springdoc.version}</version>
+      </dependency>
+
+      <!-- Swagger Core (para usar io.swagger.v3.oas.models.*) -->
+      <dependency>
+        <groupId>io.swagger.core.v3</groupId>
+        <artifactId>swagger-core</artifactId>
+        <version>${swagger-core.version}</version>
+      </dependency>
+
+      <!-- Shared interno -->
+      <dependency>
+        <groupId>com.ciudadania360</groupId>
+        <artifactId>shared</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.swagger.core.v3</groupId>
+        <artifactId>swagger-models</artifactId>
+        <version>${swagger-core.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
   <build>
     <plugins>
-      <!-- Compilador con annotation processors: MapStruct + Lombok + binding -->
+      <!-- Compilador con annotation processors: MapStruct + Lombok -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -82,19 +117,16 @@
           <target>${java.version}</target>
           <parameters>true</parameters>
           <annotationProcessorPaths>
-            <!-- MapStruct -->
             <path>
               <groupId>org.mapstruct</groupId>
               <artifactId>mapstruct-processor</artifactId>
               <version>${mapstruct.version}</version>
             </path>
-            <!-- 🔑 Lombok -->
             <path>
               <groupId>org.projectlombok</groupId>
               <artifactId>lombok</artifactId>
               <version>${lombok.version}</version>
             </path>
-            <!-- 🔑 Binding para que MapStruct entienda Lombok -->
             <path>
               <groupId>org.projectlombok</groupId>
               <artifactId>lombok-mapstruct-binding</artifactId>

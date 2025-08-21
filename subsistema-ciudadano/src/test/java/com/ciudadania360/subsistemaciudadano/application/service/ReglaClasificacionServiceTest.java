@@ -1,7 +1,7 @@
 package com.ciudadania360.subsistemaciudadano.application.service;
 
-import com.ciudadania360.subsistemaciudadano.application.dto.ReglaClasificacionRequest;
-import com.ciudadania360.subsistemaciudadano.application.dto.ReglaClasificacionResponse;
+import com.ciudadania360.subsistemaciudadano.application.dto.reglaclasificacion.ReglaClasificacionRequest;
+import com.ciudadania360.subsistemaciudadano.application.dto.reglaclasificacion.ReglaClasificacionResponse;
 import com.ciudadania360.subsistemaciudadano.application.mapper.ReglaClasificacionMapper;
 import com.ciudadania360.subsistemaciudadano.domain.entity.ReglaClasificacion;
 import com.ciudadania360.subsistemaciudadano.domain.handler.ReglaClasificacionHandler;

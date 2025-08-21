@@ -1,34 +1,47 @@
 package com.ciudadania360.gestionrolespermisos.controller;
 
-import com.ciudadania360.gestionrolespermisos.application.service.UsuarioRolServicio;
-import com.ciudadania360.gestionrolespermisos.domain.entity.UsuarioRol;
+import com.ciudadania360.gestionrolespermisos.application.dto.usuariorol.UsuarioRolRequest;
+import com.ciudadania360.gestionrolespermisos.application.dto.usuariorol.UsuarioRolResponse;
+import com.ciudadania360.gestionrolespermisos.application.service.UsuarioRolService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.*;
+
+import java.util.List;
+import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/usuariorols")
+@RequestMapping("/api/usuarioroles")
+@RequiredArgsConstructor
 public class UsuarioRolController {
-    private final UsuarioRolServicio service;
-    public UsuarioRolController(UsuarioRolServicio service) { this.service = service; }
+
+    private final UsuarioRolService service;
 
     @GetMapping
-    public List<UsuarioRol> list() { return service.list(); }
+    public List<UsuarioRolResponse> list() {
+        return service.list();
+    }
 
     @GetMapping("/{id}")
-    public UsuarioRol get(@PathVariable("id") UUID id) { return service.get(id); }
+    public UsuarioRolResponse get(@PathVariable UUID id) {
+        return service.get(id);
+    }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public UsuarioRol create(@RequestBody UsuarioRol e) { return service.create(e); }
+    public ResponseEntity<UsuarioRolResponse> create(@RequestBody UsuarioRolRequest request) {
+        UsuarioRolResponse created = service.create(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
 
     @PutMapping("/{id}")
-    public UsuarioRol update(@PathVariable("id") UUID id, @RequestBody UsuarioRol e) { return service.update(id, e); }
+    public UsuarioRolResponse update(@PathVariable UUID id, @RequestBody UsuarioRolRequest request) {
+        return service.update(id, request);
+    }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable("id") UUID id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable UUID id) {
         service.delete(id);
-        return ResponseEntity.noContent().build();
     }
 }

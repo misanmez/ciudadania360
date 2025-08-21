@@ -1,7 +1,7 @@
 package com.ciudadania360.subsistemaciudadano.application.service;
 
-import com.ciudadania360.subsistemaciudadano.application.dto.SolicitudRequest;
-import com.ciudadania360.subsistemaciudadano.application.dto.SolicitudResponse;
+import com.ciudadania360.subsistemaciudadano.application.dto.solicitud.SolicitudRequest;
+import com.ciudadania360.subsistemaciudadano.application.dto.solicitud.SolicitudResponse;
 import com.ciudadania360.subsistemaciudadano.application.mapper.SolicitudMapper;
 import com.ciudadania360.subsistemaciudadano.domain.entity.Solicitud;
 import com.ciudadania360.subsistemaciudadano.domain.handler.SolicitudHandler;

@@ -1,8 +1,8 @@
 package com.ciudadania360.subsistemaciudadano.controller;
 
 import com.ciudadania360.subsistemaciudadano.application.service.CiudadanoService;
-import com.ciudadania360.subsistemaciudadano.application.dto.CiudadanoRequest;
-import com.ciudadania360.subsistemaciudadano.application.dto.CiudadanoResponse;
+import com.ciudadania360.subsistemaciudadano.application.dto.ciudadano.CiudadanoRequest;
+import com.ciudadania360.subsistemaciudadano.application.dto.ciudadano.CiudadanoResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;

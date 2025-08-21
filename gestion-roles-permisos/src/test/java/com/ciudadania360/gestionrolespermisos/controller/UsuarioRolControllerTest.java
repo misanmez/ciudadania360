@@ -1,7 +1,8 @@
 package com.ciudadania360.gestionrolespermisos.controller;
 
-import com.ciudadania360.gestionrolespermisos.application.service.UsuarioRolServicio;
-import com.ciudadania360.gestionrolespermisos.domain.entity.UsuarioRol;
+import com.ciudadania360.gestionrolespermisos.application.dto.usuariorol.UsuarioRolRequest;
+import com.ciudadania360.gestionrolespermisos.application.dto.usuariorol.UsuarioRolResponse;
+import com.ciudadania360.gestionrolespermisos.application.service.UsuarioRolService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -26,11 +27,12 @@ class UsuarioRolControllerTest {
     private final ObjectMapper objectMapper = new ObjectMapper()
             .registerModule(new JavaTimeModule())
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
     @Test
     void listAndCreate() throws Exception {
-        UsuarioRolServicio svc = mock(UsuarioRolServicio.class);
+        UsuarioRolService svc = mock(UsuarioRolService.class);
 
-        UsuarioRol e = UsuarioRol.builder()
+        UsuarioRolResponse e = UsuarioRolResponse.builder()
                 .id(UUID.randomUUID())
                 .ciudadanoId(UUID.randomUUID())
                 .rolId(UUID.randomUUID())
@@ -40,20 +42,21 @@ class UsuarioRolControllerTest {
                 .observaciones("Asignación inicial")
                 .build();
 
+        // Mocks del servicio
         when(svc.list()).thenReturn(List.of(e));
-        when(svc.create(any())).thenReturn(e);
+        when(svc.create(any(UsuarioRolRequest.class))).thenReturn(e);
         when(svc.get(e.getId())).thenReturn(e);
-        when(svc.update(eq(e.getId()), any())).thenReturn(e);
+        when(svc.update(eq(e.getId()), any(UsuarioRolRequest.class))).thenReturn(e);
 
         UsuarioRolController controller = new UsuarioRolController(svc);
         MockMvc mvc = MockMvcBuilders.standaloneSetup(controller).build();
 
         // LIST
-        mvc.perform(get("/api/usuariorols"))
+        mvc.perform(get("/api/usuarioroles"))
                 .andExpect(status().isOk());
 
         // CREATE
-        UsuarioRol newUsuarioRol = UsuarioRol.builder()
+        UsuarioRolRequest newUsuarioRol = UsuarioRolRequest.builder()
                 .ciudadanoId(UUID.randomUUID())
                 .rolId(UUID.randomUUID())
                 .asignadoPor("admin")
@@ -62,17 +65,17 @@ class UsuarioRolControllerTest {
                 .observaciones("Asignación temporal")
                 .build();
 
-        mvc.perform(post("/api/usuariorols")
+        mvc.perform(post("/api/usuarioroles")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(newUsuarioRol)))
                 .andExpect(status().isCreated());
 
         // GET BY ID
-        mvc.perform(get("/api/usuariorols/" + e.getId()))
+        mvc.perform(get("/api/usuarioroles/" + e.getId()))
                 .andExpect(status().isOk());
 
         // UPDATE
-        UsuarioRol updatedUsuarioRol = UsuarioRol.builder()
+        UsuarioRolRequest updatedUsuarioRol = UsuarioRolRequest.builder()
                 .ciudadanoId(UUID.randomUUID())
                 .rolId(UUID.randomUUID())
                 .asignadoPor("supervisor")
@@ -82,13 +85,13 @@ class UsuarioRolControllerTest {
                 .observaciones("Acceso limitado por tiempo")
                 .build();
 
-        mvc.perform(put("/api/usuariorols/" + e.getId())
+        mvc.perform(put("/api/usuarioroles/" + e.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updatedUsuarioRol)))
                 .andExpect(status().isOk());
 
         // DELETE
-        mvc.perform(delete("/api/usuariorols/" + e.getId()))
+        mvc.perform(delete("/api/usuarioroles/" + e.getId()))
                 .andExpect(status().isNoContent());
     }
 }

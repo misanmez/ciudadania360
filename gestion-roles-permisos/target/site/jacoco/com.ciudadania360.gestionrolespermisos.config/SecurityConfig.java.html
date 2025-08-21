@@ -12,13 +12,21 @@ import org.springframework.security.web.SecurityFilterChain;
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 <span class="nc" id="L14">        http</span>
-<span class="nc" id="L15">          .csrf(csrf -&gt; csrf.disable())</span>
-<span class="nc" id="L16">          .authorizeHttpRequests(auth -&gt; auth</span>
-<span class="nc" id="L17">              .requestMatchers(&quot;/v3/api-docs/**&quot;,&quot;/swagger-ui.html&quot;,&quot;/swagger-ui/**&quot;,&quot;/actuator/health&quot;).permitAll()</span>
-<span class="nc" id="L18">              .anyRequest().authenticated()</span>
-          )
-<span class="nc" id="L20">          .oauth2ResourceServer(oauth2 -&gt; oauth2.jwt(Customizer.withDefaults()));</span>
-<span class="nc" id="L21">        return http.build();</span>
+                // Desactivar CSRF para simplificar tests y APIs REST
+<span class="nc" id="L16">                .csrf(csrf -&gt; csrf.disable())</span>
+
+                // Configuración de autorización
+<span class="nc" id="L19">                .authorizeHttpRequests(auth -&gt; auth</span>
+                        // Endpoints públicos (docs y health)
+<span class="nc" id="L21">                        .requestMatchers(&quot;/v3/api-docs/**&quot;, &quot;/swagger-ui.html&quot;, &quot;/swagger-ui/**&quot;, &quot;/actuator/health&quot;).permitAll()</span>
+                        // Resto requiere autenticación
+<span class="nc" id="L23">                        .anyRequest().authenticated()</span>
+                )
+
+                // Configuración OAuth2 Resource Server JWT
+<span class="nc" id="L27">                .oauth2ResourceServer(oauth2 -&gt; oauth2.jwt(Customizer.withDefaults()));</span>
+
+<span class="nc" id="L29">        return http.build();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

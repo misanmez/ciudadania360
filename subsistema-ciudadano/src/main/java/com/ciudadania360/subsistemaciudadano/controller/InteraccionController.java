@@ -1,7 +1,7 @@
 package com.ciudadania360.subsistemaciudadano.controller;
 
-import com.ciudadania360.subsistemaciudadano.application.dto.InteraccionRequest;
-import com.ciudadania360.subsistemaciudadano.application.dto.InteraccionResponse;
+import com.ciudadania360.subsistemaciudadano.application.dto.interaccion.InteraccionRequest;
+import com.ciudadania360.subsistemaciudadano.application.dto.interaccion.InteraccionResponse;
 import com.ciudadania360.subsistemaciudadano.application.service.InteraccionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

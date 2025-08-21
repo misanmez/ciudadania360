@@ -1,7 +1,7 @@
 package com.ciudadania360.subsistemaciudadano.application.service;
 
-import com.ciudadania360.subsistemaciudadano.application.dto.DireccionRequest;
-import com.ciudadania360.subsistemaciudadano.application.dto.DireccionResponse;
+import com.ciudadania360.subsistemaciudadano.application.dto.direccion.DireccionRequest;
+import com.ciudadania360.subsistemaciudadano.application.dto.direccion.DireccionResponse;
 import com.ciudadania360.subsistemaciudadano.application.mapper.DireccionMapper;
 import com.ciudadania360.subsistemaciudadano.domain.entity.Direccion;
 import com.ciudadania360.subsistemaciudadano.domain.handler.DireccionHandler;

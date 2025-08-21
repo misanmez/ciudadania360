@@ -1,7 +1,7 @@
 package com.ciudadania360.subsistemaciudadano.controller;
 
-import com.ciudadania360.subsistemaciudadano.application.dto.ConsentimientoRequest;
-import com.ciudadania360.subsistemaciudadano.application.dto.ConsentimientoResponse;
+import com.ciudadania360.subsistemaciudadano.application.dto.consentimiento.ConsentimientoRequest;
+import com.ciudadania360.subsistemaciudadano.application.dto.consentimiento.ConsentimientoResponse;
 import com.ciudadania360.subsistemaciudadano.application.service.ConsentimientoService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

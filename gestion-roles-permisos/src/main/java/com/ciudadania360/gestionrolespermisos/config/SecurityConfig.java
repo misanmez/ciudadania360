@@ -12,12 +12,20 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-          .csrf(csrf -> csrf.disable())
-          .authorizeHttpRequests(auth -> auth
-              .requestMatchers("/v3/api-docs/**","/swagger-ui.html","/swagger-ui/**","/actuator/health").permitAll()
-              .anyRequest().authenticated()
-          )
-          .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
+                // Desactivar CSRF para simplificar tests y APIs REST
+                .csrf(csrf -> csrf.disable())
+
+                // Configuración de autorización
+                .authorizeHttpRequests(auth -> auth
+                        // Endpoints públicos (docs y health)
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**", "/actuator/health").permitAll()
+                        // Resto requiere autenticación
+                        .anyRequest().authenticated()
+                )
+
+                // Configuración OAuth2 Resource Server JWT
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
+
         return http.build();
     }
 }

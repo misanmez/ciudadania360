@@ -1,7 +1,7 @@
 package com.ciudadania360.subsistemaciudadano.controller;
 
-import com.ciudadania360.subsistemaciudadano.application.dto.ClasificacionRequest;
-import com.ciudadania360.subsistemaciudadano.application.dto.ClasificacionResponse;
+import com.ciudadania360.subsistemaciudadano.application.dto.clasificacion.ClasificacionRequest;
+import com.ciudadania360.subsistemaciudadano.application.dto.clasificacion.ClasificacionResponse;
 import com.ciudadania360.subsistemaciudadano.application.service.ClasificacionService;
 
 import lombok.RequiredArgsConstructor;

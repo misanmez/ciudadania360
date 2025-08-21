@@ -1,7 +1,7 @@
 package com.ciudadania360.subsistemaciudadano.controller;
 
-import com.ciudadania360.subsistemaciudadano.application.dto.UbicacionRequest;
-import com.ciudadania360.subsistemaciudadano.application.dto.UbicacionResponse;
+import com.ciudadania360.subsistemaciudadano.application.dto.ubicacion.UbicacionRequest;
+import com.ciudadania360.subsistemaciudadano.application.dto.ubicacion.UbicacionResponse;
 import com.ciudadania360.subsistemaciudadano.application.service.UbicacionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;

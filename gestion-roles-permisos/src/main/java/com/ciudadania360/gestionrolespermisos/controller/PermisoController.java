@@ -1,30 +1,44 @@
 package com.ciudadania360.gestionrolespermisos.controller;
 
-import com.ciudadania360.gestionrolespermisos.application.service.PermisoServicio;
-import com.ciudadania360.gestionrolespermisos.domain.entity.Permiso;
+import com.ciudadania360.gestionrolespermisos.application.dto.permiso.PermisoRequest;
+import com.ciudadania360.gestionrolespermisos.application.dto.permiso.PermisoResponse;
+import com.ciudadania360.gestionrolespermisos.application.service.PermisoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.*;
+
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/permisos")
 public class PermisoController {
-    private final PermisoServicio service;
-    public PermisoController(PermisoServicio service) { this.service = service; }
+    private final PermisoService service;
+
+    public PermisoController(PermisoService service) {
+        this.service = service;
+    }
 
     @GetMapping
-    public List<Permiso> list() { return service.list(); }
+    public List<PermisoResponse> list() {
+        return service.list();
+    }
 
     @GetMapping("/{id}")
-    public Permiso get(@PathVariable("id") UUID id) { return service.get(id); }
+    public PermisoResponse get(@PathVariable("id") UUID id) {
+        return service.get(id);
+    }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Permiso create(@RequestBody Permiso e) { return service.create(e); }
+    public ResponseEntity<PermisoResponse> create(@RequestBody PermisoRequest request) {
+        PermisoResponse created = service.create(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
 
     @PutMapping("/{id}")
-    public Permiso update(@PathVariable("id") UUID id, @RequestBody Permiso e) { return service.update(id, e); }
+    public PermisoResponse update(@PathVariable("id") UUID id, @RequestBody PermisoRequest request) {
+        return service.update(id, request);
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") UUID id) {
