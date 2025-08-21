@@ -94,7 +94,7 @@ class SolicitudHandlerTest {
 
         when(repo.findAll()).thenReturn(List.of(e));
 
-        List<Solicitud> result = handler.obtenerTodos();
+        List<Solicitud> result = handler.list();
 
         assertThat(result).containsExactly(e);
         verify(repo).findAll();
@@ -107,7 +107,7 @@ class SolicitudHandlerTest {
 
         when(repo.findById(id)).thenReturn(Optional.of(e));
 
-        Solicitud result = handler.obtenerPorId(id);
+        Solicitud result = handler.get(id);
 
         assertThat(result).isEqualTo(e);
         verify(repo).findById(id);
@@ -119,7 +119,7 @@ class SolicitudHandlerTest {
 
         when(repo.save(any())).thenReturn(e);
 
-        Solicitud result = handler.crear(e);
+        Solicitud result = handler.create(e);
 
         assertThat(result).isEqualTo(e);
         verify(repo).save(e);
@@ -135,7 +135,7 @@ class SolicitudHandlerTest {
         when(repo.findById(id)).thenReturn(Optional.of(existente));
         when(repo.save(any())).thenReturn(existente);
 
-        Solicitud result = handler.actualizar(id, cambios);
+        Solicitud result = handler.update(id, cambios);
 
         assertThat(result.getTitulo()).isEqualTo("Nuevo título");
         verify(repo).save(existente);
@@ -146,7 +146,7 @@ class SolicitudHandlerTest {
     void deleteRemovesSolicitudById() {
         UUID id = UUID.randomUUID();
 
-        handler.eliminar(id);
+        handler.delete(id);
 
         verify(repo).deleteById(id);
     }

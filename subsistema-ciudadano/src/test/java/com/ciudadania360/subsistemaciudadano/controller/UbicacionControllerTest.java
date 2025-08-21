@@ -1,9 +1,9 @@
 package com.ciudadania360.subsistemaciudadano.controller;
 
-import com.ciudadania360.subsistemaciudadano.application.service.UbicacionServicio;
-import com.ciudadania360.subsistemaciudadano.domain.entity.Ubicacion;
+import com.ciudadania360.subsistemaciudadano.application.dto.UbicacionRequest;
+import com.ciudadania360.subsistemaciudadano.application.dto.UbicacionResponse;
+import com.ciudadania360.subsistemaciudadano.application.service.UbicacionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,26 +23,26 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class UbicacionControllerTest {
 
-    private ObjectMapper objectMapper;  // Se inicializa manualmente
+    private ObjectMapper objectMapper;
     private MockMvc mvc;
-    private UbicacionServicio svc;
-    private UbicacionController controller;
+    private UbicacionService svc;
 
     @BeforeEach
     void setup() {
-        objectMapper = new ObjectMapper(); // Inicializamos aquí
+        objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // opcional, ISO-8601
-        svc = mock(UbicacionServicio.class);
-        controller = new UbicacionController(svc);
+
+        svc = mock(UbicacionService.class);
+        UbicacionController controller = new UbicacionController(svc);
         mvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 
     @Test
     void listAndCreate() throws Exception {
-        // Entidad de ejemplo
-        Ubicacion e = Ubicacion.builder()
-                .id(UUID.randomUUID())
+        UUID ubicacionId = UUID.randomUUID();
+
+        UbicacionResponse ubicacionResponse = UbicacionResponse.builder()
+                .id(ubicacionId)
                 .direccion("Calle Mayor 123")
                 .municipio("Valencia")
                 .provincia("Valencia")
@@ -53,17 +53,18 @@ class UbicacionControllerTest {
                 .fuente("Registro Municipal")
                 .build();
 
-        when(svc.obtenerTodos()).thenReturn(List.of(e));
-        when(svc.crear(any())).thenReturn(e);
-        when(svc.obtenerPorId(e.getId())).thenReturn(e);
-        when(svc.actualizar(eq(e.getId()), any())).thenReturn(e);
+        // Mock del servicio
+        when(svc.list()).thenReturn(List.of(ubicacionResponse));
+        when(svc.create(any(UbicacionRequest.class))).thenReturn(ubicacionResponse);
+        when(svc.get(ubicacionId)).thenReturn(ubicacionResponse);
+        when(svc.update(eq(ubicacionId), any(UbicacionRequest.class))).thenReturn(ubicacionResponse);
 
         // LIST
         mvc.perform(get("/api/ubicacions"))
                 .andExpect(status().isOk());
 
         // CREATE
-        Ubicacion newUbicacion = Ubicacion.builder()
+        UbicacionRequest newRequest = UbicacionRequest.builder()
                 .direccion("Avenida de España 45")
                 .municipio("Madrid")
                 .provincia("Madrid")
@@ -76,15 +77,15 @@ class UbicacionControllerTest {
 
         mvc.perform(post("/api/ubicacions")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(newUbicacion)))
-                .andExpect(status().isCreated()); // mejor status REST
+                        .content(objectMapper.writeValueAsString(newRequest)))
+                .andExpect(status().isCreated());
 
         // GET BY ID
-        mvc.perform(get("/api/ubicacions/" + e.getId()))
+        mvc.perform(get("/api/ubicacions/" + ubicacionId))
                 .andExpect(status().isOk());
 
         // UPDATE
-        Ubicacion updatedUbicacion = Ubicacion.builder()
+        UbicacionRequest updateRequest = UbicacionRequest.builder()
                 .direccion("Calle Nueva 10")
                 .municipio("Barcelona")
                 .provincia("Barcelona")
@@ -95,13 +96,13 @@ class UbicacionControllerTest {
                 .fuente("Actualización Manual")
                 .build();
 
-        mvc.perform(put("/api/ubicacions/" + e.getId())
+        mvc.perform(put("/api/ubicacions/" + ubicacionId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updatedUbicacion)))
+                        .content(objectMapper.writeValueAsString(updateRequest)))
                 .andExpect(status().isOk());
 
         // DELETE
-        mvc.perform(delete("/api/ubicacions/" + e.getId()))
+        mvc.perform(delete("/api/ubicacions/" + ubicacionId))
                 .andExpect(status().isNoContent());
     }
 }

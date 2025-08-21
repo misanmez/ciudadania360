@@ -1,15 +1,14 @@
 package com.ciudadania360.subsistemaciudadano.controller;
 
-import com.ciudadania360.subsistemaciudadano.application.service.*;
-import com.ciudadania360.subsistemaciudadano.domain.entity.*;
+import com.ciudadania360.subsistemaciudadano.application.service.CiudadanoService;
+import com.ciudadania360.subsistemaciudadano.application.dto.CiudadanoRequest;
+import com.ciudadania360.subsistemaciudadano.application.dto.CiudadanoResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,10 +25,10 @@ class CiudadanoControllerTest {
 
     @Test
     void listAndCreate() throws Exception {
-        CiudadanoServicio svc = mock(CiudadanoServicio.class);
+        CiudadanoService svc = mock(CiudadanoService.class);
 
-        // Ciudadano de ejemplo
-        Ciudadano e = Ciudadano.builder()
+        // Ciudadano de ejemplo (Response DTO)
+        CiudadanoResponse e = CiudadanoResponse.builder()
                 .id(UUID.randomUUID())
                 .nombre("Juan")
                 .apellidos("Pérez")
@@ -43,15 +42,13 @@ class CiudadanoControllerTest {
                 .estado("Activo")
                 .externalId("EXT123")
                 .metadata("{}")
-                .solicitudes(Collections.emptyList())
-                .version(0L)
                 .build();
 
         // Mock del servicio
         when(svc.list()).thenReturn(List.of(e));
-        when(svc.create(any())).thenReturn(e);
+        when(svc.create(any(CiudadanoRequest.class))).thenReturn(e);
         when(svc.get(e.getId())).thenReturn(e);
-        when(svc.update(eq(e.getId()), any())).thenReturn(e);
+        when(svc.update(eq(e.getId()), any(CiudadanoRequest.class))).thenReturn(e);
 
         CiudadanoController controller = new CiudadanoController(svc);
         MockMvc mvc = MockMvcBuilders.standaloneSetup(controller).build();
@@ -61,7 +58,7 @@ class CiudadanoControllerTest {
                 .andExpect(status().isOk());
 
         // Create
-        Ciudadano newCiudadano = Ciudadano.builder()
+        CiudadanoRequest newCiudadano = CiudadanoRequest.builder()
                 .nombre("Juan")
                 .apellidos("Pérez")
                 .email("juan@example.com")
@@ -74,7 +71,6 @@ class CiudadanoControllerTest {
                 .estado("Activo")
                 .externalId("EXT123")
                 .metadata("{}")
-                .solicitudes(Collections.emptyList())
                 .build();
 
         mvc.perform(post("/api/ciudadanos")
@@ -87,7 +83,7 @@ class CiudadanoControllerTest {
                 .andExpect(status().isOk());
 
         // Update
-        Ciudadano updatedCiudadano = Ciudadano.builder()
+        CiudadanoRequest updatedCiudadano = CiudadanoRequest.builder()
                 .nombre("Juan Actualizado")
                 .apellidos("Pérez Actualizado")
                 .email("juan.new@example.com")
@@ -100,7 +96,6 @@ class CiudadanoControllerTest {
                 .estado("Inactivo")
                 .externalId("EXT456")
                 .metadata("{\"actualizado\":true}")
-                .solicitudes(Collections.emptyList())
                 .build();
 
         mvc.perform(put("/api/ciudadanos/" + e.getId())

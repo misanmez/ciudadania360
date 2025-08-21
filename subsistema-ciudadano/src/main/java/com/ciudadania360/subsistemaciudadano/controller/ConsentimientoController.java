@@ -1,35 +1,49 @@
 package com.ciudadania360.subsistemaciudadano.controller;
 
-import com.ciudadania360.subsistemaciudadano.application.service.ConsentimientoServicio;
-import com.ciudadania360.subsistemaciudadano.domain.entity.Clasificacion;
-import com.ciudadania360.subsistemaciudadano.domain.entity.Consentimiento;
-import org.springframework.http.HttpStatus;
+import com.ciudadania360.subsistemaciudadano.application.dto.ConsentimientoRequest;
+import com.ciudadania360.subsistemaciudadano.application.dto.ConsentimientoResponse;
+import com.ciudadania360.subsistemaciudadano.application.service.ConsentimientoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.*;
+
+import java.util.List;
+import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/consentimientos")
+@RequestMapping("/consentimientos")
 public class ConsentimientoController {
-    private final ConsentimientoServicio service;
-    public ConsentimientoController(ConsentimientoServicio service) { this.service = service; }
+
+    private final ConsentimientoService service;
+
+    public ConsentimientoController(ConsentimientoService service) {
+        this.service = service;
+    }
 
     @GetMapping
-    public List<Consentimiento> list() { return service.list(); }
+    public ResponseEntity<List<ConsentimientoResponse>> list() {
+        return ResponseEntity.ok(service.list());
+    }
 
     @GetMapping("/{id}")
-    public Consentimiento get(@PathVariable("id") UUID id) { return service.get(id); }
+    public ResponseEntity<ConsentimientoResponse> get(@PathVariable UUID id) {
+        return ResponseEntity.ok(service.get(id));
+    }
 
     @PostMapping
-    public ResponseEntity<Consentimiento> crear(@RequestBody Consentimiento e) {
-        Consentimiento created = service.create(e);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    public ResponseEntity<ConsentimientoResponse> create(@RequestBody ConsentimientoRequest request) {
+        return ResponseEntity.ok(service.create(request));
     }
+
     @PutMapping("/{id}")
-    public Consentimiento update(@PathVariable("id") UUID id, @RequestBody Consentimiento e) { return service.update(id, e); }
+    public ResponseEntity<ConsentimientoResponse> update(
+            @PathVariable UUID id,
+            @RequestBody ConsentimientoRequest request
+    ) {
+        return ResponseEntity.ok(service.update(id, request));
+    }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable("id") UUID id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }

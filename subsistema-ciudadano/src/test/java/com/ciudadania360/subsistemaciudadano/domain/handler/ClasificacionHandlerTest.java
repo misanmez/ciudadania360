@@ -45,7 +45,7 @@ class ClasificacionHandlerTest {
     void testObtenerTodos() {
         when(repository.findAll()).thenReturn(List.of(clasificacion));
 
-        List<Clasificacion> resultado = handler.obtenerTodos();
+        List<Clasificacion> resultado = handler.list();
 
         assertEquals(1, resultado.size());
         assertEquals(clasificacion.getId(), resultado.get(0).getId());
@@ -56,7 +56,7 @@ class ClasificacionHandlerTest {
     void testObtenerPorId() {
         when(repository.findById(id)).thenReturn(Optional.of(clasificacion));
 
-        Clasificacion resultado = handler.obtenerPorId(id);
+        Clasificacion resultado = handler.get(id);
 
         assertEquals(clasificacion.getId(), resultado.getId());
         verify(repository, times(1)).findById(id);
@@ -66,29 +66,33 @@ class ClasificacionHandlerTest {
     void testCrear() {
         when(repository.save(any(Clasificacion.class))).thenReturn(clasificacion);
 
-        Clasificacion resultado = handler.crear(clasificacion);
+        Clasificacion resultado = handler.create(clasificacion);
 
         assertEquals(clasificacion.getId(), resultado.getId());
         verify(repository, times(1)).save(clasificacion);
     }
+
+
 
     @Test
     void testActualizar() {
-        when(repository.existsById(id)).thenReturn(true);
+        when(repository.findById(id)).thenReturn(Optional.of(clasificacion));
         when(repository.save(any(Clasificacion.class))).thenReturn(clasificacion);
 
-        Clasificacion resultado = handler.actualizar(id, clasificacion);
+        Clasificacion resultado = handler.update(id, clasificacion);
 
         assertEquals(clasificacion.getId(), resultado.getId());
-        verify(repository, times(1)).existsById(id);
+        verify(repository, times(1)).findById(id);
         verify(repository, times(1)).save(clasificacion);
     }
+
+
 
     @Test
     void testEliminar() {
         doNothing().when(repository).deleteById(id);
 
-        handler.eliminar(id);
+        handler.delete(id);
 
         // Solo verificamos que deleteById se haya llamado
         verify(repository, times(1)).deleteById(id);

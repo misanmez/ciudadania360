@@ -14,19 +14,19 @@ public class ReglaClasificacionHandler {
 <span class="fc" id="L14">        this.repositorio = repositorio;</span>
 <span class="fc" id="L15">    }</span>
 
-    public List&lt;ReglaClasificacion&gt; obtenerTodos() {
+    public List&lt;ReglaClasificacion&gt; list() {
 <span class="fc" id="L18">        return repositorio.findAll();</span>
     }
 
-    public ReglaClasificacion obtenerPorId(UUID id) {
+    public ReglaClasificacion get(UUID id) {
 <span class="pc" id="L22">        return repositorio.findById(id).orElseThrow(() -&gt; new RuntimeException(&quot;ReglaClasificacion no encontrado&quot;));</span>
     }
 
-    public ReglaClasificacion crear(ReglaClasificacion e) {
+    public ReglaClasificacion create(ReglaClasificacion e) {
 <span class="fc" id="L26">        return repositorio.save(e);</span>
     }
 
-    public ReglaClasificacion actualizar(UUID id, ReglaClasificacion cambios) {
+    public ReglaClasificacion update(UUID id, ReglaClasificacion cambios) {
         // Obtener la entidad existente
 <span class="fc" id="L31">        ReglaClasificacion existente = repositorio.findById(id)</span>
 <span class="pc" id="L32">                .orElseThrow(() -&gt; new RuntimeException(&quot;ReglaClasificacion no encontrado&quot;));</span>
@@ -47,7 +47,7 @@ public class ReglaClasificacionHandler {
     }
 
 
-    public void eliminar(UUID id) {
+    public void delete(UUID id) {
 <span class="fc" id="L51">        repositorio.deleteById(id);</span>
 <span class="fc" id="L52">    }</span>
 }

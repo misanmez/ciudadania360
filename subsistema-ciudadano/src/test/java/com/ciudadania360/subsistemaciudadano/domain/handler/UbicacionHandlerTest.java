@@ -45,7 +45,7 @@ class UbicacionHandlerTest {
 
         when(repo.findAll()).thenReturn(List.of(e));
 
-        List<Ubicacion> result = handler.obtenerTodos();
+        List<Ubicacion> result = handler.list();
 
         assertThat(result).containsExactly(e);
         verify(repo).findAll();
@@ -58,7 +58,7 @@ class UbicacionHandlerTest {
 
         when(repo.findById(id)).thenReturn(Optional.of(e));
 
-        Ubicacion result = handler.obtenerPorId(id);
+        Ubicacion result = handler.get(id);
 
         assertThat(result).isEqualTo(e);
         verify(repo).findById(id);
@@ -70,7 +70,7 @@ class UbicacionHandlerTest {
 
         when(repo.save(any())).thenReturn(e);
 
-        Ubicacion result = handler.crear(e);
+        Ubicacion result = handler.create(e);
 
         assertThat(result).isEqualTo(e);
         verify(repo).save(e);
@@ -92,7 +92,7 @@ class UbicacionHandlerTest {
         when(repo.findById(id)).thenReturn(Optional.of(existente));
         when(repo.save(any())).thenReturn(existente);
 
-        Ubicacion result = handler.actualizar(id, cambios);
+        Ubicacion result = handler.update(id, cambios);
 
         // Verificar que los cambios fueron aplicados
         assertThat(result.getDireccion()).isEqualTo("Avenida Siempre Viva 742");
@@ -108,7 +108,7 @@ class UbicacionHandlerTest {
     void deleteRemovesUbicacionById() {
         UUID id = UUID.randomUUID();
 
-        handler.eliminar(id);
+        handler.delete(id);
 
         verify(repo).deleteById(id);
     }

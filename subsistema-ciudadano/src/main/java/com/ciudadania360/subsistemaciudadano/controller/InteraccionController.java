@@ -1,47 +1,48 @@
 package com.ciudadania360.subsistemaciudadano.controller;
 
-import com.ciudadania360.subsistemaciudadano.application.service.InteraccionServicio;
-import com.ciudadania360.subsistemaciudadano.domain.entity.Interaccion;
-import com.ciudadania360.subsistemaciudadano.domain.entity.ReglaClasificacion;
+import com.ciudadania360.subsistemaciudadano.application.dto.InteraccionRequest;
+import com.ciudadania360.subsistemaciudadano.application.dto.InteraccionResponse;
+import com.ciudadania360.subsistemaciudadano.application.service.InteraccionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/interaccions")
 public class InteraccionController {
-    private final InteraccionServicio servicio;
 
-    public InteraccionController(InteraccionServicio servicio) {
-        this.servicio = servicio;
+    private final InteraccionService service;
+
+    public InteraccionController(InteraccionService service) {
+        this.service = service;
     }
 
     @GetMapping
-    public ResponseEntity<List<Interaccion>> listar() {
-        return ResponseEntity.ok(servicio.obtenerTodos());
+    public List<InteraccionResponse> list() { return service.list();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Interaccion> obtener(@PathVariable("id") UUID id) {
-        return ResponseEntity.ok(servicio.obtenerPorId(id));
+    public InteraccionResponse get(@PathVariable("id") UUID id)  {
+        return service.get(id);
     }
 
     @PostMapping
-    public ResponseEntity<Interaccion> crear(@RequestBody Interaccion e) {
-        Interaccion created = servicio.crear(e);
+    public ResponseEntity<InteraccionResponse> create(@RequestBody InteraccionRequest request) {
+        InteraccionResponse created = service.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Interaccion> actualizar(@PathVariable("id") UUID id, @RequestBody Interaccion e) {
-        return ResponseEntity.ok(servicio.actualizar(id, e));
+    public InteraccionResponse update(@PathVariable("id") UUID id, @RequestBody InteraccionRequest request) {
+        return service.update(id, request);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable("id") UUID id) {
-        servicio.eliminar(id);
+    public ResponseEntity<Void> delete(@PathVariable("id") UUID id) {
+        service.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

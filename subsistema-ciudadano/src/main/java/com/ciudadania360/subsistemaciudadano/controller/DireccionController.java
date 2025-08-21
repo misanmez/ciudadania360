@@ -1,36 +1,48 @@
 package com.ciudadania360.subsistemaciudadano.controller;
 
-import com.ciudadania360.subsistemaciudadano.application.service.DireccionServicio;
-import com.ciudadania360.subsistemaciudadano.domain.entity.Direccion;
-import com.ciudadania360.subsistemaciudadano.domain.entity.Interaccion;
+import com.ciudadania360.subsistemaciudadano.application.dto.DireccionRequest;
+import com.ciudadania360.subsistemaciudadano.application.dto.DireccionResponse;
+import com.ciudadania360.subsistemaciudadano.application.service.DireccionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.*;
+
+import java.util.List;
+import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/direccions")
+@RequestMapping("/api/direcciones")
 public class DireccionController {
-    private final DireccionServicio service;
-    public DireccionController(DireccionServicio service) { this.service = service; }
+
+    private final DireccionService service;
+
+    public DireccionController(DireccionService service) {
+        this.service = service;
+    }
 
     @GetMapping
-    public List<Direccion> list() { return service.list(); }
+    public List<DireccionResponse> list() {
+        return service.list();
+    }
 
     @GetMapping("/{id}")
-    public Direccion get(@PathVariable("id") UUID id) { return service.get(id); }
+    public DireccionResponse get(@PathVariable UUID id) {
+        return service.get(id);
+    }
 
     @PostMapping
-    public ResponseEntity<Direccion> crear(@RequestBody Direccion e) {
-        Direccion created = service.create(e);
+    public ResponseEntity<DireccionResponse> create(@RequestBody DireccionRequest request) {
+        DireccionResponse created = service.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @PutMapping("/{id}")
-    public Direccion update(@PathVariable("id") UUID id, @RequestBody Direccion e) { return service.update(id, e); }
+    public DireccionResponse update(@PathVariable UUID id, @RequestBody DireccionRequest request) {
+        return service.update(id, request);
+    }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable("id") UUID id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }

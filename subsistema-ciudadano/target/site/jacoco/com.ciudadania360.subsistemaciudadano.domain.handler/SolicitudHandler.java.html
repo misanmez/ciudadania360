@@ -14,19 +14,19 @@ public class SolicitudHandler {
 <span class="fc" id="L14">        this.repositorio = repositorio;</span>
 <span class="fc" id="L15">    }</span>
 
-    public List&lt;Solicitud&gt; obtenerTodos() {
+    public List&lt;Solicitud&gt; list() {
 <span class="fc" id="L18">        return repositorio.findAll();</span>
     }
 
-    public Solicitud obtenerPorId(UUID id) {
+    public Solicitud get(UUID id) {
 <span class="pc" id="L22">        return repositorio.findById(id).orElseThrow(() -&gt; new RuntimeException(&quot;Solicitud no encontrado&quot;));</span>
     }
 
-    public Solicitud crear(Solicitud e) {
+    public Solicitud create(Solicitud e) {
 <span class="fc" id="L26">        return repositorio.save(e);</span>
     }
 
-    public Solicitud actualizar(UUID id, Solicitud cambios) {
+    public Solicitud update(UUID id, Solicitud cambios) {
 <span class="fc" id="L30">        Solicitud existente = repositorio.findById(id)</span>
 <span class="pc" id="L31">                .orElseThrow(() -&gt; new RuntimeException(&quot;Solicitud no encontrado&quot;));</span>
 
@@ -55,7 +55,7 @@ public class SolicitudHandler {
     }
 
 
-    public void eliminar(UUID id) {
+    public void delete(UUID id) {
 <span class="fc" id="L59">        repositorio.deleteById(id);</span>
 <span class="fc" id="L60">    }</span>
 }

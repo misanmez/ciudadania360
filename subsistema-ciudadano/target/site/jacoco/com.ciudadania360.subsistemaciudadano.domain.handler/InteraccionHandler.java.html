@@ -14,19 +14,19 @@ public class InteraccionHandler {
 <span class="fc" id="L14">        this.repositorio = repositorio;</span>
 <span class="fc" id="L15">    }</span>
 
-    public List&lt;Interaccion&gt; obtenerTodos() {
+    public List&lt;Interaccion&gt; list() {
 <span class="fc" id="L18">        return repositorio.findAll();</span>
     }
 
-    public Interaccion obtenerPorId(UUID id) {
+    public Interaccion get(UUID id) {
 <span class="pc" id="L22">        return repositorio.findById(id).orElseThrow(() -&gt; new RuntimeException(&quot;Interaccion no encontrado&quot;));</span>
     }
 
-    public Interaccion crear(Interaccion e) {
+    public Interaccion create(Interaccion e) {
 <span class="fc" id="L26">        return repositorio.save(e);</span>
     }
 
-    public Interaccion actualizar(UUID id, Interaccion cambios) {
+    public Interaccion update(UUID id, Interaccion cambios) {
         // Obtener la entidad existente
 <span class="fc" id="L31">        Interaccion existente = repositorio.findById(id)</span>
 <span class="pc" id="L32">                .orElseThrow(() -&gt; new RuntimeException(&quot;Interaccion no encontrado&quot;));</span>
@@ -46,7 +46,7 @@ public class InteraccionHandler {
     }
 
 
-    public void eliminar(UUID id) {
+    public void delete(UUID id) {
 <span class="fc" id="L50">        repositorio.deleteById(id);</span>
 <span class="fc" id="L51">    }</span>
 }

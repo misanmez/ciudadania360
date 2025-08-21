@@ -43,7 +43,7 @@ class ReglaClasificacionHandlerTest {
 
         when(repo.findAll()).thenReturn(List.of(e));
 
-        List<ReglaClasificacion> result = handler.obtenerTodos();
+        List<ReglaClasificacion> result = handler.list();
 
         assertThat(result).containsExactly(e);
         verify(repo).findAll();
@@ -60,7 +60,7 @@ class ReglaClasificacionHandlerTest {
 
         when(repo.findById(id)).thenReturn(Optional.of(e));
 
-        ReglaClasificacion result = handler.obtenerPorId(id);
+        ReglaClasificacion result = handler.get(id);
 
         assertThat(result).isEqualTo(e);
         verify(repo).findById(id);
@@ -76,7 +76,7 @@ class ReglaClasificacionHandlerTest {
 
         when(repo.save(any())).thenReturn(e);
 
-        ReglaClasificacion result = handler.crear(e);
+        ReglaClasificacion result = handler.create(e);
 
         assertThat(result).isEqualTo(e);
         verify(repo).save(e);
@@ -103,7 +103,7 @@ class ReglaClasificacionHandlerTest {
         when(repo.findById(id)).thenReturn(Optional.of(existente));
         when(repo.save(any())).thenReturn(existente);
 
-        ReglaClasificacion result = handler.actualizar(id, cambios);
+        ReglaClasificacion result = handler.update(id, cambios);
 
         // Verificar que los cambios se aplicaron en la entidad existente
         assertThat(result.getNombre()).isEqualTo("Regla Y");
@@ -118,7 +118,7 @@ class ReglaClasificacionHandlerTest {
     void deleteRemovesReglaById() {
         UUID id = UUID.randomUUID();
 
-        handler.eliminar(id);
+        handler.delete(id);
 
         verify(repo).deleteById(id);
     }

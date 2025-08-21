@@ -1,47 +1,48 @@
 package com.ciudadania360.subsistemaciudadano.controller;
 
-import com.ciudadania360.subsistemaciudadano.application.service.ClasificacionServicio;
-import com.ciudadania360.subsistemaciudadano.domain.entity.Ciudadano;
-import com.ciudadania360.subsistemaciudadano.domain.entity.Clasificacion;
+import com.ciudadania360.subsistemaciudadano.application.dto.ClasificacionRequest;
+import com.ciudadania360.subsistemaciudadano.application.dto.ClasificacionResponse;
+import com.ciudadania360.subsistemaciudadano.application.service.ClasificacionService;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/clasificacions")
+@RequestMapping("/api/clasificaciones")
+@RequiredArgsConstructor
 public class ClasificacionController {
-    private final ClasificacionServicio servicio;
 
-    public ClasificacionController(ClasificacionServicio servicio) {
-        this.servicio = servicio;
-    }
+    private final ClasificacionService service;
 
     @GetMapping
-    public ResponseEntity<List<Clasificacion>> listar() {
-        return ResponseEntity.ok(servicio.obtenerTodos());
+    public List<ClasificacionResponse> list() {
+        return service.list();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Clasificacion> obtener(@PathVariable("id") UUID id) {
-        return ResponseEntity.ok(servicio.obtenerPorId(id));
+    public ClasificacionResponse get(@PathVariable UUID id) {
+        return service.get(id);
     }
 
     @PostMapping
-    public ResponseEntity<Clasificacion> crear(@RequestBody Clasificacion e) {
-        Clasificacion created = servicio.crear(e);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    @ResponseStatus(HttpStatus.CREATED)
+    public ClasificacionResponse create(@RequestBody ClasificacionRequest request) {
+        return service.create(request);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Clasificacion> actualizar(@PathVariable("id") UUID id, @RequestBody Clasificacion e) {
-        return ResponseEntity.ok(servicio.actualizar(id, e));
+    public ClasificacionResponse update(@PathVariable UUID id,
+                                        @RequestBody ClasificacionRequest request) {
+        return service.update(id, request);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable("id") UUID id) {
-        servicio.eliminar(id);
-        return ResponseEntity.noContent().build();
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable UUID id) {
+        service.delete(id);
     }
 }

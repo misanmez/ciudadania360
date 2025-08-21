@@ -1,47 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SolicitudController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">subsistema-ciudadano</a> &gt; <a href="index.source.html" class="el_package">com.ciudadania360.subsistemaciudadano.controller</a> &gt; <span class="el_source">SolicitudController.java</span></div><h1>SolicitudController.java</h1><pre class="source lang-java linenums">package com.ciudadania360.subsistemaciudadano.controller;
 
-import com.ciudadania360.subsistemaciudadano.application.service.SolicitudServicio;
-import com.ciudadania360.subsistemaciudadano.domain.entity.Solicitud;
+import com.ciudadania360.subsistemaciudadano.application.dto.SolicitudRequest;
+import com.ciudadania360.subsistemaciudadano.application.dto.SolicitudResponse;
+import com.ciudadania360.subsistemaciudadano.application.service.SolicitudService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.UUID;
 
 @RestController
 @RequestMapping(&quot;/api/solicituds&quot;)
 public class SolicitudController {
-    private final SolicitudServicio servicio;
 
-<span class="fc" id="L16">    public SolicitudController(SolicitudServicio servicio) {</span>
-<span class="fc" id="L17">        this.servicio = servicio;</span>
-<span class="fc" id="L18">    }</span>
+    private final SolicitudService service;
+
+<span class="fc" id="L19">    public SolicitudController(SolicitudService service) {</span>
+<span class="fc" id="L20">        this.service = service;</span>
+<span class="fc" id="L21">    }</span>
 
     @GetMapping
-    public ResponseEntity&lt;List&lt;Solicitud&gt;&gt; listar() {
-<span class="fc" id="L22">        return ResponseEntity.ok(servicio.obtenerTodos());</span>
+    public List&lt;SolicitudResponse&gt; list() {
+<span class="fc" id="L25">        return service.list();</span>
     }
 
     @GetMapping(&quot;/{id}&quot;)
-    public ResponseEntity&lt;Solicitud&gt; obtener(@PathVariable(&quot;id&quot;) UUID id) {
-<span class="fc" id="L27">        return ResponseEntity.ok(servicio.obtenerPorId(id));</span>
+    public SolicitudResponse get(@PathVariable UUID id) {
+<span class="fc" id="L30">        return service.get(id);</span>
     }
 
     @PostMapping
-    public ResponseEntity&lt;Solicitud&gt; crear(@RequestBody Solicitud e) {
-<span class="fc" id="L32">        Solicitud created = servicio.crear(e);</span>
-<span class="fc" id="L33">        return ResponseEntity.status(HttpStatus.CREATED).body(created);</span>
+    public ResponseEntity&lt;SolicitudResponse&gt; create(@RequestBody SolicitudRequest request) {
+<span class="fc" id="L35">        SolicitudResponse created = service.create(request);</span>
+<span class="fc" id="L36">        return ResponseEntity.status(HttpStatus.CREATED).body(created);</span>
     }
 
     @PutMapping(&quot;/{id}&quot;)
-    public ResponseEntity&lt;Solicitud&gt; actualizar(@PathVariable(&quot;id&quot;) UUID id, @RequestBody Solicitud e) {
-<span class="fc" id="L38">        return ResponseEntity.ok(servicio.actualizar(id, e));</span>
+    public SolicitudResponse update(@PathVariable UUID id, @RequestBody SolicitudRequest request) {
+<span class="fc" id="L41">        return service.update(id, request);</span>
     }
 
     @DeleteMapping(&quot;/{id}&quot;)
-    public ResponseEntity&lt;Void&gt; eliminar(@PathVariable(&quot;id&quot;) UUID id) {
-<span class="fc" id="L43">        servicio.eliminar(id);</span>
-<span class="fc" id="L44">        return ResponseEntity.noContent().build();</span>
+    public ResponseEntity&lt;Void&gt; delete(@PathVariable UUID id) {
+<span class="fc" id="L46">        service.delete(id);</span>
+<span class="fc" id="L47">        return ResponseEntity.noContent().build();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

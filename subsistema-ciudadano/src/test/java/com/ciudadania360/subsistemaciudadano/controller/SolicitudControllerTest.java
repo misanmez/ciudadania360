@@ -1,7 +1,8 @@
 package com.ciudadania360.subsistemaciudadano.controller;
 
-import com.ciudadania360.subsistemaciudadano.application.service.SolicitudServicio;
-import com.ciudadania360.subsistemaciudadano.domain.entity.Solicitud;
+import com.ciudadania360.subsistemaciudadano.application.dto.SolicitudRequest;
+import com.ciudadania360.subsistemaciudadano.application.dto.SolicitudResponse;
+import com.ciudadania360.subsistemaciudadano.application.service.SolicitudService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -27,107 +28,85 @@ class SolicitudControllerTest {
 
     private ObjectMapper objectMapper;
     private MockMvc mvc;
-    private SolicitudServicio svc;
-    private SolicitudController controller;
+    private SolicitudService svc;
 
     @BeforeEach
     void setup() {
         objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // opcional, ISO-8601
-        svc = mock(SolicitudServicio.class);
-        controller = new SolicitudController(svc);
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        svc = mock(SolicitudService.class);
+        SolicitudController controller = new SolicitudController(svc);
         mvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 
     @Test
     void listAndCreate() throws Exception {
-        // Entidad de ejemplo
-        Solicitud e = Solicitud.builder()
-                .id(UUID.randomUUID())
-                .titulo("Solicitud Inicial")
-                .descripcion("Descripción de la solicitud inicial")
-                .tipo("Tipo A")
-                .canalEntrada("Email")
-                .estado("Abierta")
-                .prioridad("Alta")
-                .numeroExpediente("EXP-123")
-                .fechaRegistro(Instant.now())
-                .fechaLimiteSLA(Instant.now().plusSeconds(86400))
-                .fechaCierre(null)
-                .scoreRelevancia(BigDecimal.valueOf(0.75))
-                .origen("Interno")
-                .adjuntosCount(0)
-                .encuestaEnviada(false)
-                .referenciaExterna("REF-001")
-                .metadata("{\"campo\":\"valor\"}")
-                .build();
+        UUID id = UUID.randomUUID();
 
-        when(svc.obtenerTodos()).thenReturn(List.of(e));
-        when(svc.crear(any())).thenReturn(e);
-        when(svc.obtenerPorId(e.getId())).thenReturn(e);
-        when(svc.actualizar(eq(e.getId()), any())).thenReturn(e);
+        // Response de ejemplo
+        SolicitudResponse response = new SolicitudResponse();
+        response.setId(id);
+        response.setTitulo("Solicitud Inicial");
+        response.setDescripcion("Descripción de la solicitud inicial");
+        response.setTipo("Tipo A");
+        response.setCanalEntrada("Email");
+        response.setEstado("Abierta");
+        response.setPrioridad("Alta");
+        response.setNumeroExpediente("EXP-123");
+        response.setFechaRegistro(Instant.now());
+        response.setFechaLimiteSLA(Instant.now().plusSeconds(86400));
+        response.setFechaCierre(null);
+        response.setScoreRelevancia(BigDecimal.valueOf(0.75));
+        response.setOrigen("Interno");
+
+        when(svc.list()).thenReturn(List.of(response));
+        when(svc.create(any(SolicitudRequest.class))).thenReturn(response);
+        when(svc.get(id)).thenReturn(response);
+        when(svc.update(eq(id), any(SolicitudRequest.class))).thenReturn(response);
 
         // LIST
         mvc.perform(get("/api/solicituds"))
                 .andExpect(status().isOk());
 
         // CREATE
-        Solicitud newSolicitud = Solicitud.builder()
-                .titulo("Solicitud Nueva")
-                .descripcion("Descripción de la nueva solicitud")
-                .tipo("Tipo B")
-                .canalEntrada("Web")
-                .estado("Pendiente")
-                .prioridad("Media")
-                .numeroExpediente("EXP-456")
-                .fechaRegistro(Instant.now())
-                .fechaLimiteSLA(Instant.now().plusSeconds(172800))
-                .fechaCierre(null)
-                .scoreRelevancia(BigDecimal.valueOf(0.9))
-                .origen("Externo")
-                .adjuntosCount(2)
-                .encuestaEnviada(false)
-                .referenciaExterna("REF-002")
-                .metadata("{\"campo\":\"nuevo_valor\"}")
-                .build();
+        SolicitudRequest newRequest = new SolicitudRequest();
+        newRequest.setTitulo("Solicitud Nueva");
+        newRequest.setDescripcion("Descripción de la nueva solicitud");
+        newRequest.setTipo("Tipo B");
+        newRequest.setCanalEntrada("Web");
+        newRequest.setEstado("Pendiente");
+        newRequest.setPrioridad("Media");
+        newRequest.setNumeroExpediente("EXP-456");
+        newRequest.setOrigen("Externo");
 
         mvc.perform(post("/api/solicituds")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(newSolicitud)))
-                .andExpect(status().isCreated()); // mejor status REST
+                        .content(objectMapper.writeValueAsString(newRequest)))
+                .andExpect(status().isCreated());
 
         // GET BY ID
-        mvc.perform(get("/api/solicituds/" + e.getId()))
+        mvc.perform(get("/api/solicituds/" + id))
                 .andExpect(status().isOk());
 
         // UPDATE
-        Solicitud updatedSolicitud = Solicitud.builder()
-                .titulo("Solicitud Actualizada")
-                .descripcion("Descripción actualizada")
-                .tipo("Tipo C")
-                .canalEntrada("Teléfono")
-                .estado("Cerrada")
-                .prioridad("Baja")
-                .numeroExpediente("EXP-789")
-                .fechaRegistro(Instant.now())
-                .fechaLimiteSLA(Instant.now().plusSeconds(3600))
-                .fechaCierre(Instant.now())
-                .scoreRelevancia(BigDecimal.valueOf(1.0))
-                .origen("Interno")
-                .adjuntosCount(1)
-                .encuestaEnviada(true)
-                .referenciaExterna("REF-003")
-                .metadata("{\"campo\":\"actualizado\"}")
-                .build();
+        SolicitudRequest updateRequest = new SolicitudRequest();
+        updateRequest.setTitulo("Solicitud Actualizada");
+        updateRequest.setDescripcion("Descripción actualizada");
+        updateRequest.setTipo("Tipo C");
+        updateRequest.setCanalEntrada("Teléfono");
+        updateRequest.setEstado("Cerrada");
+        updateRequest.setPrioridad("Baja");
+        updateRequest.setNumeroExpediente("EXP-789");
+        updateRequest.setOrigen("Interno");
 
-        mvc.perform(put("/api/solicituds/" + e.getId())
+        mvc.perform(put("/api/solicituds/" + id)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updatedSolicitud)))
+                        .content(objectMapper.writeValueAsString(updateRequest)))
                 .andExpect(status().isOk());
 
         // DELETE
-        mvc.perform(delete("/api/solicituds/" + e.getId()))
+        mvc.perform(delete("/api/solicituds/" + id))
                 .andExpect(status().isNoContent());
     }
 }

@@ -3,36 +3,43 @@ package com.ciudadania360.subsistemaciudadano.domain.handler;
 import com.ciudadania360.subsistemaciudadano.domain.entity.Clasificacion;
 import com.ciudadania360.subsistemaciudadano.domain.repository.ClasificacionRepositorio;
 import org.springframework.stereotype.Component;
+
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Component
 public class ClasificacionHandler {
-    private final ClasificacionRepositorio repositorio;
 
-    public ClasificacionHandler(ClasificacionRepositorio repositorio) {
-        this.repositorio = repositorio;
+    private final ClasificacionRepositorio repo;
+
+    public ClasificacionHandler(ClasificacionRepositorio repo) {
+        this.repo = repo;
     }
 
-    public List<Clasificacion> obtenerTodos() {
-        return repositorio.findAll();
+    public List<Clasificacion> list() {
+        return repo.findAll();
     }
 
-    public Clasificacion obtenerPorId(UUID id) {
-        return repositorio.findById(id).orElseThrow(() -> new RuntimeException("Clasificacion no encontrado"));
+    public Clasificacion get(UUID id) {
+        return repo.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Clasificación no encontrada"));
     }
 
-    public Clasificacion crear(Clasificacion e) {
-        return repositorio.save(e);
+    public Clasificacion create(Clasificacion e) {
+        if (e.getId() == null) {
+            e.setId(UUID.randomUUID());
+        }
+        return repo.save(e);
     }
 
-    public Clasificacion actualizar(UUID id, Clasificacion e) {
-        if (!repositorio.existsById(id)) throw new RuntimeException("Clasificacion no encontrado");
-        e.setId(id);
-        return repositorio.save(e);
+    public Clasificacion update(UUID id, Clasificacion e) {
+        Clasificacion actual = get(id); // asegura existencia
+        e.setId(actual.getId());
+        return repo.save(e);
     }
 
-    public void eliminar(UUID id) {
-        repositorio.deleteById(id);
+    public void delete(UUID id) {
+        repo.deleteById(id);
     }
 }

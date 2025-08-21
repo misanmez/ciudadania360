@@ -14,19 +14,19 @@ public class UbicacionHandler {
         this.repositorio = repositorio;
     }
 
-    public List<Ubicacion> obtenerTodos() {
+    public List<Ubicacion> list() {
         return repositorio.findAll();
     }
 
-    public Ubicacion obtenerPorId(UUID id) {
+    public Ubicacion get(UUID id) {
         return repositorio.findById(id).orElseThrow(() -> new RuntimeException("Ubicacion no encontrado"));
     }
 
-    public Ubicacion crear(Ubicacion e) {
+    public Ubicacion create(Ubicacion e) {
         return repositorio.save(e);
     }
 
-    public Ubicacion actualizar(UUID id, Ubicacion cambios) {
+    public Ubicacion update(UUID id, Ubicacion cambios) {
         Ubicacion existente = repositorio.findById(id)
                 .orElseThrow(() -> new RuntimeException("Ubicacion no encontrado"));
 
@@ -43,7 +43,7 @@ public class UbicacionHandler {
         return repositorio.save(existente);
     }
 
-    public void eliminar(UUID id) {
+    public void delete(UUID id) {
         repositorio.deleteById(id);
     }
 }

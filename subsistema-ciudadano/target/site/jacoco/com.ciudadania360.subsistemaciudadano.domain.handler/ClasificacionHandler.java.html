@@ -3,37 +3,44 @@
 import com.ciudadania360.subsistemaciudadano.domain.entity.Clasificacion;
 import com.ciudadania360.subsistemaciudadano.domain.repository.ClasificacionRepositorio;
 import org.springframework.stereotype.Component;
+
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Component
 public class ClasificacionHandler {
-    private final ClasificacionRepositorio repositorio;
 
-<span class="fc" id="L13">    public ClasificacionHandler(ClasificacionRepositorio repositorio) {</span>
-<span class="fc" id="L14">        this.repositorio = repositorio;</span>
-<span class="fc" id="L15">    }</span>
+    private final ClasificacionRepositorio repo;
 
-    public List&lt;Clasificacion&gt; obtenerTodos() {
-<span class="fc" id="L18">        return repositorio.findAll();</span>
+<span class="fc" id="L16">    public ClasificacionHandler(ClasificacionRepositorio repo) {</span>
+<span class="fc" id="L17">        this.repo = repo;</span>
+<span class="fc" id="L18">    }</span>
+
+    public List&lt;Clasificacion&gt; list() {
+<span class="fc" id="L21">        return repo.findAll();</span>
     }
 
-    public Clasificacion obtenerPorId(UUID id) {
-<span class="pc" id="L22">        return repositorio.findById(id).orElseThrow(() -&gt; new RuntimeException(&quot;Clasificacion no encontrado&quot;));</span>
+    public Clasificacion get(UUID id) {
+<span class="fc" id="L25">        return repo.findById(id)</span>
+<span class="fc" id="L26">                .orElseThrow(() -&gt; new NoSuchElementException(&quot;Clasificación no encontrada&quot;));</span>
     }
 
-    public Clasificacion crear(Clasificacion e) {
-<span class="fc" id="L26">        return repositorio.save(e);</span>
+    public Clasificacion create(Clasificacion e) {
+<span class="pc bpc" id="L30" title="1 of 2 branches missed.">        if (e.getId() == null) {</span>
+<span class="nc" id="L31">            e.setId(UUID.randomUUID());</span>
+        }
+<span class="fc" id="L33">        return repo.save(e);</span>
     }
 
-    public Clasificacion actualizar(UUID id, Clasificacion e) {
-<span class="pc bpc" id="L30" title="1 of 2 branches missed.">        if (!repositorio.existsById(id)) throw new RuntimeException(&quot;Clasificacion no encontrado&quot;);</span>
-<span class="fc" id="L31">        e.setId(id);</span>
-<span class="fc" id="L32">        return repositorio.save(e);</span>
+    public Clasificacion update(UUID id, Clasificacion e) {
+<span class="fc" id="L37">        Clasificacion actual = get(id); // asegura existencia</span>
+<span class="fc" id="L38">        e.setId(actual.getId());</span>
+<span class="fc" id="L39">        return repo.save(e);</span>
     }
 
-    public void eliminar(UUID id) {
-<span class="fc" id="L36">        repositorio.deleteById(id);</span>
-<span class="fc" id="L37">    }</span>
+    public void delete(UUID id) {
+<span class="fc" id="L43">        repo.deleteById(id);</span>
+<span class="fc" id="L44">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

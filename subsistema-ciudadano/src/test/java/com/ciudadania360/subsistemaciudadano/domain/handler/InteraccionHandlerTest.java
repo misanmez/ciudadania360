@@ -47,7 +47,7 @@ class InteraccionHandlerTest {
 
         when(repo.findAll()).thenReturn(List.of(e));
 
-        List<Interaccion> result = handler.obtenerTodos();
+        List<Interaccion> result = handler.list();
 
         assertThat(result).containsExactly(e);
         verify(repo).findAll();
@@ -68,7 +68,7 @@ class InteraccionHandlerTest {
 
         when(repo.findById(id)).thenReturn(Optional.of(e));
 
-        Interaccion result = handler.obtenerPorId(id);
+        Interaccion result = handler.get(id);
 
         assertThat(result).isEqualTo(e);
         verify(repo).findById(id);
@@ -88,7 +88,7 @@ class InteraccionHandlerTest {
 
         when(repo.save(any())).thenReturn(e);
 
-        Interaccion result = handler.crear(e);
+        Interaccion result = handler.create(e);
 
         assertThat(result).isEqualTo(e);
         verify(repo).save(e);
@@ -123,7 +123,7 @@ class InteraccionHandlerTest {
         when(repo.findById(id)).thenReturn(Optional.of(existente));
         when(repo.save(any())).thenReturn(existente);
 
-        Interaccion result = handler.actualizar(id, cambios);
+        Interaccion result = handler.update(id, cambios);
 
         // Verificar que los cambios se aplicaron en la entidad existente
         assertThat(result.getCanal()).isEqualTo("Chat");
@@ -142,7 +142,7 @@ class InteraccionHandlerTest {
     void deleteRemovesInteraccionById() {
         UUID id = UUID.randomUUID();
 
-        handler.eliminar(id);
+        handler.delete(id);
 
         verify(repo).deleteById(id);
     }

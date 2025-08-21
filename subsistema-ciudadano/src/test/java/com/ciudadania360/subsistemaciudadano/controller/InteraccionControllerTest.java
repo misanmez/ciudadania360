@@ -1,9 +1,8 @@
 package com.ciudadania360.subsistemaciudadano.controller;
 
-import com.ciudadania360.subsistemaciudadano.application.service.InteraccionServicio;
-import com.ciudadania360.subsistemaciudadano.domain.entity.Ciudadano;
-import com.ciudadania360.subsistemaciudadano.domain.entity.Interaccion;
-import com.ciudadania360.subsistemaciudadano.domain.entity.Solicitud;
+import com.ciudadania360.subsistemaciudadano.application.dto.InteraccionRequest;
+import com.ciudadania360.subsistemaciudadano.application.dto.InteraccionResponse;
+import com.ciudadania360.subsistemaciudadano.application.service.InteraccionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,35 +26,28 @@ class InteraccionControllerTest {
 
     private ObjectMapper objectMapper;
     private MockMvc mvc;
-    private InteraccionServicio svc;
+    private InteraccionService svc;
 
     @BeforeEach
     void setup() {
         objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule()); // Permite serializar Instant
+        objectMapper.registerModule(new JavaTimeModule());
 
-        svc = mock(InteraccionServicio.class);
+        svc = mock(InteraccionService.class);
         InteraccionController controller = new InteraccionController(svc);
         mvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 
     @Test
     void listAndCreate() throws Exception {
-        Ciudadano ciudadano = Ciudadano.builder()
-                .id(UUID.randomUUID())
-                .nombre("Juan")
-                .apellidos("Pérez")
-                .email("juan@example.com")
-                .build();
+        UUID interaccionId = UUID.randomUUID();
+        UUID ciudadanoId = UUID.randomUUID();
+        UUID solicitudId = UUID.randomUUID();
 
-        Solicitud solicitud = Solicitud.builder()
-                .id(UUID.randomUUID())
-                .build();
-
-        Interaccion e = Interaccion.builder()
-                .id(UUID.randomUUID())
-                .ciudadano(ciudadano)
-                .solicitud(solicitud)
+        InteraccionResponse interaccionResponse = InteraccionResponse.builder()
+                .id(interaccionId)
+                .ciudadanoId(ciudadanoId)
+                .solicitudId(solicitudId)
                 .canal("Email")
                 .fecha(Instant.now())
                 .agente("Agente 1")
@@ -64,19 +56,20 @@ class InteraccionControllerTest {
                 .visibilidad("PUBLICA")
                 .build();
 
-        when(svc.obtenerTodos()).thenReturn(List.of(e));
-        when(svc.crear(any())).thenReturn(e);
-        when(svc.obtenerPorId(e.getId())).thenReturn(e);
-        when(svc.actualizar(eq(e.getId()), any())).thenReturn(e);
+        // Mock del servicio
+        when(svc.list()).thenReturn(List.of(interaccionResponse));
+        when(svc.create(any(InteraccionRequest.class))).thenReturn(interaccionResponse);
+        when(svc.get(interaccionId)).thenReturn(interaccionResponse);
+        when(svc.update(eq(interaccionId), any(InteraccionRequest.class))).thenReturn(interaccionResponse);
 
         // LIST
         mvc.perform(get("/api/interaccions"))
                 .andExpect(status().isOk());
 
         // CREATE
-        Interaccion newInteraccion = Interaccion.builder()
-                .ciudadano(ciudadano)
-                .solicitud(solicitud)
+        InteraccionRequest newRequest = InteraccionRequest.builder()
+                .ciudadanoId(ciudadanoId)
+                .solicitudId(solicitudId)
                 .canal("Chat")
                 .fecha(Instant.now())
                 .agente("Agente 2")
@@ -87,17 +80,17 @@ class InteraccionControllerTest {
 
         mvc.perform(post("/api/interaccions")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(newInteraccion)))
+                        .content(objectMapper.writeValueAsString(newRequest)))
                 .andExpect(status().isCreated());
 
         // GET BY ID
-        mvc.perform(get("/api/interaccions/" + e.getId()))
+        mvc.perform(get("/api/interaccions/" + interaccionId))
                 .andExpect(status().isOk());
 
         // UPDATE
-        Interaccion updatedInteraccion = Interaccion.builder()
-                .ciudadano(ciudadano)
-                .solicitud(solicitud)
+        InteraccionRequest updateRequest = InteraccionRequest.builder()
+                .ciudadanoId(ciudadanoId)
+                .solicitudId(solicitudId)
                 .canal("Teléfono")
                 .fecha(Instant.now())
                 .agente("Agente 3")
@@ -106,13 +99,13 @@ class InteraccionControllerTest {
                 .visibilidad("PUBLICA")
                 .build();
 
-        mvc.perform(put("/api/interaccions/" + e.getId())
+        mvc.perform(put("/api/interaccions/" + interaccionId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updatedInteraccion)))
+                        .content(objectMapper.writeValueAsString(updateRequest)))
                 .andExpect(status().isOk());
 
         // DELETE
-        mvc.perform(delete("/api/interaccions/" + e.getId()))
+        mvc.perform(delete("/api/interaccions/" + interaccionId))
                 .andExpect(status().isNoContent());
     }
 }

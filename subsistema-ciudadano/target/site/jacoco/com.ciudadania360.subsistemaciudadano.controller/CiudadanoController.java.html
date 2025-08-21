@@ -1,38 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CiudadanoController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">subsistema-ciudadano</a> &gt; <a href="index.source.html" class="el_package">com.ciudadania360.subsistemaciudadano.controller</a> &gt; <span class="el_source">CiudadanoController.java</span></div><h1>CiudadanoController.java</h1><pre class="source lang-java linenums">package com.ciudadania360.subsistemaciudadano.controller;
 
-import com.ciudadania360.subsistemaciudadano.application.service.CiudadanoServicio;
-import com.ciudadania360.subsistemaciudadano.domain.entity.Ciudadano;
-import com.ciudadania360.subsistemaciudadano.domain.entity.Direccion;
+import com.ciudadania360.subsistemaciudadano.application.dto.CiudadanoRequest;
+import com.ciudadania360.subsistemaciudadano.application.dto.CiudadanoResponse;
+import com.ciudadania360.subsistemaciudadano.application.service.CiudadanoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.*;
+
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping(&quot;/api/ciudadanos&quot;)
 public class CiudadanoController {
-    private final CiudadanoServicio service;
-<span class="fc" id="L15">    public CiudadanoController(CiudadanoServicio service) { this.service = service; }</span>
+    private final CiudadanoService service;
+
+<span class="fc" id="L18">    public CiudadanoController(CiudadanoService service) {</span>
+<span class="fc" id="L19">        this.service = service;</span>
+<span class="fc" id="L20">    }</span>
 
     @GetMapping
-<span class="fc" id="L18">    public List&lt;Ciudadano&gt; list() { return service.list(); }</span>
+    public List&lt;CiudadanoResponse&gt; list() {
+<span class="fc" id="L24">        return service.list();</span>
+    }
 
     @GetMapping(&quot;/{id}&quot;)
-<span class="fc" id="L21">    public Ciudadano get(@PathVariable(&quot;id&quot;) UUID id) { return service.get(id); }</span>
+    public CiudadanoResponse get(@PathVariable(&quot;id&quot;) UUID id) {
+<span class="fc" id="L29">        return service.get(id);</span>
+    }
 
     @PostMapping
-    public ResponseEntity&lt;Ciudadano&gt; crear(@RequestBody Ciudadano e) {
-<span class="fc" id="L25">        Ciudadano created = service.create(e);</span>
-<span class="fc" id="L26">        return ResponseEntity.status(HttpStatus.CREATED).body(created);</span>
+    public ResponseEntity&lt;CiudadanoResponse&gt; create(@RequestBody CiudadanoRequest request) {
+<span class="fc" id="L34">        CiudadanoResponse created = service.create(request);</span>
+<span class="fc" id="L35">        return ResponseEntity.status(HttpStatus.CREATED).body(created);</span>
     }
 
     @PutMapping(&quot;/{id}&quot;)
-<span class="fc" id="L30">    public Ciudadano update(@PathVariable(&quot;id&quot;) UUID id, @RequestBody Ciudadano e) { return service.update(id, e); }</span>
+    public CiudadanoResponse update(@PathVariable(&quot;id&quot;) UUID id, @RequestBody CiudadanoRequest request) {
+<span class="fc" id="L40">        return service.update(id, request);</span>
+    }
 
     @DeleteMapping(&quot;/{id}&quot;)
     public ResponseEntity&lt;Void&gt; delete(@PathVariable(&quot;id&quot;) UUID id) {
-<span class="fc" id="L34">        service.delete(id);</span>
-<span class="fc" id="L35">        return ResponseEntity.noContent().build();</span>
+<span class="fc" id="L45">        service.delete(id);</span>
+<span class="fc" id="L46">        return ResponseEntity.noContent().build();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
