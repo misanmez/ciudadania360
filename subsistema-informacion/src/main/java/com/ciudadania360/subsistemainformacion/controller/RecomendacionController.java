@@ -1,33 +1,47 @@
 package com.ciudadania360.subsistemainformacion.controller;
 
-import com.ciudadania360.subsistemainformacion.application.service.RecomendacionServicio;
-import com.ciudadania360.subsistemainformacion.domain.entity.Recomendacion;
+import com.ciudadania360.subsistemainformacion.application.dto.recomendacion.RecomendacionRequest;
+import com.ciudadania360.subsistemainformacion.application.dto.recomendacion.RecomendacionResponse;
+import com.ciudadania360.subsistemainformacion.application.service.RecomendacionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.*;
+
+import java.util.List;
+import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/recomendacions")
+@RequestMapping("/api/recomendaciones")
 public class RecomendacionController {
-    private final RecomendacionServicio service;
-    public RecomendacionController(RecomendacionServicio service) { this.service = service; }
+
+    private final RecomendacionService service;
+
+    public RecomendacionController(RecomendacionService service) {
+        this.service = service;
+    }
 
     @GetMapping
-    public List<Recomendacion> list() { return service.list(); }
+    public List<RecomendacionResponse> list() {
+        return service.list();
+    }
 
     @GetMapping("/{id}")
-    public Recomendacion get(@PathVariable("id") UUID id) { return service.get(id); }
+    public RecomendacionResponse get(@PathVariable UUID id) {
+        return service.get(id);
+    }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Recomendacion create(@RequestBody Recomendacion e) { return service.create(e); }
+    public ResponseEntity<RecomendacionResponse> create(@RequestBody RecomendacionRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(request));
+    }
 
     @PutMapping("/{id}")
-    public Recomendacion update(@PathVariable("id") UUID id, @RequestBody Recomendacion e) { return service.update(id, e); }
+    public RecomendacionResponse update(@PathVariable UUID id, @RequestBody RecomendacionRequest request) {
+        return service.update(id, request);
+    }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable("id") UUID id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }

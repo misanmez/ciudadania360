@@ -1,10 +1,11 @@
 package com.ciudadania360.subsistemainformacion.controller;
 
-import com.ciudadania360.subsistemainformacion.application.service.InformacionServicio;
-import com.ciudadania360.subsistemainformacion.domain.entity.Informacion;
+import com.ciudadania360.subsistemainformacion.application.dto.informacion.InformacionRequest;
+import com.ciudadania360.subsistemainformacion.application.dto.informacion.InformacionResponse;
+import com.ciudadania360.subsistemainformacion.application.service.InformacionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -14,89 +15,90 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class InformacionControllerTest {
 
-    private final ObjectMapper objectMapper = new ObjectMapper()
-            .registerModule(new JavaTimeModule())
-            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+    private ObjectMapper objectMapper;
+
+    @BeforeEach
+    void setup() {
+        objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+    }
 
     @Test
     void listAndCreate() throws Exception {
-        InformacionServicio svc = mock(InformacionServicio.class);
+        InformacionService svc = mock(InformacionService.class);
 
-        // Información de ejemplo
-        Informacion e = Informacion.builder()
+        // Response de ejemplo
+        InformacionResponse e = InformacionResponse.builder()
                 .id(UUID.randomUUID())
-                .titulo("Información de Ejemplo")
-                .contenido("Descripción de la información")
-                .etiquetas("ejemplo, prueba")
-                .audiencia("publico")
-                .estadoPublicacion("borrador")
-                .propietario("admin")
+                .titulo("Título de prueba")
+                .contenido("Contenido de prueba")
+                .etiquetas("etiqueta1,etiqueta2")
+                .audiencia("General")
+                .estadoPublicacion("Publicado")
+                .propietario("Admin")
                 .versionNumber(1)
-                .fechaPublicacion(Instant.parse("2023-10-01T00:00:00Z"))
+                .fechaPublicacion(Instant.now())
                 .build();
 
-        // Mock del servicio
         when(svc.list()).thenReturn(List.of(e));
-        when(svc.create(any())).thenReturn(e);
+        when(svc.create(any(InformacionRequest.class))).thenReturn(e);
         when(svc.get(e.getId())).thenReturn(e);
-        when(svc.update(eq(e.getId()), any())).thenReturn(e);
+        when(svc.update(eq(e.getId()), any(InformacionRequest.class))).thenReturn(e);
 
-        InformacionController controller = new InformacionController(svc);
-        MockMvc mvc = MockMvcBuilders.standaloneSetup(controller).build();
+        // Configuramos MockMvc
+        MockMvc mvc = MockMvcBuilders.standaloneSetup(new InformacionController(svc)).build();
 
         // List
-        mvc.perform(get("/api/informacions"))
+        mvc.perform(get("/api/informaciones"))
                 .andExpect(status().isOk());
 
         // Create
-        Informacion newInfo = Informacion.builder()
-                .titulo("Información de Ejemplo")
-                .contenido("Descripción de la información")
-                .etiquetas("ejemplo, prueba")
-                .audiencia("publico")
-                .estadoPublicacion("borrador")
-                .propietario("admin")
+        InformacionRequest newInfo = InformacionRequest.builder()
+                .titulo("Título de prueba")
+                .contenido("Contenido de prueba")
+                .etiquetas("etiqueta1,etiqueta2")
+                .audiencia("General")
+                .estadoPublicacion("Publicado")
+                .propietario("Admin")
                 .versionNumber(1)
-                .fechaPublicacion(Instant.parse("2023-10-01T00:00:00Z"))
+                .fechaPublicacion(Instant.now())
                 .build();
 
-        mvc.perform(post("/api/informacions")
+        mvc.perform(post("/api/informaciones")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(newInfo)))
                 .andExpect(status().isCreated());
 
         // Get by ID
-        mvc.perform(get("/api/informacions/" + e.getId()))
+        mvc.perform(get("/api/informaciones/" + e.getId()))
                 .andExpect(status().isOk());
 
         // Update
-        Informacion updatedInfo = Informacion.builder()
-                .titulo("Información Actualizada")
+        InformacionRequest updatedInfo = InformacionRequest.builder()
+                .titulo("Título actualizado")
                 .contenido("Contenido actualizado")
-                .etiquetas("actualizado")
-                .audiencia("publico")
-                .estadoPublicacion("publicado")
-                .propietario("editor")
+                .etiquetas("etiqueta3")
+                .audiencia("Privado")
+                .estadoPublicacion("Borrador")
+                .propietario("Admin2")
                 .versionNumber(2)
-                .fechaPublicacion(Instant.parse("2023-10-02T00:00:00Z"))
+                .fechaPublicacion(Instant.now())
                 .build();
 
-        mvc.perform(put("/api/informacions/" + e.getId())
+        mvc.perform(put("/api/informaciones/" + e.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updatedInfo)))
                 .andExpect(status().isOk());
 
         // Delete
-        mvc.perform(delete("/api/informacions/" + e.getId()))
+        mvc.perform(delete("/api/informaciones/" + e.getId()))
                 .andExpect(status().isNoContent());
     }
 }

@@ -1,10 +1,11 @@
 package com.ciudadania360.subsistemainformacion.controller;
 
-import com.ciudadania360.subsistemainformacion.application.service.DatasetServicio;
-import com.ciudadania360.subsistemainformacion.domain.entity.Dataset;
+import com.ciudadania360.subsistemainformacion.application.dto.dataset.DatasetRequest;
+import com.ciudadania360.subsistemainformacion.application.dto.dataset.DatasetResponse;
+import com.ciudadania360.subsistemainformacion.application.service.DatasetService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -14,85 +15,71 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class DatasetControllerTest {
 
-    private final ObjectMapper objectMapper = new ObjectMapper()
-            .registerModule(new JavaTimeModule())
-            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+    private ObjectMapper objectMapper;
+
+    @BeforeEach
+    void setup() {
+        objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+    }
 
     @Test
-    void listAndCrudOperations() throws Exception {
-        DatasetServicio svc = mock(DatasetServicio.class);
+    void listAndCreate() throws Exception {
+        DatasetService svc = mock(DatasetService.class);
 
-        Dataset e = Dataset.builder()
+        DatasetResponse e = DatasetResponse.builder()
                 .id(UUID.randomUUID())
-                .nombre("Example Dataset")
-                .descripcion("Description of dataset")
-                .fuente("http://example.com/dataset")
-                .urlPortalDatos("http://example.com/dataset")
+                .nombre("Dataset 1")
+                .descripcion("Descripción del dataset")
+                .fuente("Fuente 1")
+                .esquema("{\"campo\":\"tipo\"}")
+                .periodicidad("Mensual")
+                .licencia("MIT")
+                .urlPortalDatos("http://datos.example.com")
                 .formato("CSV")
-                .responsable("Admin")
+                .responsable("Responsable")
                 .ultimaActualizacion(Instant.now())
-                .version(0L)
                 .build();
 
         when(svc.list()).thenReturn(List.of(e));
-        when(svc.create(any())).thenReturn(e);
+        when(svc.create(any(DatasetRequest.class))).thenReturn(e);
         when(svc.get(e.getId())).thenReturn(e);
-        when(svc.update(eq(e.getId()), any())).thenReturn(e);
+        when(svc.update(eq(e.getId()), any(DatasetRequest.class))).thenReturn(e);
 
-        DatasetController controller = new DatasetController(svc);
+        var controller = new DatasetController(svc);
         MockMvc mvc = MockMvcBuilders.standaloneSetup(controller).build();
 
-        // List
-        mvc.perform(get("/api/datasets"))
-                .andExpect(status().isOk());
+        mvc.perform(get("/api/datasets")).andExpect(status().isOk());
 
-        // Create
-        Dataset newDataset = Dataset.builder()
-                .nombre("New Dataset")
-                .descripcion("New description")
-                .fuente("http://example.com/new-dataset")
-                .urlPortalDatos("http://example.com/new-dataset")
-                .formato("JSON")
-                .responsable("User")
-                .ultimaActualizacion(Instant.now())
-                .build();
+        DatasetRequest request = new DatasetRequest(
+                "Dataset 1", "Descripción del dataset", "Fuente 1", "{\"campo\":\"tipo\"}",
+                "Mensual", "MIT", "http://datos.example.com", "CSV", "Responsable", Instant.now()
+        );
 
         mvc.perform(post("/api/datasets")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(newDataset)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated());
 
-        // Get by ID
-        mvc.perform(get("/api/datasets/" + e.getId()))
-                .andExpect(status().isOk());
+        mvc.perform(get("/api/datasets/" + e.getId())).andExpect(status().isOk());
 
-        // Update
-        Dataset updatedDataset = Dataset.builder()
-                .nombre("Updated Dataset")
-                .descripcion("Updated description")
-                .fuente("http://example.com/updated-dataset")
-                .urlPortalDatos("http://example.com/updated-dataset")
-                .formato("XML")
-                .responsable("Admin")
-                .ultimaActualizacion(Instant.now())
-                .build();
+        DatasetRequest updateRequest = new DatasetRequest(
+                "Dataset actualizado", "Nueva descripción", "Fuente 2", "{\"campo\":\"tipo2\"}",
+                "Semanal", "GPL", "http://nuevoportal.com", "JSON", "Nuevo responsable", Instant.now()
+        );
 
         mvc.perform(put("/api/datasets/" + e.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updatedDataset)))
+                        .content(objectMapper.writeValueAsString(updateRequest)))
                 .andExpect(status().isOk());
 
-        // Delete
-        mvc.perform(delete("/api/datasets/" + e.getId()))
-                .andExpect(status().isNoContent());
+        mvc.perform(delete("/api/datasets/" + e.getId())).andExpect(status().isNoContent());
     }
 }

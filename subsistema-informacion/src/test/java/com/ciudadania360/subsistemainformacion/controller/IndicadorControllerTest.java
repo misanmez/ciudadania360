@@ -1,10 +1,9 @@
 package com.ciudadania360.subsistemainformacion.controller;
 
-import com.ciudadania360.subsistemainformacion.application.service.IndicadorServicio;
-import com.ciudadania360.subsistemainformacion.domain.entity.Indicador;
+import com.ciudadania360.subsistemainformacion.application.dto.indicador.IndicadorRequest;
+import com.ciudadania360.subsistemainformacion.application.dto.indicador.IndicadorResponse;
+import com.ciudadania360.subsistemainformacion.application.service.IndicadorService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -13,95 +12,61 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.List;
 import java.util.UUID;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class IndicadorControllerTest {
 
-    private final ObjectMapper objectMapper = new ObjectMapper()
-            .registerModule(new JavaTimeModule())
-            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
     void listAndCreate() throws Exception {
-        IndicadorServicio svc = mock(IndicadorServicio.class);
+        IndicadorService svc = mock(IndicadorService.class);
 
-        // Indicador de ejemplo
-        Indicador e = Indicador.builder()
+        IndicadorResponse e = IndicadorResponse.builder()
                 .id(UUID.randomUUID())
-                .nombre("Indicador de Ejemplo")
-                .descripcion("Descripción del indicador")
-                .codigo("IND-001")
-                .definicionCalculo("Valor calculado")
+                .codigo("IND001")
+                .nombre("Indicador de prueba")
+                .descripcion("Descripción")
+                .definicionCalculo("Suma")
                 .frecuencia("Mensual")
                 .unidad("Unidad")
-                .responsable("Responsable")
+                .responsable("Admin")
                 .kpi(true)
-                .origenDatos("Sistema X")
+                .origenDatos("Sistema")
                 .datasetId(UUID.randomUUID())
                 .build();
 
-        // Mock del servicio
         when(svc.list()).thenReturn(List.of(e));
-        when(svc.create(any())).thenReturn(e);
+        when(svc.create(any(IndicadorRequest.class))).thenReturn(e);
         when(svc.get(e.getId())).thenReturn(e);
-        when(svc.update(eq(e.getId()), any())).thenReturn(e);
+        when(svc.update(eq(e.getId()), any(IndicadorRequest.class))).thenReturn(e);
 
-        IndicadorController controller = new IndicadorController(svc);
+        var controller = new IndicadorController(svc);
         MockMvc mvc = MockMvcBuilders.standaloneSetup(controller).build();
 
-        // List
-        mvc.perform(get("/api/indicadors"))
-                .andExpect(status().isOk());
+        mvc.perform(get("/api/indicadores")).andExpect(status().isOk());
 
-        // Create
-        Indicador newIndicador = Indicador.builder()
-                .nombre("Indicador de Ejemplo")
-                .descripcion("Descripción del indicador")
-                .codigo("IND-001")
-                .definicionCalculo("Valor calculado")
-                .frecuencia("Mensual")
-                .unidad("Unidad")
-                .responsable("Responsable")
-                .kpi(true)
-                .origenDatos("Sistema X")
-                .datasetId(UUID.randomUUID())
-                .build();
+        IndicadorRequest request = new IndicadorRequest(
+                e.getCodigo(), e.getNombre(), e.getDescripcion(), e.getDefinicionCalculo(),
+                e.getFrecuencia(), e.getUnidad(), e.getResponsable(), e.getKpi(),
+                e.getOrigenDatos(), e.getDatasetId()
+        );
 
-        mvc.perform(post("/api/indicadors")
+        mvc.perform(post("/api/indicadores")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(newIndicador)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated());
 
-        // Get by ID
-        mvc.perform(get("/api/indicadors/" + e.getId()))
-                .andExpect(status().isOk());
+        mvc.perform(get("/api/indicadores/" + e.getId())).andExpect(status().isOk());
 
-        // Update
-        Indicador updatedIndicador = Indicador.builder()
-                .nombre("Indicador Actualizado")
-                .descripcion("Descripción actualizada")
-                .codigo("IND-001")
-                .definicionCalculo("Valor recalculado")
-                .frecuencia("Semanal")
-                .unidad("Unidad")
-                .responsable("Nuevo Responsable")
-                .kpi(true)
-                .origenDatos("Sistema Y")
-                .datasetId(UUID.randomUUID())
-                .build();
-
-        mvc.perform(put("/api/indicadors/" + e.getId())
+        mvc.perform(put("/api/indicadores/" + e.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updatedIndicador)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk());
 
-        // Delete
-        mvc.perform(delete("/api/indicadors/" + e.getId()))
-                .andExpect(status().isNoContent());
+        mvc.perform(delete("/api/indicadores/" + e.getId())).andExpect(status().isNoContent());
     }
 }

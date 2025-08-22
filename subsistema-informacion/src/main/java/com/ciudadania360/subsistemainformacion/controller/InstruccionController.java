@@ -1,33 +1,47 @@
 package com.ciudadania360.subsistemainformacion.controller;
 
-import com.ciudadania360.subsistemainformacion.application.service.InstruccionServicio;
-import com.ciudadania360.subsistemainformacion.domain.entity.Instruccion;
+import com.ciudadania360.subsistemainformacion.application.dto.instruccion.InstruccionRequest;
+import com.ciudadania360.subsistemainformacion.application.dto.instruccion.InstruccionResponse;
+import com.ciudadania360.subsistemainformacion.application.service.InstruccionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.*;
+
+import java.util.List;
+import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/instruccions")
+@RequestMapping("/api/instrucciones")
 public class InstruccionController {
-    private final InstruccionServicio service;
-    public InstruccionController(InstruccionServicio service) { this.service = service; }
+
+    private final InstruccionService service;
+
+    public InstruccionController(InstruccionService service) {
+        this.service = service;
+    }
 
     @GetMapping
-    public List<Instruccion> list() { return service.list(); }
+    public List<InstruccionResponse> list() {
+        return service.list();
+    }
 
     @GetMapping("/{id}")
-    public Instruccion get(@PathVariable("id") UUID id) { return service.get(id); }
+    public InstruccionResponse get(@PathVariable UUID id) {
+        return service.get(id);
+    }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Instruccion create(@RequestBody Instruccion e) { return service.create(e); }
+    public ResponseEntity<InstruccionResponse> create(@RequestBody InstruccionRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(request));
+    }
 
     @PutMapping("/{id}")
-    public Instruccion update(@PathVariable("id") UUID id, @RequestBody Instruccion e) { return service.update(id, e); }
+    public InstruccionResponse update(@PathVariable UUID id, @RequestBody InstruccionRequest request) {
+        return service.update(id, request);
+    }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable("id") UUID id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }

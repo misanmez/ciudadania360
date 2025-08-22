@@ -1,7 +1,8 @@
 package com.ciudadania360.subsistemainformacion.controller;
 
-import com.ciudadania360.subsistemainformacion.application.service.InstruccionServicio;
-import com.ciudadania360.subsistemainformacion.domain.entity.Instruccion;
+import com.ciudadania360.subsistemainformacion.application.dto.instruccion.InstruccionRequest;
+import com.ciudadania360.subsistemainformacion.application.dto.instruccion.InstruccionResponse;
+import com.ciudadania360.subsistemainformacion.application.service.InstruccionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -11,10 +12,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.List;
 import java.util.UUID;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -24,56 +23,38 @@ class InstruccionControllerTest {
 
     @Test
     void listAndCreate() throws Exception {
-        InstruccionServicio svc = mock(InstruccionServicio.class);
+        InstruccionService svc = mock(InstruccionService.class);
 
-        // Objeto de prueba
-        Instruccion e = Instruccion.builder()
-                .id(UUID.randomUUID())
-                .titulo("Ejemplo de Instrucción")
-                .pasos("Paso 1, Paso 2, Paso 3")
-                .build();
+        InstruccionResponse e = new InstruccionResponse(
+                UUID.randomUUID(),
+                "Título instrucción",
+                "Paso1, Paso2"
+        );
 
-        // Mock del servicio
         when(svc.list()).thenReturn(List.of(e));
-        when(svc.create(any())).thenReturn(e);
+        when(svc.create(any(InstruccionRequest.class))).thenReturn(e);
         when(svc.get(e.getId())).thenReturn(e);
-        when(svc.update(eq(e.getId()), any())).thenReturn(e);
+        when(svc.update(eq(e.getId()), any(InstruccionRequest.class))).thenReturn(e);
 
-        InstruccionController controller = new InstruccionController(svc);
+        var controller = new InstruccionController(svc);
         MockMvc mvc = MockMvcBuilders.standaloneSetup(controller).build();
 
-        // List
-        mvc.perform(get("/api/instruccions"))
-                .andExpect(status().isOk());
+        mvc.perform(get("/api/instrucciones")).andExpect(status().isOk());
 
-        // Create
-        Instruccion newInst = Instruccion.builder()
-                .titulo("Ejemplo de Instrucción")
-                .pasos("Paso 1, Paso 2, Paso 3")
-                .build();
+        InstruccionRequest request = new InstruccionRequest(e.getTitulo(), e.getPasos());
 
-        mvc.perform(post("/api/instruccions")
+        mvc.perform(post("/api/instrucciones")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(newInst)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated());
 
-        // Get by ID
-        mvc.perform(get("/api/instruccions/" + e.getId()))
-                .andExpect(status().isOk());
+        mvc.perform(get("/api/instrucciones/" + e.getId())).andExpect(status().isOk());
 
-        // Update
-        Instruccion updatedInst = Instruccion.builder()
-                .titulo("Instrucción Actualizada")
-                .pasos("Nuevo paso 1, Nuevo paso 2")
-                .build();
-
-        mvc.perform(put("/api/instruccions/" + e.getId())
+        mvc.perform(put("/api/instrucciones/" + e.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updatedInst)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk());
 
-        // Delete
-        mvc.perform(delete("/api/instruccions/" + e.getId()))
-                .andExpect(status().isNoContent());
+        mvc.perform(delete("/api/instrucciones/" + e.getId())).andExpect(status().isNoContent());
     }
 }

@@ -1,33 +1,47 @@
 package com.ciudadania360.subsistemainformacion.controller;
 
-import com.ciudadania360.subsistemainformacion.application.service.DudaServicio;
-import com.ciudadania360.subsistemainformacion.domain.entity.Duda;
+import com.ciudadania360.subsistemainformacion.application.dto.duda.DudaRequest;
+import com.ciudadania360.subsistemainformacion.application.dto.duda.DudaResponse;
+import com.ciudadania360.subsistemainformacion.application.service.DudaService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.*;
+
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/dudas")
 public class DudaController {
-    private final DudaServicio service;
-    public DudaController(DudaServicio service) { this.service = service; }
+
+    private final DudaService service;
+
+    public DudaController(DudaService service) {
+        this.service = service;
+    }
 
     @GetMapping
-    public List<Duda> list() { return service.list(); }
+    public List<DudaResponse> list() {
+        return service.list();
+    }
 
     @GetMapping("/{id}")
-    public Duda get(@PathVariable("id") UUID id) { return service.get(id); }
+    public DudaResponse get(@PathVariable UUID id) {
+        return service.get(id);
+    }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Duda create(@RequestBody Duda e) { return service.create(e); }
+    public ResponseEntity<DudaResponse> create(@RequestBody DudaRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(request));
+    }
 
     @PutMapping("/{id}")
-    public Duda update(@PathVariable("id") UUID id, @RequestBody Duda e) { return service.update(id, e); }
+    public DudaResponse update(@PathVariable UUID id, @RequestBody DudaRequest request) {
+        return service.update(id, request);
+    }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable("id") UUID id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }

@@ -1,7 +1,8 @@
 package com.ciudadania360.subsistemainformacion.controller;
 
-import com.ciudadania360.subsistemainformacion.application.service.RecomendacionServicio;
-import com.ciudadania360.subsistemainformacion.domain.entity.Recomendacion;
+import com.ciudadania360.subsistemainformacion.application.dto.recomendacion.RecomendacionRequest;
+import com.ciudadania360.subsistemainformacion.application.dto.recomendacion.RecomendacionResponse;
+import com.ciudadania360.subsistemainformacion.application.service.RecomendacionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -11,10 +12,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.List;
 import java.util.UUID;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -24,56 +23,46 @@ class RecomendacionControllerTest {
 
     @Test
     void listAndCreate() throws Exception {
-        RecomendacionServicio svc = mock(RecomendacionServicio.class);
+        RecomendacionService svc = mock(RecomendacionService.class);
 
-        // Objeto de prueba
-        Recomendacion e = Recomendacion.builder()
+        RecomendacionResponse e = RecomendacionResponse.builder()
                 .id(UUID.randomUUID())
-                .titulo("Recomendación de Ejemplo")
-                .detalle("Detalle de la recomendación")
+                .titulo("Título")
+                .detalle("Detalle")
                 .build();
 
-        // Mock del servicio
         when(svc.list()).thenReturn(List.of(e));
-        when(svc.create(any())).thenReturn(e);
+        when(svc.create(any(RecomendacionRequest.class))).thenReturn(e);
         when(svc.get(e.getId())).thenReturn(e);
-        when(svc.update(eq(e.getId()), any())).thenReturn(e);
+        when(svc.update(eq(e.getId()), any(RecomendacionRequest.class))).thenReturn(e);
 
         RecomendacionController controller = new RecomendacionController(svc);
         MockMvc mvc = MockMvcBuilders.standaloneSetup(controller).build();
 
-        // List
-        mvc.perform(get("/api/recomendacions"))
-                .andExpect(status().isOk());
+        mvc.perform(get("/api/recomendaciones")).andExpect(status().isOk());
 
-        // Create
-        Recomendacion newRec = Recomendacion.builder()
-                .titulo("Recomendación de Ejemplo")
-                .detalle("Detalle de la recomendación")
+        RecomendacionRequest request = RecomendacionRequest.builder()
+                .titulo("Título")
+                .detalle("Detalle")
                 .build();
 
-        mvc.perform(post("/api/recomendacions")
+        mvc.perform(post("/api/recomendaciones")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(newRec)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated());
 
-        // Get by ID
-        mvc.perform(get("/api/recomendacions/" + e.getId()))
-                .andExpect(status().isOk());
+        mvc.perform(get("/api/recomendaciones/" + e.getId())).andExpect(status().isOk());
 
-        // Update
-        Recomendacion updatedRec = Recomendacion.builder()
-                .titulo("Recomendación Actualizada")
-                .detalle("Nuevo detalle de la recomendación")
+        RecomendacionRequest updateRequest = RecomendacionRequest.builder()
+                .titulo("Nuevo título")
+                .detalle("Nuevo detalle")
                 .build();
 
-        mvc.perform(put("/api/recomendacions/" + e.getId())
+        mvc.perform(put("/api/recomendaciones/" + e.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updatedRec)))
+                        .content(objectMapper.writeValueAsString(updateRequest)))
                 .andExpect(status().isOk());
 
-        // Delete
-        mvc.perform(delete("/api/recomendacions/" + e.getId()))
-                .andExpect(status().isNoContent());
+        mvc.perform(delete("/api/recomendaciones/" + e.getId())).andExpect(status().isNoContent());
     }
 }

@@ -1,33 +1,47 @@
 package com.ciudadania360.subsistemainformacion.controller;
 
-import com.ciudadania360.subsistemainformacion.application.service.SugerenciaServicio;
-import com.ciudadania360.subsistemainformacion.domain.entity.Sugerencia;
+import com.ciudadania360.subsistemainformacion.application.dto.sugerencia.SugerenciaRequest;
+import com.ciudadania360.subsistemainformacion.application.dto.sugerencia.SugerenciaResponse;
+import com.ciudadania360.subsistemainformacion.application.service.SugerenciaService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.*;
+
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/sugerencias")
 public class SugerenciaController {
-    private final SugerenciaServicio service;
-    public SugerenciaController(SugerenciaServicio service) { this.service = service; }
+
+    private final SugerenciaService service;
+
+    public SugerenciaController(SugerenciaService service) {
+        this.service = service;
+    }
 
     @GetMapping
-    public List<Sugerencia> list() { return service.list(); }
+    public List<SugerenciaResponse> list() {
+        return service.list();
+    }
 
     @GetMapping("/{id}")
-    public Sugerencia get(@PathVariable("id") UUID id) { return service.get(id); }
+    public SugerenciaResponse get(@PathVariable UUID id) {
+        return service.get(id);
+    }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Sugerencia create(@RequestBody Sugerencia e) { return service.create(e); }
+    public ResponseEntity<SugerenciaResponse> create(@RequestBody SugerenciaRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(request));
+    }
 
     @PutMapping("/{id}")
-    public Sugerencia update(@PathVariable("id") UUID id, @RequestBody Sugerencia e) { return service.update(id, e); }
+    public SugerenciaResponse update(@PathVariable UUID id, @RequestBody SugerenciaRequest request) {
+        return service.update(id, request);
+    }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable("id") UUID id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
