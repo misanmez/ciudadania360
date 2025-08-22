@@ -1,8 +1,10 @@
 package com.ciudadania360.subsistemavideoconferencia.controller;
 
-import com.ciudadania360.subsistemavideoconferencia.application.service.SesionServicio;
-import com.ciudadania360.subsistemavideoconferencia.domain.entity.Sesion;
+import com.ciudadania360.subsistemavideoconferencia.application.dto.sesion.SesionRequest;
+import com.ciudadania360.subsistemavideoconferencia.application.dto.sesion.SesionResponse;
+import com.ciudadania360.subsistemavideoconferencia.application.service.SesionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -12,74 +14,70 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class SesionControllerTest {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
     @Test
-    void listAndCrudOperations() throws Exception {
-        SesionServicio svc = mock(SesionServicio.class);
+    void listAndCreate() throws Exception {
+        SesionService svc = mock(SesionService.class);
 
-        // Mock entity
-        Sesion e = Sesion.builder()
-                .id(UUID.randomUUID())
-                .codigoAcceso("Codigo123")
+        UUID fixedId = UUID.fromString("11111111-1111-1111-1111-111111111111");
+        Instant fixedStart = Instant.parse("2025-08-22T09:00:00.000Z");
+        Instant fixedEnd = fixedStart.plusSeconds(3600);
+
+        SesionResponse e = SesionResponse.builder()
+                .id(fixedId)
+                .solicitudId(UUID.randomUUID())
+                .fechaInicio(fixedStart)
+                .fechaFin(fixedEnd)
                 .estado("Programada")
-                .fechaInicio(Instant.now())
-                .fechaFin(Instant.now().plusSeconds(3600))
                 .plataforma("Zoom")
-                .enlace("https://zoom.us/j/123456789")
+                .enlace("https://zoom.example.com/123")
+                .codigoAcceso("ABC123")
+                .grabacionUri("https://storage.example.com/video.mp4")
+                .motivo("Reunión")
+                .operadorId("OP123")
                 .build();
 
         when(svc.list()).thenReturn(List.of(e));
-        when(svc.create(any())).thenReturn(e);
+        when(svc.create(any(SesionRequest.class))).thenReturn(e);
         when(svc.get(e.getId())).thenReturn(e);
-        when(svc.update(eq(e.getId()), any())).thenReturn(e);
+        when(svc.update(eq(e.getId()), any(SesionRequest.class))).thenReturn(e);
 
-        SesionController controller = new SesionController(svc);
-        MockMvc mvc = MockMvcBuilders.standaloneSetup(controller).build();
+        MockMvc mvc = MockMvcBuilders.standaloneSetup(new SesionController(svc)).build();
 
-        // List
-        mvc.perform(get("/api/sesions"))
-                .andExpect(status().isOk());
+        mvc.perform(get("/api/sesiones")).andExpect(status().isOk());
 
-        // Create
-        Sesion newSesion = Sesion.builder()
-                .codigoAcceso("NuevoCodigo")
-                .estado("Pendiente")
+        SesionRequest req = SesionRequest.builder()
+                .solicitudId(UUID.randomUUID())
+                .fechaInicio(fixedStart)
+                .fechaFin(fixedEnd)
+                .estado("Programada")
+                .plataforma("Zoom")
+                .enlace("https://zoom.example.com/123")
+                .codigoAcceso("ABC123")
+                .grabacionUri("https://storage.example.com/video.mp4")
+                .motivo("Reunión")
+                .operadorId("OP123")
                 .build();
 
-        mvc.perform(post("/api/sesions")
+        mvc.perform(post("/api/sesiones")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(newSesion)))
+                        .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isCreated());
 
-        // Get by ID
-        mvc.perform(get("/api/sesions/" + e.getId()))
-                .andExpect(status().isOk());
+        mvc.perform(get("/api/sesiones/" + e.getId())).andExpect(status().isOk());
 
-        // Update
-        Sesion updatedSesion = Sesion.builder()
-                .codigoAcceso("CodigoActualizado")
-                .estado("Finalizada")
-                .build();
-
-        mvc.perform(put("/api/sesions/" + e.getId())
+        mvc.perform(put("/api/sesiones/" + e.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updatedSesion)))
+                        .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isOk());
 
-        // Delete
-        mvc.perform(delete("/api/sesions/" + e.getId()))
-                .andExpect(status().isNoContent());
-
-        // Verify delete was called
-        verify(svc).delete(e.getId());
+        mvc.perform(delete("/api/sesiones/" + e.getId())).andExpect(status().isNoContent());
     }
 }

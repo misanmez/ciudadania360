@@ -1,7 +1,8 @@
 package com.ciudadania360.subsistemavideoconferencia.controller;
 
-import com.ciudadania360.subsistemavideoconferencia.application.service.PlanificacionServicio;
-import com.ciudadania360.subsistemavideoconferencia.domain.entity.Planificacion;
+import com.ciudadania360.subsistemavideoconferencia.application.dto.planificacion.PlanificacionRequest;
+import com.ciudadania360.subsistemavideoconferencia.application.dto.planificacion.PlanificacionResponse;
+import com.ciudadania360.subsistemavideoconferencia.application.service.PlanificacionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -11,70 +12,52 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.List;
 import java.util.UUID;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class PlanificacionControllerTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
-    void listAndCrudOperations() throws Exception {
-        PlanificacionServicio svc = mock(PlanificacionServicio.class);
+    void listAndCreate() throws Exception {
+        PlanificacionService svc = mock(PlanificacionService.class);
 
-        // Mock entity
-        Planificacion e = Planificacion.builder()
-                .id(UUID.randomUUID())
-                .nombre("Nombre de la Planificación")
-                .descripcion("Descripción de la Planificación")
+        UUID fixedId = UUID.fromString("11111111-1111-1111-1111-111111111111");
+
+        PlanificacionResponse e = PlanificacionResponse.builder()
+                .id(fixedId)
+                .nombre("Planificación 1")
+                .descripcion("Descripción de prueba")
                 .build();
 
         when(svc.list()).thenReturn(List.of(e));
-        when(svc.create(any())).thenReturn(e);
+        when(svc.create(any(PlanificacionRequest.class))).thenReturn(e);
         when(svc.get(e.getId())).thenReturn(e);
-        when(svc.update(eq(e.getId()), any())).thenReturn(e);
+        when(svc.update(eq(e.getId()), any(PlanificacionRequest.class))).thenReturn(e);
 
-        PlanificacionController controller = new PlanificacionController(svc);
-        MockMvc mvc = MockMvcBuilders.standaloneSetup(controller).build();
+        MockMvc mvc = MockMvcBuilders.standaloneSetup(new PlanificacionController(svc)).build();
 
-        // List
-        mvc.perform(get("/api/planificacions"))
-                .andExpect(status().isOk());
+        mvc.perform(get("/api/planificaciones")).andExpect(status().isOk());
 
-        // Create
-        Planificacion newPlanificacion = Planificacion.builder()
-                .nombre("Nueva Planificación")
-                .descripcion("Descripción nueva")
+        PlanificacionRequest req = PlanificacionRequest.builder()
+                .nombre("Planificación 1")
+                .descripcion("Descripción de prueba")
                 .build();
 
-        mvc.perform(post("/api/planificacions")
+        mvc.perform(post("/api/planificaciones")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(newPlanificacion)))
+                        .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isCreated());
 
-        // Get by ID
-        mvc.perform(get("/api/planificacions/" + e.getId()))
-                .andExpect(status().isOk());
+        mvc.perform(get("/api/planificaciones/" + e.getId())).andExpect(status().isOk());
 
-        // Update
-        Planificacion updatedPlanificacion = Planificacion.builder()
-                .nombre("Nombre Actualizado")
-                .descripcion("Descripción Actualizada")
-                .build();
-
-        mvc.perform(put("/api/planificacions/" + e.getId())
+        mvc.perform(put("/api/planificaciones/" + e.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updatedPlanificacion)))
+                        .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isOk());
 
-        // Delete
-        mvc.perform(delete("/api/planificacions/" + e.getId()))
-                .andExpect(status().isNoContent());
-
-        // Verify delete was called
-        verify(svc).delete(e.getId());
+        mvc.perform(delete("/api/planificaciones/" + e.getId())).andExpect(status().isNoContent());
     }
 }

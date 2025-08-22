@@ -1,33 +1,47 @@
 package com.ciudadania360.subsistemavideoconferencia.controller;
 
-import com.ciudadania360.subsistemavideoconferencia.application.service.PlanificacionServicio;
-import com.ciudadania360.subsistemavideoconferencia.domain.entity.Planificacion;
+import com.ciudadania360.subsistemavideoconferencia.application.dto.planificacion.PlanificacionRequest;
+import com.ciudadania360.subsistemavideoconferencia.application.dto.planificacion.PlanificacionResponse;
+import com.ciudadania360.subsistemavideoconferencia.application.service.PlanificacionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.*;
+
+import java.util.List;
+import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/planificacions")
+@RequestMapping("/api/planificaciones")
 public class PlanificacionController {
-    private final PlanificacionServicio service;
-    public PlanificacionController(PlanificacionServicio service) { this.service = service; }
+
+    private final PlanificacionService service;
+
+    public PlanificacionController(PlanificacionService service) {
+        this.service = service;
+    }
 
     @GetMapping
-    public List<Planificacion> list() { return service.list(); }
+    public List<PlanificacionResponse> list() {
+        return service.list();
+    }
 
     @GetMapping("/{id}")
-    public Planificacion get(@PathVariable("id") UUID id) { return service.get(id); }
+    public PlanificacionResponse get(@PathVariable UUID id) {
+        return service.get(id);
+    }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Planificacion create(@RequestBody Planificacion e) { return service.create(e); }
+    public ResponseEntity<PlanificacionResponse> create(@RequestBody PlanificacionRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(request));
+    }
 
     @PutMapping("/{id}")
-    public Planificacion update(@PathVariable("id") UUID id, @RequestBody Planificacion e) { return service.update(id, e); }
+    public PlanificacionResponse update(@PathVariable UUID id, @RequestBody PlanificacionRequest request) {
+        return service.update(id, request);
+    }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable("id") UUID id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }

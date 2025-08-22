@@ -1,33 +1,47 @@
 package com.ciudadania360.subsistemavideoconferencia.controller;
 
-import com.ciudadania360.subsistemavideoconferencia.application.service.SesionServicio;
-import com.ciudadania360.subsistemavideoconferencia.domain.entity.Sesion;
+import com.ciudadania360.subsistemavideoconferencia.application.dto.sesion.SesionRequest;
+import com.ciudadania360.subsistemavideoconferencia.application.dto.sesion.SesionResponse;
+import com.ciudadania360.subsistemavideoconferencia.application.service.SesionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.*;
+
+import java.util.List;
+import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/sesions")
+@RequestMapping("/api/sesiones")
 public class SesionController {
-    private final SesionServicio service;
-    public SesionController(SesionServicio service) { this.service = service; }
+
+    private final SesionService service;
+
+    public SesionController(SesionService service) {
+        this.service = service;
+    }
 
     @GetMapping
-    public List<Sesion> list() { return service.list(); }
+    public List<SesionResponse> list() {
+        return service.list();
+    }
 
     @GetMapping("/{id}")
-    public Sesion get(@PathVariable("id") UUID id) { return service.get(id); }
+    public SesionResponse get(@PathVariable UUID id) {
+        return service.get(id);
+    }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Sesion create(@RequestBody Sesion e) { return service.create(e); }
+    public ResponseEntity<SesionResponse> create(@RequestBody SesionRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(request));
+    }
 
     @PutMapping("/{id}")
-    public Sesion update(@PathVariable("id") UUID id, @RequestBody Sesion e) { return service.update(id, e); }
+    public SesionResponse update(@PathVariable UUID id, @RequestBody SesionRequest request) {
+        return service.update(id, request);
+    }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable("id") UUID id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }

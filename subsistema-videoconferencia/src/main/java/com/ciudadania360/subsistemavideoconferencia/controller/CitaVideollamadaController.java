@@ -1,33 +1,47 @@
 package com.ciudadania360.subsistemavideoconferencia.controller;
 
-import com.ciudadania360.subsistemavideoconferencia.application.service.CitaVideollamadaServicio;
-import com.ciudadania360.subsistemavideoconferencia.domain.entity.CitaVideollamada;
+import com.ciudadania360.subsistemavideoconferencia.application.dto.citavideollamada.CitaVideollamadaRequest;
+import com.ciudadania360.subsistemavideoconferencia.application.dto.citavideollamada.CitaVideollamadaResponse;
+import com.ciudadania360.subsistemavideoconferencia.application.service.CitaVideollamadaService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.*;
+
+import java.util.List;
+import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/citavideollamadas")
+@RequestMapping("/api/citas-videollamada")
 public class CitaVideollamadaController {
-    private final CitaVideollamadaServicio service;
-    public CitaVideollamadaController(CitaVideollamadaServicio service) { this.service = service; }
+
+    private final CitaVideollamadaService service;
+
+    public CitaVideollamadaController(CitaVideollamadaService service) {
+        this.service = service;
+    }
 
     @GetMapping
-    public List<CitaVideollamada> list() { return service.list(); }
+    public List<CitaVideollamadaResponse> list() {
+        return service.list();
+    }
 
     @GetMapping("/{id}")
-    public CitaVideollamada get(@PathVariable("id") UUID id) { return service.get(id); }
+    public CitaVideollamadaResponse get(@PathVariable UUID id) {
+        return service.get(id);
+    }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public CitaVideollamada create(@RequestBody CitaVideollamada e) { return service.create(e); }
+    public ResponseEntity<CitaVideollamadaResponse> create(@RequestBody CitaVideollamadaRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(request));
+    }
 
     @PutMapping("/{id}")
-    public CitaVideollamada update(@PathVariable("id") UUID id, @RequestBody CitaVideollamada e) { return service.update(id, e); }
+    public CitaVideollamadaResponse update(@PathVariable UUID id, @RequestBody CitaVideollamadaRequest request) {
+        return service.update(id, request);
+    }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable("id") UUID id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }

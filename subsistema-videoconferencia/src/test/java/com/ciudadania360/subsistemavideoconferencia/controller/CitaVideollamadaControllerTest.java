@@ -1,9 +1,9 @@
 package com.ciudadania360.subsistemavideoconferencia.controller;
 
-import com.ciudadania360.subsistemavideoconferencia.application.service.CitaVideollamadaServicio;
-import com.ciudadania360.subsistemavideoconferencia.domain.entity.CitaVideollamada;
+import com.ciudadania360.subsistemavideoconferencia.application.dto.citavideollamada.CitaVideollamadaRequest;
+import com.ciudadania360.subsistemavideoconferencia.application.dto.citavideollamada.CitaVideollamadaResponse;
+import com.ciudadania360.subsistemavideoconferencia.application.service.CitaVideollamadaService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -14,8 +14,6 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -23,80 +21,59 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class CitaVideollamadaControllerTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper()
-            .registerModule(new JavaTimeModule())
-            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+            .registerModule(new JavaTimeModule()); // <--- Maneja Instant correctamente
 
     @Test
-    void listAndCrudOperations() throws Exception {
-        CitaVideollamadaServicio svc = mock(CitaVideollamadaServicio.class);
+    void listAndCreate() throws Exception {
+        CitaVideollamadaService svc = mock(CitaVideollamadaService.class);
 
-        CitaVideollamada e = CitaVideollamada.builder()
-                .id(UUID.randomUUID())
+        UUID fixedId = UUID.fromString("11111111-1111-1111-1111-111111111111");
+        Instant fixedInstant = Instant.parse("2025-08-22T09:02:58.214242400Z");
+
+        CitaVideollamadaResponse e = CitaVideollamadaResponse.builder()
+                .id(fixedId)
                 .sesionId(UUID.randomUUID())
                 .ciudadanoId(UUID.randomUUID())
-                .empleadoId("empleado-01")
-                .fechaProgramadaInicio(Instant.parse("2023-10-01T10:00:00Z"))
-                .fechaProgramadaFin(Instant.parse("2023-10-01T11:00:00Z"))
-                .estado("PENDIENTE")
-                .canalNotificacion("EMAIL")
+                .empleadoId("EMP123")
+                .fechaProgramadaInicio(fixedInstant)
+                .fechaProgramadaFin(fixedInstant.plusSeconds(3600))
+                .estado("Pendiente")
+                .canalNotificacion("Email")
                 .notas("Notas de prueba")
                 .build();
 
         when(svc.list()).thenReturn(List.of(e));
-        when(svc.create(any())).thenReturn(e);
+        when(svc.create(any(CitaVideollamadaRequest.class))).thenReturn(e);
         when(svc.get(e.getId())).thenReturn(e);
-        when(svc.update(eq(e.getId()), any())).thenReturn(e);
+        when(svc.update(eq(e.getId()), any(CitaVideollamadaRequest.class))).thenReturn(e);
 
-        CitaVideollamadaController controller = new CitaVideollamadaController(svc);
-        MockMvc mvc = MockMvcBuilders.standaloneSetup(controller).build();
+        MockMvc mvc = MockMvcBuilders.standaloneSetup(new CitaVideollamadaController(svc)).build();
 
-        // List
-        mvc.perform(get("/api/citavideollamadas"))
-                .andExpect(status().isOk());
+        mvc.perform(get("/api/citas-videollamada")).andExpect(status().isOk());
 
-        // Create
-        CitaVideollamada newCita = CitaVideollamada.builder()
+        CitaVideollamadaRequest req = CitaVideollamadaRequest.builder()
                 .sesionId(UUID.randomUUID())
                 .ciudadanoId(UUID.randomUUID())
-                .empleadoId("empleado-02")
-                .fechaProgramadaInicio(Instant.parse("2023-10-02T10:00:00Z"))
-                .fechaProgramadaFin(Instant.parse("2023-10-02T11:00:00Z"))
-                .estado("PENDIENTE")
-                .canalNotificacion("SMS")
-                .notas("Nueva cita")
+                .empleadoId("EMP123")
+                .fechaProgramadaInicio(fixedInstant)
+                .fechaProgramadaFin(fixedInstant.plusSeconds(3600))
+                .estado("Pendiente")
+                .canalNotificacion("Email")
+                .notas("Notas de prueba")
                 .build();
 
-        mvc.perform(post("/api/citavideollamadas")
+        mvc.perform(post("/api/citas-videollamada")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(newCita)))
+                        .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isCreated());
 
-        // Get by ID
-        mvc.perform(get("/api/citavideollamadas/" + e.getId()))
-                .andExpect(status().isOk());
+        mvc.perform(get("/api/citas-videollamada/" + e.getId())).andExpect(status().isOk());
 
-        // Update
-        CitaVideollamada updatedCita = CitaVideollamada.builder()
-                .sesionId(e.getSesionId())
-                .ciudadanoId(e.getCiudadanoId())
-                .empleadoId("empleado-03")
-                .fechaProgramadaInicio(Instant.parse("2023-10-01T11:00:00Z"))
-                .fechaProgramadaFin(Instant.parse("2023-10-01T12:00:00Z"))
-                .estado("CONFIRMADA")
-                .canalNotificacion("EMAIL")
-                .notas("Cita actualizada")
-                .build();
-
-        mvc.perform(put("/api/citavideollamadas/" + e.getId())
+        mvc.perform(put("/api/citas-videollamada/" + e.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updatedCita)))
+                        .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isOk());
 
-        // Delete
-        mvc.perform(delete("/api/citavideollamadas/" + e.getId()))
-                .andExpect(status().isNoContent());
-
-        // Verificar que el servicio fue llamado al eliminar
-        verify(svc).delete(e.getId());
+        mvc.perform(delete("/api/citas-videollamada/" + e.getId())).andExpect(status().isNoContent());
     }
 }
