@@ -1,33 +1,48 @@
 package com.ciudadania360.subsistematramitacion.controller;
 
-import com.ciudadania360.subsistematramitacion.application.service.CarpetaServicio;
-import com.ciudadania360.subsistematramitacion.domain.entity.Carpeta;
+import com.ciudadania360.subsistematramitacion.application.dto.carpeta.CarpetaRequest;
+import com.ciudadania360.subsistematramitacion.application.dto.carpeta.CarpetaResponse;
+import com.ciudadania360.subsistematramitacion.application.service.CarpetaService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.*;
+
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/carpetas")
 public class CarpetaController {
-    private final CarpetaServicio service;
-    public CarpetaController(CarpetaServicio service) { this.service = service; }
+
+    private final CarpetaService service;
+
+    public CarpetaController(CarpetaService service) {
+        this.service = service;
+    }
 
     @GetMapping
-    public List<Carpeta> list() { return service.list(); }
+    public List<CarpetaResponse> list() {
+        return service.list();
+    }
 
     @GetMapping("/{id}")
-    public Carpeta get(@PathVariable("id") UUID id) { return service.get(id); }
+    public CarpetaResponse get(@PathVariable UUID id) {
+        return service.get(id);
+    }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Carpeta create(@RequestBody Carpeta e) { return service.create(e); }
+    public ResponseEntity<CarpetaResponse> create(@RequestBody CarpetaRequest request) {
+        CarpetaResponse created = service.create(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
 
     @PutMapping("/{id}")
-    public Carpeta update(@PathVariable("id") UUID id, @RequestBody Carpeta e) { return service.update(id, e); }
+    public CarpetaResponse update(@PathVariable UUID id, @RequestBody CarpetaRequest request) {
+        return service.update(id, request);
+    }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable("id") UUID id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }

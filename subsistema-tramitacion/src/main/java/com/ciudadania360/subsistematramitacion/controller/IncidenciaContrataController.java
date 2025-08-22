@@ -1,33 +1,47 @@
 package com.ciudadania360.subsistematramitacion.controller;
 
-import com.ciudadania360.subsistematramitacion.application.service.IncidenciaContrataServicio;
-import com.ciudadania360.subsistematramitacion.domain.entity.IncidenciaContrata;
+import com.ciudadania360.subsistematramitacion.application.dto.incidenciacontrata.IncidenciaContrataRequest;
+import com.ciudadania360.subsistematramitacion.application.dto.incidenciacontrata.IncidenciaContrataResponse;
+import com.ciudadania360.subsistematramitacion.application.service.IncidenciaContrataService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.*;
+
+import java.util.List;
+import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/incidenciacontratas")
+@RequestMapping("/api/incidencias-contrata")
 public class IncidenciaContrataController {
-    private final IncidenciaContrataServicio service;
-    public IncidenciaContrataController(IncidenciaContrataServicio service) { this.service = service; }
+
+    private final IncidenciaContrataService service;
+
+    public IncidenciaContrataController(IncidenciaContrataService service) {
+        this.service = service;
+    }
 
     @GetMapping
-    public List<IncidenciaContrata> list() { return service.list(); }
+    public List<IncidenciaContrataResponse> list() {
+        return service.list();
+    }
 
     @GetMapping("/{id}")
-    public IncidenciaContrata get(@PathVariable("id") UUID id) { return service.get(id); }
+    public IncidenciaContrataResponse get(@PathVariable UUID id) {
+        return service.get(id);
+    }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public IncidenciaContrata create(@RequestBody IncidenciaContrata e) { return service.create(e); }
+    public ResponseEntity<IncidenciaContrataResponse> create(@RequestBody IncidenciaContrataRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(request));
+    }
 
     @PutMapping("/{id}")
-    public IncidenciaContrata update(@PathVariable("id") UUID id, @RequestBody IncidenciaContrata e) { return service.update(id, e); }
+    public IncidenciaContrataResponse update(@PathVariable UUID id, @RequestBody IncidenciaContrataRequest request) {
+        return service.update(id, request);
+    }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable("id") UUID id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }

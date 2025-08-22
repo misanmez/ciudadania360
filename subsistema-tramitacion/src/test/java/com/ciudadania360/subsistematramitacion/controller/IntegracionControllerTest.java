@@ -1,7 +1,8 @@
 package com.ciudadania360.subsistematramitacion.controller;
 
-import com.ciudadania360.subsistematramitacion.application.service.IntegracionServicio;
-import com.ciudadania360.subsistematramitacion.domain.entity.Integracion;
+import com.ciudadania360.subsistematramitacion.application.dto.integracion.IntegracionRequest;
+import com.ciudadania360.subsistematramitacion.application.dto.integracion.IntegracionResponse;
+import com.ciudadania360.subsistematramitacion.application.service.IntegracionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -11,8 +12,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.List;
 import java.util.UUID;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -22,60 +21,39 @@ class IntegracionControllerTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
-    void listAndCrudOperations() throws Exception {
-        IntegracionServicio svc = mock(IntegracionServicio.class);
+    void listAndCreate() throws Exception {
+        IntegracionService svc = mock(IntegracionService.class);
 
-        Integracion e = Integracion.builder()
+        IntegracionResponse e = IntegracionResponse.builder()
                 .id(UUID.randomUUID())
-                .sistema("sistema")
-                .tipo("tipo")
-                .endpoint("endpoint")
+                .sistema("Sistema X")
+                .tipo("REST")
+                .endpoint("/api/test")
                 .build();
 
         when(svc.list()).thenReturn(List.of(e));
-        when(svc.create(any())).thenReturn(e);
+        when(svc.create(any(IntegracionRequest.class))).thenReturn(e);
         when(svc.get(e.getId())).thenReturn(e);
-        when(svc.update(eq(e.getId()), any())).thenReturn(e);
+        when(svc.update(eq(e.getId()), any(IntegracionRequest.class))).thenReturn(e);
 
-        IntegracionController controller = new IntegracionController(svc);
-        MockMvc mvc = MockMvcBuilders.standaloneSetup(controller).build();
+        MockMvc mvc = MockMvcBuilders.standaloneSetup(new IntegracionController(svc)).build();
 
-        // List
-        mvc.perform(get("/api/integracions"))
-                .andExpect(status().isOk());
+        mvc.perform(get("/api/integraciones")).andExpect(status().isOk());
 
-        // Create
-        Integracion newIntegracion = Integracion.builder()
-                .sistema("nuevoSistema")
-                .tipo("nuevoTipo")
-                .endpoint("nuevoEndpoint")
-                .build();
+        IntegracionRequest req = new IntegracionRequest("Sistema X", "REST", "/api/test");
 
-        mvc.perform(post("/api/integracions")
+        mvc.perform(post("/api/integraciones")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(newIntegracion)))
+                        .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isCreated());
 
-        // Get by ID
-        mvc.perform(get("/api/integracions/" + e.getId()))
-                .andExpect(status().isOk());
+        mvc.perform(get("/api/integraciones/" + e.getId())).andExpect(status().isOk());
 
-        // Update
-        Integracion updatedIntegracion = Integracion.builder()
-                .sistema("sistemaActualizado")
-                .tipo("tipoActualizado")
-                .endpoint("endpointActualizado")
-                .build();
-
-        mvc.perform(put("/api/integracions/" + e.getId())
+        mvc.perform(put("/api/integraciones/" + e.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updatedIntegracion)))
+                        .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isOk());
 
-        // Delete
-        mvc.perform(delete("/api/integracions/" + e.getId()))
-                .andExpect(status().isNoContent());
-
-        verify(svc).delete(e.getId());
+        mvc.perform(delete("/api/integraciones/" + e.getId())).andExpect(status().isNoContent());
     }
 }

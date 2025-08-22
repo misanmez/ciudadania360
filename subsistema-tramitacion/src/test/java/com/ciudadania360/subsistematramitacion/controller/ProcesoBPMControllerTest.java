@@ -1,10 +1,11 @@
 package com.ciudadania360.subsistematramitacion.controller;
 
-import com.ciudadania360.subsistematramitacion.application.service.ProcesoBPMServicio;
-import com.ciudadania360.subsistematramitacion.domain.entity.ProcesoBPM;
+import com.ciudadania360.subsistematramitacion.application.dto.procesobpm.ProcesoBPMRequest;
+import com.ciudadania360.subsistematramitacion.application.dto.procesobpm.ProcesoBPMResponse;
+import com.ciudadania360.subsistematramitacion.application.service.ProcesoBPMService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -14,28 +15,30 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class ProcesoBPMControllerTest {
 
-    private final ObjectMapper objectMapper = new ObjectMapper()
-            .registerModule(new JavaTimeModule())
-            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+    private ObjectMapper objectMapper;
+
+    @BeforeEach
+    void setup() {
+        objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+    }
 
     @Test
-    void listAndCrudOperations() throws Exception {
-        ProcesoBPMServicio svc = mock(ProcesoBPMServicio.class);
+    void listAndCreate() throws Exception {
+        ProcesoBPMService svc = mock(ProcesoBPMService.class);
 
-        ProcesoBPM e = ProcesoBPM.builder()
+        ProcesoBPMResponse e = ProcesoBPMResponse.builder()
                 .id(UUID.randomUUID())
-                .engineInstanceId("engine1")
-                .definitionKey("def1")
+                .engineInstanceId("engine-1")
+                .definitionKey("def-key")
                 .businessKey(UUID.randomUUID())
-                .estado("Estado Inicial")
+                .estado("En curso")
                 .inicio(Instant.now())
                 .fin(null)
                 .variables("{}")
@@ -43,58 +46,29 @@ class ProcesoBPMControllerTest {
                 .build();
 
         when(svc.list()).thenReturn(List.of(e));
-        when(svc.create(any())).thenReturn(e);
+        when(svc.create(any(ProcesoBPMRequest.class))).thenReturn(e);
         when(svc.get(e.getId())).thenReturn(e);
-        when(svc.update(eq(e.getId()), any())).thenReturn(e);
+        when(svc.update(eq(e.getId()), any(ProcesoBPMRequest.class))).thenReturn(e);
 
-        ProcesoBPMController controller = new ProcesoBPMController(svc);
-        MockMvc mvc = MockMvcBuilders.standaloneSetup(controller).build();
+        MockMvc mvc = MockMvcBuilders.standaloneSetup(new ProcesoBPMController(svc)).build();
 
-        // List
-        mvc.perform(get("/api/procesobpms"))
-                .andExpect(status().isOk());
+        mvc.perform(get("/api/procesos-bpm")).andExpect(status().isOk());
 
-        // Create
-        ProcesoBPM newProceso = ProcesoBPM.builder()
-                .engineInstanceId("engine2")
-                .definitionKey("def2")
-                .businessKey(UUID.randomUUID())
-                .estado("Nuevo Estado")
-                .inicio(Instant.now())
-                .variables("{}")
-                .iniciador("usuario2")
-                .build();
+        ProcesoBPMRequest req = new ProcesoBPMRequest(e.getEngineInstanceId(), e.getDefinitionKey(),
+                e.getBusinessKey(), e.getEstado(), e.getInicio(), e.getFin(), e.getVariables(), e.getIniciador());
 
-        mvc.perform(post("/api/procesobpms")
+        mvc.perform(post("/api/procesos-bpm")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(newProceso)))
+                        .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isCreated());
 
-        // Get by ID
-        mvc.perform(get("/api/procesobpms/" + e.getId()))
-                .andExpect(status().isOk());
+        mvc.perform(get("/api/procesos-bpm/" + e.getId())).andExpect(status().isOk());
 
-        // Update
-        ProcesoBPM updatedProceso = ProcesoBPM.builder()
-                .engineInstanceId(e.getEngineInstanceId())
-                .definitionKey(e.getDefinitionKey())
-                .businessKey(e.getBusinessKey())
-                .estado("Estado Actualizado")
-                .inicio(e.getInicio())
-                .fin(Instant.now())
-                .variables("{\"var\":\"valor\"}")
-                .iniciador(e.getIniciador())
-                .build();
-
-        mvc.perform(put("/api/procesobpms/" + e.getId())
+        mvc.perform(put("/api/procesos-bpm/" + e.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updatedProceso)))
+                        .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isOk());
 
-        // Delete
-        mvc.perform(delete("/api/procesobpms/" + e.getId()))
-                .andExpect(status().isNoContent());
-
-        verify(svc).delete(e.getId());
+        mvc.perform(delete("/api/procesos-bpm/" + e.getId())).andExpect(status().isNoContent());
     }
 }

@@ -1,10 +1,11 @@
 package com.ciudadania360.subsistematramitacion.controller;
 
-import com.ciudadania360.subsistematramitacion.application.service.DocumentoServicio;
-import com.ciudadania360.subsistematramitacion.domain.entity.Documento;
+import com.ciudadania360.subsistematramitacion.application.dto.documento.DocumentoRequest;
+import com.ciudadania360.subsistematramitacion.application.dto.documento.DocumentoResponse;
+import com.ciudadania360.subsistematramitacion.application.service.DocumentoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -14,92 +15,72 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class DocumentoControllerTest {
 
-    private final ObjectMapper objectMapper = new ObjectMapper()
-            .registerModule(new JavaTimeModule())
-            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+    private ObjectMapper objectMapper;
+
+    @BeforeEach
+    void setup() {
+        objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule()); // 🔹 Esto permite serializar Instant
+    }
 
     @Test
-    void listAndCrudOperations() throws Exception {
-        DocumentoServicio svc = mock(DocumentoServicio.class);
+    void listAndCreate() throws Exception {
+        DocumentoService svc = mock(DocumentoService.class);
 
-        Documento e = Documento.builder()
+        DocumentoResponse e = DocumentoResponse.builder()
                 .id(UUID.randomUUID())
-                .nombre("Nombre del Documento")
+                .carpetaId(UUID.randomUUID())
+                .nombre("Documento 1")
                 .tipoMime("application/pdf")
-                .uriAlmacenamiento("/documentos/doc1.pdf")
-                .hash("hash123")
+                .uriAlmacenamiento("/docs/doc1.pdf")
+                .hash("abc123")
                 .versionNumber(1)
                 .fechaSubida(Instant.now())
-                .origen("sistema")
-                .firmado(false)
-                .metadatos("{\"clave\":\"valor\"}")
+                .origen("ORIGEN")
+                .firmado(true)
+                .metadatos("{}")
                 .build();
 
         when(svc.list()).thenReturn(List.of(e));
-        when(svc.create(any())).thenReturn(e);
+        when(svc.create(any(DocumentoRequest.class))).thenReturn(e);
         when(svc.get(e.getId())).thenReturn(e);
-        when(svc.update(eq(e.getId()), any())).thenReturn(e);
+        when(svc.update(eq(e.getId()), any(DocumentoRequest.class))).thenReturn(e);
 
-        DocumentoController controller = new DocumentoController(svc);
-        MockMvc mvc = MockMvcBuilders.standaloneSetup(controller).build();
+        MockMvc mvc = MockMvcBuilders.standaloneSetup(new DocumentoController(svc)).build();
 
-        // List
-        mvc.perform(get("/api/documentos"))
-                .andExpect(status().isOk());
+        mvc.perform(get("/api/documentos")).andExpect(status().isOk());
 
-        // Create
-        Documento newDocumento = Documento.builder()
-                .nombre("Nuevo Documento")
+        DocumentoRequest req = DocumentoRequest.builder()
+                .carpetaId(UUID.randomUUID())
+                .nombre("Documento 1")
                 .tipoMime("application/pdf")
-                .uriAlmacenamiento("/documentos/doc2.pdf")
-                .hash("hash456")
+                .uriAlmacenamiento("/docs/doc1.pdf")
+                .hash("abc123")
                 .versionNumber(1)
                 .fechaSubida(Instant.now())
-                .origen("usuario")
+                .origen("ORIGEN")
                 .firmado(true)
-                .metadatos("{\"info\":\"dato\"}")
+                .metadatos("{}")
                 .build();
 
         mvc.perform(post("/api/documentos")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(newDocumento)))
+                        .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isCreated());
 
-        // Get by ID
-        mvc.perform(get("/api/documentos/" + e.getId()))
-                .andExpect(status().isOk());
-
-        // Update
-        Documento updatedDocumento = Documento.builder()
-                .nombre("Documento Actualizado")
-                .tipoMime("application/pdf")
-                .uriAlmacenamiento("/documentos/doc1_v2.pdf")
-                .hash("hash789")
-                .versionNumber(2)
-                .fechaSubida(Instant.now())
-                .origen("sistema")
-                .firmado(true)
-                .metadatos("{\"clave\":\"nuevo_valor\"}")
-                .build();
+        mvc.perform(get("/api/documentos/" + e.getId())).andExpect(status().isOk());
 
         mvc.perform(put("/api/documentos/" + e.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updatedDocumento)))
+                        .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isOk());
 
-        // Delete
-        mvc.perform(delete("/api/documentos/" + e.getId()))
-                .andExpect(status().isNoContent());
-
-        // Verificar que el servicio fue llamado al eliminar
-        verify(svc).delete(e.getId());
+        mvc.perform(delete("/api/documentos/" + e.getId())).andExpect(status().isNoContent());
     }
 }

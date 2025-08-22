@@ -1,33 +1,47 @@
 package com.ciudadania360.subsistematramitacion.controller;
 
-import com.ciudadania360.subsistematramitacion.application.service.IntegracionServicio;
-import com.ciudadania360.subsistematramitacion.domain.entity.Integracion;
+import com.ciudadania360.subsistematramitacion.application.dto.integracion.IntegracionRequest;
+import com.ciudadania360.subsistematramitacion.application.dto.integracion.IntegracionResponse;
+import com.ciudadania360.subsistematramitacion.application.service.IntegracionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.*;
+
+import java.util.List;
+import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/integracions")
+@RequestMapping("/api/integraciones")
 public class IntegracionController {
-    private final IntegracionServicio service;
-    public IntegracionController(IntegracionServicio service) { this.service = service; }
+
+    private final IntegracionService service;
+
+    public IntegracionController(IntegracionService service) {
+        this.service = service;
+    }
 
     @GetMapping
-    public List<Integracion> list() { return service.list(); }
+    public List<IntegracionResponse> list() {
+        return service.list();
+    }
 
     @GetMapping("/{id}")
-    public Integracion get(@PathVariable("id") UUID id) { return service.get(id); }
+    public IntegracionResponse get(@PathVariable UUID id) {
+        return service.get(id);
+    }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Integracion create(@RequestBody Integracion e) { return service.create(e); }
+    public ResponseEntity<IntegracionResponse> create(@RequestBody IntegracionRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(request));
+    }
 
     @PutMapping("/{id}")
-    public Integracion update(@PathVariable("id") UUID id, @RequestBody Integracion e) { return service.update(id, e); }
+    public IntegracionResponse update(@PathVariable UUID id, @RequestBody IntegracionRequest request) {
+        return service.update(id, request);
+    }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable("id") UUID id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
