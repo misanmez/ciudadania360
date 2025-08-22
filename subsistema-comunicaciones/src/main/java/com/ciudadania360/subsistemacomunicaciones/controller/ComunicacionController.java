@@ -1,30 +1,45 @@
 package com.ciudadania360.subsistemacomunicaciones.controller;
 
-import com.ciudadania360.subsistemacomunicaciones.application.service.ComunicacionServicio;
-import com.ciudadania360.subsistemacomunicaciones.domain.entity.Comunicacion;
+import com.ciudadania360.subsistemacomunicaciones.application.dto.comunicacion.ComunicacionRequest;
+import com.ciudadania360.subsistemacomunicaciones.application.dto.comunicacion.ComunicacionResponse;
+import com.ciudadania360.subsistemacomunicaciones.application.service.ComunicacionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.*;
+
+import java.util.List;
+import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/comunicacions")
+@RequestMapping("/api/comunicaciones")
 public class ComunicacionController {
-    private final ComunicacionServicio service;
-    public ComunicacionController(ComunicacionServicio service) { this.service = service; }
+
+    private final ComunicacionService service;
+
+    public ComunicacionController(ComunicacionService service) {
+        this.service = service;
+    }
 
     @GetMapping
-    public List<Comunicacion> list() { return service.list(); }
+    public List<ComunicacionResponse> list() {
+        return service.list();
+    }
 
     @GetMapping("/{id}")
-    public Comunicacion get(@PathVariable("id") UUID id) { return service.get(id); }
+    public ComunicacionResponse get(@PathVariable("id") UUID id) {
+        return service.get(id);
+    }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Comunicacion create(@RequestBody Comunicacion e) { return service.create(e); }
+    public ResponseEntity<ComunicacionResponse> create(@RequestBody ComunicacionRequest request) {
+        ComunicacionResponse created = service.create(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
 
     @PutMapping("/{id}")
-    public Comunicacion update(@PathVariable("id") UUID id, @RequestBody Comunicacion e) { return service.update(id, e); }
+    public ComunicacionResponse update(@PathVariable("id") UUID id, @RequestBody ComunicacionRequest request) {
+        return service.update(id, request);
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") UUID id) {

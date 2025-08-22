@@ -1,7 +1,8 @@
 package com.ciudadania360.subsistemacomunicaciones.controller;
 
-import com.ciudadania360.subsistemacomunicaciones.application.service.SuscripcionServicio;
-import com.ciudadania360.subsistemacomunicaciones.domain.entity.Suscripcion;
+import com.ciudadania360.subsistemacomunicaciones.application.dto.suscripcion.SuscripcionRequest;
+import com.ciudadania360.subsistemacomunicaciones.application.dto.suscripcion.SuscripcionResponse;
+import com.ciudadania360.subsistemacomunicaciones.application.service.SuscripcionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -11,72 +12,60 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.List;
 import java.util.UUID;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class SuscripcionControllerTest {
+class SuscripcionControllerTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
     void listAndCreate() throws Exception {
-        SuscripcionServicio svc = mock(SuscripcionServicio.class);
+        SuscripcionService svc = mock(SuscripcionService.class);
 
-        // Suscripción de ejemplo
-        Suscripcion s = Suscripcion.builder()
+        SuscripcionResponse e = SuscripcionResponse.builder()
                 .id(UUID.randomUUID())
                 .ciudadanoId(UUID.randomUUID())
-                .tema("Suscripción de Ejemplo")
+                .tema("Noticias")
                 .activo(true)
-                .version(0L)
                 .build();
 
-        // Mock del servicio
-        when(svc.list()).thenReturn(List.of(s));
-        when(svc.create(any())).thenReturn(s);
-        when(svc.get(s.getId())).thenReturn(s);
-        when(svc.update(eq(s.getId()), any())).thenReturn(s);
+        when(svc.list()).thenReturn(List.of(e));
+        when(svc.create(any(SuscripcionRequest.class))).thenReturn(e);
+        when(svc.get(e.getId())).thenReturn(e);
+        when(svc.update(eq(e.getId()), any(SuscripcionRequest.class))).thenReturn(e);
 
         SuscripcionController controller = new SuscripcionController(svc);
         MockMvc mvc = MockMvcBuilders.standaloneSetup(controller).build();
 
-        // List
-        mvc.perform(get("/api/suscripcions"))
-                .andExpect(status().isOk());
+        mvc.perform(get("/api/suscripciones")).andExpect(status().isOk());
 
-        // Create
-        Suscripcion newSuscripcion = Suscripcion.builder()
+        SuscripcionRequest newSub = SuscripcionRequest.builder()
                 .ciudadanoId(UUID.randomUUID())
-                .tema("Nueva Suscripción")
-                .activo(false)
-                .build();
-
-        mvc.perform(post("/api/suscripcions")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(newSuscripcion)))
-                .andExpect(status().isCreated());
-
-        // Get by ID
-        mvc.perform(get("/api/suscripcions/" + s.getId()))
-                .andExpect(status().isOk());
-
-        // Update
-        Suscripcion updatedSuscripcion = Suscripcion.builder()
-                .tema("Suscripción Actualizada")
+                .tema("Noticias")
                 .activo(true)
                 .build();
 
-        mvc.perform(put("/api/suscripcions/" + s.getId())
+        mvc.perform(post("/api/suscripciones")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updatedSuscripcion)))
+                        .content(objectMapper.writeValueAsString(newSub)))
+                .andExpect(status().isCreated());
+
+        mvc.perform(get("/api/suscripciones/" + e.getId())).andExpect(status().isOk());
+
+        SuscripcionRequest updatedSub = SuscripcionRequest.builder()
+                .ciudadanoId(UUID.randomUUID())
+                .tema("Promociones")
+                .activo(false)
+                .build();
+
+        mvc.perform(put("/api/suscripciones/" + e.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updatedSub)))
                 .andExpect(status().isOk());
 
-        // Delete
-        mvc.perform(delete("/api/suscripcions/" + s.getId()))
-                .andExpect(status().isNoContent());
+        mvc.perform(delete("/api/suscripciones/" + e.getId())).andExpect(status().isNoContent());
     }
 }

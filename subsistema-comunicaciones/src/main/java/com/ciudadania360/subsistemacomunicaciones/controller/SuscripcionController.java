@@ -1,30 +1,45 @@
 package com.ciudadania360.subsistemacomunicaciones.controller;
 
-import com.ciudadania360.subsistemacomunicaciones.application.service.SuscripcionServicio;
-import com.ciudadania360.subsistemacomunicaciones.domain.entity.Suscripcion;
+import com.ciudadania360.subsistemacomunicaciones.application.dto.suscripcion.SuscripcionRequest;
+import com.ciudadania360.subsistemacomunicaciones.application.dto.suscripcion.SuscripcionResponse;
+import com.ciudadania360.subsistemacomunicaciones.application.service.SuscripcionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.*;
+
+import java.util.List;
+import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/suscripcions")
+@RequestMapping("/api/suscripciones")
 public class SuscripcionController {
-    private final SuscripcionServicio service;
-    public SuscripcionController(SuscripcionServicio service) { this.service = service; }
+
+    private final SuscripcionService service;
+
+    public SuscripcionController(SuscripcionService service) {
+        this.service = service;
+    }
 
     @GetMapping
-    public List<Suscripcion> list() { return service.list(); }
+    public List<SuscripcionResponse> list() {
+        return service.list();
+    }
 
     @GetMapping("/{id}")
-    public Suscripcion get(@PathVariable("id") UUID id) { return service.get(id); }
+    public SuscripcionResponse get(@PathVariable("id") UUID id) {
+        return service.get(id);
+    }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Suscripcion create(@RequestBody Suscripcion e) { return service.create(e); }
+    public ResponseEntity<SuscripcionResponse> create(@RequestBody SuscripcionRequest request) {
+        SuscripcionResponse created = service.create(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
 
     @PutMapping("/{id}")
-    public Suscripcion update(@PathVariable("id") UUID id, @RequestBody Suscripcion e) { return service.update(id, e); }
+    public SuscripcionResponse update(@PathVariable("id") UUID id, @RequestBody SuscripcionRequest request) {
+        return service.update(id, request);
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") UUID id) {

@@ -1,70 +1,66 @@
 package com.ciudadania360.subsistemacomunicaciones.controller;
 
-import com.ciudadania360.subsistemacomunicaciones.application.service.EncuestaServicio;
-import com.ciudadania360.subsistemacomunicaciones.domain.entity.Encuesta;
+import com.ciudadania360.subsistemacomunicaciones.application.dto.encuesta.EncuestaRequest;
+import com.ciudadania360.subsistemacomunicaciones.application.dto.encuesta.EncuestaResponse;
+import com.ciudadania360.subsistemacomunicaciones.application.service.EncuestaService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.Instant;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class EncuestaControllerTest {
+class EncuestaControllerTest {
 
-    private final ObjectMapper objectMapper = new ObjectMapper()
-            .registerModule(new JavaTimeModule())              // permite serializar Instant
-            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // fechas en formato ISO
+    private ObjectMapper objectMapper;
+
+    @BeforeEach
+    void setup() {
+        objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+    }
 
     @Test
     void listAndCreate() throws Exception {
-        EncuestaServicio svc = mock(EncuestaServicio.class);
+        EncuestaService svc = mock(EncuestaService.class);
 
-        // Encuesta de ejemplo
-        Encuesta e = Encuesta.builder()
+        EncuestaResponse e = EncuestaResponse.builder()
                 .id(UUID.randomUUID())
-                .titulo("Encuesta de Satisfacción")
-                .descripcion("Descripción de la encuesta")
-                .preguntas("{}")
-                .estado("Activo")
+                .titulo("Encuesta prueba")
+                .descripcion("Descripción de prueba")
+                .preguntas("{\"1\":\"Sí\"}")
+                .estado("ACTIVA")
                 .audiencia("General")
                 .fechaInicio(Instant.now())
                 .fechaFin(Instant.now().plusSeconds(3600))
                 .vinculadaSolicitudId(UUID.randomUUID())
-                .version(0L)
                 .build();
 
-        // Mock del servicio
         when(svc.list()).thenReturn(List.of(e));
-        when(svc.create(any())).thenReturn(e);
+        when(svc.create(any(EncuestaRequest.class))).thenReturn(e);
         when(svc.get(e.getId())).thenReturn(e);
-        when(svc.update(eq(e.getId()), any())).thenReturn(e);
+        when(svc.update(eq(e.getId()), any(EncuestaRequest.class))).thenReturn(e);
 
         EncuestaController controller = new EncuestaController(svc);
         MockMvc mvc = MockMvcBuilders.standaloneSetup(controller).build();
 
-        // List
-        mvc.perform(get("/api/encuestas"))
-                .andExpect(status().isOk());
+        mvc.perform(get("/api/encuestas")).andExpect(status().isOk());
 
-        // Create
-        Encuesta newEncuesta = Encuesta.builder()
-                .titulo("Encuesta de Satisfacción")
-                .descripcion("Descripción de la encuesta")
-                .preguntas("{}")
-                .estado("Activo")
+        EncuestaRequest newEnc = EncuestaRequest.builder()
+                .titulo("Encuesta prueba")
+                .descripcion("Descripción de prueba")
+                .preguntas("{\"1\":\"Sí\"}")
+                .estado("ACTIVA")
                 .audiencia("General")
                 .fechaInicio(Instant.now())
                 .fechaFin(Instant.now().plusSeconds(3600))
@@ -73,19 +69,16 @@ public class EncuestaControllerTest {
 
         mvc.perform(post("/api/encuestas")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(newEncuesta)))
+                        .content(objectMapper.writeValueAsString(newEnc)))
                 .andExpect(status().isCreated());
 
-        // Get by ID
-        mvc.perform(get("/api/encuestas/" + e.getId()))
-                .andExpect(status().isOk());
+        mvc.perform(get("/api/encuestas/" + e.getId())).andExpect(status().isOk());
 
-        // Update
-        Encuesta updatedEncuesta = Encuesta.builder()
-                .titulo("Encuesta Actualizada")
+        EncuestaRequest updatedEnc = EncuestaRequest.builder()
+                .titulo("Encuesta actualizada")
                 .descripcion("Descripción actualizada")
-                .preguntas("{\"actualizado\":true}")
-                .estado("Inactivo")
+                .preguntas("{\"1\":\"No\"}")
+                .estado("INACTIVA")
                 .audiencia("Privada")
                 .fechaInicio(Instant.now())
                 .fechaFin(Instant.now().plusSeconds(7200))
@@ -94,11 +87,9 @@ public class EncuestaControllerTest {
 
         mvc.perform(put("/api/encuestas/" + e.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updatedEncuesta)))
+                        .content(objectMapper.writeValueAsString(updatedEnc)))
                 .andExpect(status().isOk());
 
-        // Delete
-        mvc.perform(delete("/api/encuestas/" + e.getId()))
-                .andExpect(status().isNoContent());
+        mvc.perform(delete("/api/encuestas/" + e.getId())).andExpect(status().isNoContent());
     }
 }

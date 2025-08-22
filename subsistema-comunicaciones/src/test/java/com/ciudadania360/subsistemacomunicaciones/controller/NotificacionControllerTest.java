@@ -1,10 +1,11 @@
 package com.ciudadania360.subsistemacomunicaciones.controller;
 
-import com.ciudadania360.subsistemacomunicaciones.application.service.NotificacionServicio;
-import com.ciudadania360.subsistemacomunicaciones.domain.entity.Notificacion;
+import com.ciudadania360.subsistemacomunicaciones.application.dto.notificacion.NotificacionRequest;
+import com.ciudadania360.subsistemacomunicaciones.application.dto.notificacion.NotificacionResponse;
+import com.ciudadania360.subsistemacomunicaciones.application.service.NotificacionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -14,89 +15,81 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class NotificacionControllerTest {
+class NotificacionControllerTest {
 
-    private final ObjectMapper objectMapper = new ObjectMapper()
-            .registerModule(new JavaTimeModule())              // permite serializar Instant
-            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // fechas en formato ISO
+    private ObjectMapper objectMapper;
+
+    @BeforeEach
+    void setup() {
+        objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+    }
 
     @Test
     void listAndCreate() throws Exception {
-        NotificacionServicio svc = mock(NotificacionServicio.class);
+        NotificacionService svc = mock(NotificacionService.class);
 
-        // Notificación de ejemplo
-        Notificacion n = Notificacion.builder()
+        NotificacionResponse e = NotificacionResponse.builder()
                 .id(UUID.randomUUID())
                 .ciudadanoId(UUID.randomUUID())
-                .titulo("Notificación de Prueba")
-                .mensaje("Contenido de la notificación")
+                .titulo("Notificación prueba")
+                .mensaje("Mensaje prueba")
                 .canal("Email")
-                .prioridad("Alta")
-                .estado("Pendiente")
-                .referencia("REF-123")
+                .prioridad("ALTA")
+                .estado("PENDIENTE")
+                .referencia("REF123")
                 .fechaEntrega(Instant.now())
-                .version(0L)
                 .build();
 
-        // Mock del servicio
-        when(svc.list()).thenReturn(List.of(n));
-        when(svc.create(any())).thenReturn(n);
-        when(svc.get(n.getId())).thenReturn(n);
-        when(svc.update(eq(n.getId()), any())).thenReturn(n);
+        when(svc.list()).thenReturn(List.of(e));
+        when(svc.create(any(NotificacionRequest.class))).thenReturn(e);
+        when(svc.get(e.getId())).thenReturn(e);
+        when(svc.update(eq(e.getId()), any(NotificacionRequest.class))).thenReturn(e);
 
         NotificacionController controller = new NotificacionController(svc);
         MockMvc mvc = MockMvcBuilders.standaloneSetup(controller).build();
 
-        // List
-        mvc.perform(get("/api/notificacions"))
-                .andExpect(status().isOk());
+        mvc.perform(get("/api/notificaciones")).andExpect(status().isOk());
 
-        // Create
-        Notificacion newNotificacion = Notificacion.builder()
+        NotificacionRequest newNot = NotificacionRequest.builder()
                 .ciudadanoId(UUID.randomUUID())
-                .titulo("Notificación de Prueba")
-                .mensaje("Contenido de la notificación")
+                .titulo("Notificación prueba")
+                .mensaje("Mensaje prueba")
                 .canal("Email")
-                .prioridad("Alta")
-                .estado("Pendiente")
-                .referencia("REF-123")
+                .prioridad("ALTA")
+                .estado("PENDIENTE")
+                .referencia("REF123")
                 .fechaEntrega(Instant.now())
                 .build();
 
-        mvc.perform(post("/api/notificacions")
+        mvc.perform(post("/api/notificaciones")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(newNotificacion)))
+                        .content(objectMapper.writeValueAsString(newNot)))
                 .andExpect(status().isCreated());
 
-        // Get by ID
-        mvc.perform(get("/api/notificacions/" + n.getId()))
-                .andExpect(status().isOk());
+        mvc.perform(get("/api/notificaciones/" + e.getId())).andExpect(status().isOk());
 
-        // Update
-        Notificacion updatedNotificacion = Notificacion.builder()
-                .titulo("Notificación Actualizada")
-                .mensaje("Contenido actualizado")
+        NotificacionRequest updatedNot = NotificacionRequest.builder()
+                .ciudadanoId(UUID.randomUUID())
+                .titulo("Notificación actualizada")
+                .mensaje("Mensaje actualizado")
                 .canal("SMS")
-                .prioridad("Baja")
-                .estado("Enviado")
-                .referencia("REF-456")
-                .fechaEntrega(Instant.now().plusSeconds(3600))
+                .prioridad("MEDIA")
+                .estado("ENVIADO")
+                .referencia("REF456")
+                .fechaEntrega(Instant.now())
                 .build();
 
-        mvc.perform(put("/api/notificacions/" + n.getId())
+        mvc.perform(put("/api/notificaciones/" + e.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updatedNotificacion)))
+                        .content(objectMapper.writeValueAsString(updatedNot)))
                 .andExpect(status().isOk());
 
-        // Delete
-        mvc.perform(delete("/api/notificacions/" + n.getId()))
-                .andExpect(status().isNoContent());
+        mvc.perform(delete("/api/notificaciones/" + e.getId())).andExpect(status().isNoContent());
     }
 }

@@ -1,10 +1,11 @@
 package com.ciudadania360.subsistemacomunicaciones.controller;
 
-import com.ciudadania360.subsistemacomunicaciones.application.service.RespuestaEncuestaServicio;
-import com.ciudadania360.subsistemacomunicaciones.domain.entity.RespuestaEncuesta;
+import com.ciudadania360.subsistemacomunicaciones.application.dto.respuestaencuesta.RespuestaEncuestaRequest;
+import com.ciudadania360.subsistemacomunicaciones.application.dto.respuestaencuesta.RespuestaEncuestaResponse;
+import com.ciudadania360.subsistemacomunicaciones.application.service.RespuestaEncuestaService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -14,82 +15,75 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class RespuestaEncuestaControllerTest {
+class RespuestaEncuestaControllerTest {
 
-    private final ObjectMapper objectMapper = new ObjectMapper()
-            .registerModule(new JavaTimeModule())              // permite serializar Instant
-            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // fechas en formato ISO
+    private ObjectMapper objectMapper;
+
+    @BeforeEach
+    void setup() {
+        objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+    }
 
     @Test
     void listAndCreate() throws Exception {
-        RespuestaEncuestaServicio svc = mock(RespuestaEncuestaServicio.class);
+        RespuestaEncuestaService svc = mock(RespuestaEncuestaService.class);
 
-        // Respuesta de encuesta de ejemplo
-        RespuestaEncuesta r = RespuestaEncuesta.builder()
+        RespuestaEncuestaResponse e = RespuestaEncuestaResponse.builder()
                 .id(UUID.randomUUID())
                 .encuestaId(UUID.randomUUID())
                 .ciudadanoId(UUID.randomUUID())
-                .respuestas("{\"pregunta1\": \"Sí\"}")
-                .puntuacion(5)
-                .comentarios("Muy buena encuesta")
+                .respuestas("{\"1\":\"Sí\"}")
+                .puntuacion(10)
+                .comentarios("Comentario de prueba")
                 .fecha(Instant.now())
-                .version(0L)
                 .build();
 
-        // Mock del servicio
-        when(svc.list()).thenReturn(List.of(r));
-        when(svc.create(any())).thenReturn(r);
-        when(svc.get(r.getId())).thenReturn(r);
-        when(svc.update(eq(r.getId()), any())).thenReturn(r);
+        when(svc.list()).thenReturn(List.of(e));
+        when(svc.create(any(RespuestaEncuestaRequest.class))).thenReturn(e);
+        when(svc.get(e.getId())).thenReturn(e);
+        when(svc.update(eq(e.getId()), any(RespuestaEncuestaRequest.class))).thenReturn(e);
 
         RespuestaEncuestaController controller = new RespuestaEncuestaController(svc);
         MockMvc mvc = MockMvcBuilders.standaloneSetup(controller).build();
 
-        // List
-        mvc.perform(get("/api/respuestaencuestas"))
-                .andExpect(status().isOk());
+        mvc.perform(get("/api/respuestas-encuestas")).andExpect(status().isOk());
 
-        // Create
-        RespuestaEncuesta newRespuesta = RespuestaEncuesta.builder()
+        RespuestaEncuestaRequest newResp = RespuestaEncuestaRequest.builder()
                 .encuestaId(UUID.randomUUID())
                 .ciudadanoId(UUID.randomUUID())
-                .respuestas("{\"pregunta1\": \"No\"}")
-                .puntuacion(3)
-                .comentarios("Aceptable")
+                .respuestas("{\"1\":\"Sí\"}")
+                .puntuacion(10)
+                .comentarios("Comentario de prueba")
                 .fecha(Instant.now())
                 .build();
 
-        mvc.perform(post("/api/respuestaencuestas")
+        mvc.perform(post("/api/respuestas-encuestas")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(newRespuesta)))
+                        .content(objectMapper.writeValueAsString(newResp)))
                 .andExpect(status().isCreated());
 
-        // Get by ID
-        mvc.perform(get("/api/respuestaencuestas/" + r.getId()))
-                .andExpect(status().isOk());
+        mvc.perform(get("/api/respuestas-encuestas/" + e.getId())).andExpect(status().isOk());
 
-        // Update
-        RespuestaEncuesta updatedRespuesta = RespuestaEncuesta.builder()
-                .respuestas("{\"pregunta1\": \"Sí, totalmente\"}")
+        RespuestaEncuestaRequest updatedResp = RespuestaEncuestaRequest.builder()
+                .encuestaId(UUID.randomUUID())
+                .ciudadanoId(UUID.randomUUID())
+                .respuestas("{\"1\":\"No\"}")
                 .puntuacion(5)
-                .comentarios("Excelente encuesta")
-                .fecha(Instant.now().plusSeconds(3600))
+                .comentarios("Actualizado")
+                .fecha(Instant.now())
                 .build();
 
-        mvc.perform(put("/api/respuestaencuestas/" + r.getId())
+        mvc.perform(put("/api/respuestas-encuestas/" + e.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updatedRespuesta)))
+                        .content(objectMapper.writeValueAsString(updatedResp)))
                 .andExpect(status().isOk());
 
-        // Delete
-        mvc.perform(delete("/api/respuestaencuestas/" + r.getId()))
-                .andExpect(status().isNoContent());
+        mvc.perform(delete("/api/respuestas-encuestas/" + e.getId())).andExpect(status().isNoContent());
     }
 }
