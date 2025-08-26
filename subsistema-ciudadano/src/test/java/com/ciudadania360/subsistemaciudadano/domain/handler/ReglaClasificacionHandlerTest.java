@@ -1,7 +1,7 @@
 package com.ciudadania360.subsistemaciudadano.domain.handler;
 
 import com.ciudadania360.subsistemaciudadano.domain.entity.ReglaClasificacion;
-import com.ciudadania360.subsistemaciudadano.domain.repository.ReglaClasificacionRepositorio;
+import com.ciudadania360.subsistemaciudadano.domain.repository.ReglaClasificacionRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 class ReglaClasificacionHandlerTest {
 
     @Mock
-    private ReglaClasificacionRepositorio repo;
+    private ReglaClasificacionRepository repo;
 
     @InjectMocks
     private ReglaClasificacionHandler handler;

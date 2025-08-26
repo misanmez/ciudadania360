@@ -34,6 +34,7 @@ public class DireccionService {
 
     public DireccionResponse create(DireccionRequest request) {
         Direccion entity = mapper.toEntity(request);
+        entity.setId(UUID.randomUUID());
         Direccion created = handler.create(entity);
         return mapper.toResponse(created);
     }

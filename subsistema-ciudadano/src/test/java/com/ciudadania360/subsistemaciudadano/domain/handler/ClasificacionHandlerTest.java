@@ -1,7 +1,7 @@
 package com.ciudadania360.subsistemaciudadano.domain.handler;
 
 import com.ciudadania360.subsistemaciudadano.domain.entity.Clasificacion;
-import com.ciudadania360.subsistemaciudadano.domain.repository.ClasificacionRepositorio;
+import com.ciudadania360.subsistemaciudadano.domain.repository.ClasificacionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 class ClasificacionHandlerTest {
 
     @Mock
-    private ClasificacionRepositorio repository; // Suponiendo que tu handler usa un repositorio
+    private ClasificacionRepository repository; // Suponiendo que tu handler usa un repositorio
 
     @InjectMocks
     private ClasificacionHandler handler;

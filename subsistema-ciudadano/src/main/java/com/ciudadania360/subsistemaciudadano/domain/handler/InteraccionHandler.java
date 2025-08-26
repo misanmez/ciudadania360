@@ -1,16 +1,16 @@
 package com.ciudadania360.subsistemaciudadano.domain.handler;
 
 import com.ciudadania360.subsistemaciudadano.domain.entity.Interaccion;
-import com.ciudadania360.subsistemaciudadano.domain.repository.InteraccionRepositorio;
+import com.ciudadania360.subsistemaciudadano.domain.repository.InteraccionRepository;
 import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.UUID;
 
 @Component
 public class InteraccionHandler {
-    private final InteraccionRepositorio repositorio;
+    private final InteraccionRepository repositorio;
 
-    public InteraccionHandler(InteraccionRepositorio repositorio) {
+    public InteraccionHandler(InteraccionRepository repositorio) {
         this.repositorio = repositorio;
     }
 

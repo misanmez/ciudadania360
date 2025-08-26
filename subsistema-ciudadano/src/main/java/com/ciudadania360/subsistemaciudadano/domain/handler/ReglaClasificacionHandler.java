@@ -1,16 +1,16 @@
 package com.ciudadania360.subsistemaciudadano.domain.handler;
 
 import com.ciudadania360.subsistemaciudadano.domain.entity.ReglaClasificacion;
-import com.ciudadania360.subsistemaciudadano.domain.repository.ReglaClasificacionRepositorio;
+import com.ciudadania360.subsistemaciudadano.domain.repository.ReglaClasificacionRepository;
 import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.UUID;
 
 @Component
 public class ReglaClasificacionHandler {
-    private final ReglaClasificacionRepositorio repositorio;
+    private final ReglaClasificacionRepository repositorio;
 
-    public ReglaClasificacionHandler(ReglaClasificacionRepositorio repositorio) {
+    public ReglaClasificacionHandler(ReglaClasificacionRepository repositorio) {
         this.repositorio = repositorio;
     }
 

@@ -1,16 +1,16 @@
 package com.ciudadania360.subsistemaciudadano.domain.handler;
 
 import com.ciudadania360.subsistemaciudadano.domain.entity.Ubicacion;
-import com.ciudadania360.subsistemaciudadano.domain.repository.UbicacionRepositorio;
+import com.ciudadania360.subsistemaciudadano.domain.repository.UbicacionRepository;
 import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.UUID;
 
 @Component
 public class UbicacionHandler {
-    private final UbicacionRepositorio repositorio;
+    private final UbicacionRepository repositorio;
 
-    public UbicacionHandler(UbicacionRepositorio repositorio) {
+    public UbicacionHandler(UbicacionRepository repositorio) {
         this.repositorio = repositorio;
     }
 

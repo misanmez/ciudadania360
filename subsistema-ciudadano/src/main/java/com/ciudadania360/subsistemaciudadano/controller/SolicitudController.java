@@ -1,7 +1,6 @@
 package com.ciudadania360.subsistemaciudadano.controller;
 
-import com.ciudadania360.subsistemaciudadano.application.dto.solicitud.SolicitudRequest;
-import com.ciudadania360.subsistemaciudadano.application.dto.solicitud.SolicitudResponse;
+import com.ciudadania360.subsistemaciudadano.application.dto.solicitud.*;
 import com.ciudadania360.subsistemaciudadano.application.service.SolicitudService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,5 +44,30 @@ public class SolicitudController {
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/transition")
+    public SolicitudResponse transition(@PathVariable UUID id, @RequestBody SolicitudTransitionRequest req) {
+        return service.transition(id, req.getNuevoEstado());
+    }
+
+    @PostMapping("/{id}/recalculate-sla")
+    public SolicitudResponse recalcSla(@PathVariable UUID id) {
+        return service.recalculateSla(id);
+    }
+
+    @PostMapping("/{id}/assign")
+    public SolicitudResponse assign(@PathVariable UUID id, @RequestBody SolicitudAssignRequest req) {
+        return service.assign(id, req.getAgenteId());
+    }
+
+    @PostMapping("/search")
+    public List<SolicitudResponse> search(@RequestBody SolicitudSearchFilter filter) {
+        return service.search(filter);
+    }
+
+    @PostMapping("/{id}/classify-auto")
+    public SolicitudResponse classifyAuto(@PathVariable UUID id) {
+        return service.classifyAuto(id);
     }
 }

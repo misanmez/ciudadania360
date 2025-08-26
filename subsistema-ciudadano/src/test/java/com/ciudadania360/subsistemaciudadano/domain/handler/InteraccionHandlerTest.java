@@ -3,7 +3,7 @@ package com.ciudadania360.subsistemaciudadano.domain.handler;
 import com.ciudadania360.subsistemaciudadano.domain.entity.Ciudadano;
 import com.ciudadania360.subsistemaciudadano.domain.entity.Interaccion;
 import com.ciudadania360.subsistemaciudadano.domain.entity.Solicitud;
-import com.ciudadania360.subsistemaciudadano.domain.repository.InteraccionRepositorio;
+import com.ciudadania360.subsistemaciudadano.domain.repository.InteraccionRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 class InteraccionHandlerTest {
 
     @Mock
-    private InteraccionRepositorio repo;
+    private InteraccionRepository repo;
 
     @InjectMocks
     private InteraccionHandler handler;

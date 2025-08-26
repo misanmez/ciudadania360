@@ -1,8 +1,7 @@
 package com.ciudadania360.subsistemaciudadano.domain.repository;
 
+import com.ciudadania360.subsistemaciudadano.domain.entity.Direccion;
 import org.springframework.data.jpa.repository.JpaRepository;
-import com.ciudadania360.subsistemaciudadano.domain.entity.Ubicacion;
 import java.util.UUID;
 
-public interface UbicacionRepositorio extends JpaRepository<Ubicacion, UUID> {
-}
+public interface DireccionRepository extends JpaRepository<Direccion, UUID> {}

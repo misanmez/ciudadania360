@@ -4,10 +4,7 @@ import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.*;
 import java.util.UUID;
-import lombok.*;
-
 import lombok.*;
 
 @Entity
@@ -54,6 +51,8 @@ public class Solicitud {
     private String referenciaExterna;
     @Column(columnDefinition = "jsonb")
     private String metadata;
+
+    private String agenteAsignado;    // quién lleva la solicitud
 
     @Version
     private Long version;

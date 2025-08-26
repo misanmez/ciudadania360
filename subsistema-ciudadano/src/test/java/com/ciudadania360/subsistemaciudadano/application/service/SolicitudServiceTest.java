@@ -3,8 +3,10 @@ package com.ciudadania360.subsistemaciudadano.application.service;
 import com.ciudadania360.subsistemaciudadano.application.dto.solicitud.SolicitudRequest;
 import com.ciudadania360.subsistemaciudadano.application.dto.solicitud.SolicitudResponse;
 import com.ciudadania360.subsistemaciudadano.application.mapper.SolicitudMapper;
+import com.ciudadania360.subsistemaciudadano.domain.entity.Clasificacion;
 import com.ciudadania360.subsistemaciudadano.domain.entity.Solicitud;
 import com.ciudadania360.subsistemaciudadano.domain.handler.SolicitudHandler;
+import com.ciudadania360.subsistemaciudadano.application.dto.solicitud.SolicitudSearchFilter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
@@ -21,14 +23,9 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class SolicitudServiceTest {
 
-    @Mock
-    private SolicitudHandler handler;
-
-    @Mock
-    private SolicitudMapper mapper;
-
-    @InjectMocks
-    private SolicitudService svc;
+    @Mock private SolicitudHandler handler;
+    @Mock private SolicitudMapper mapper;
+    @InjectMocks private SolicitudService svc;
 
     private Solicitud buildSolicitud() {
         UUID id = UUID.fromString("00000000-0000-0000-0000-000000000001");
@@ -96,8 +93,8 @@ class SolicitudServiceTest {
         );
     }
 
-    @Test
-    void getAllDelegatesToHandler() {
+    // --- TESTS ORIGINALES ---
+    @Test void getAllDelegatesToHandler() {
         Solicitud s = buildSolicitud();
         SolicitudResponse expectedResponse = toResponse(s);
 
@@ -111,8 +108,7 @@ class SolicitudServiceTest {
         verify(mapper).toResponse(s);
     }
 
-    @Test
-    void getByIdDelegatesToHandler() {
+    @Test void getByIdDelegatesToHandler() {
         Solicitud s = buildSolicitud();
         SolicitudResponse expectedResponse = toResponse(s);
 
@@ -126,8 +122,7 @@ class SolicitudServiceTest {
         verify(mapper).toResponse(s);
     }
 
-    @Test
-    void createDelegatesToHandler() {
+    @Test void createDelegatesToHandler() {
         Solicitud s = buildSolicitud();
         SolicitudRequest request = toRequest(s);
         SolicitudResponse expectedResponse = toResponse(s);
@@ -144,8 +139,7 @@ class SolicitudServiceTest {
         verify(mapper).toResponse(s);
     }
 
-    @Test
-    void updateDelegatesToHandler() {
+    @Test void updateDelegatesToHandler() {
         Solicitud s = buildSolicitud();
         SolicitudRequest request = toRequest(s);
         SolicitudResponse expectedResponse = toResponse(s);
@@ -164,14 +158,113 @@ class SolicitudServiceTest {
         verify(mapper).toResponse(s);
     }
 
-    @Test
-    void deleteDelegatesToHandler() {
+    @Test void deleteDelegatesToHandler() {
         UUID id = UUID.fromString("00000000-0000-0000-0000-000000000002");
-
         doNothing().when(handler).delete(id);
         svc.delete(id);
 
         verify(handler).delete(id);
         verifyNoInteractions(mapper);
+    }
+
+    // --- NUEVOS TESTS ---
+    @Test
+    void transitionUpdatesEstadoAndFechaCierre() {
+        Solicitud s = buildSolicitud();
+        SolicitudResponse expectedResponse = toResponse(s);
+
+        when(handler.get(s.getId())).thenReturn(s);
+        when(handler.update(s.getId(), s)).thenReturn(s);
+        when(mapper.toResponse(s)).thenReturn(expectedResponse);
+
+        SolicitudResponse result = svc.transition(s.getId(), "CERRADA");
+
+        assertThat(result).isEqualTo(expectedResponse);
+        assertThat(s.getEstado()).isEqualTo("CERRADA");
+        assertThat(s.getFechaCierre()).isNotNull();
+
+        verify(handler).get(s.getId());
+        verify(handler).update(s.getId(), s);
+        verify(mapper).toResponse(s);
+    }
+
+    @Test
+    void recalculateSlaUpdatesFechaLimiteSLA() {
+        Solicitud s = buildSolicitud();
+        SolicitudResponse expectedResponse = toResponse(s);
+
+        when(handler.get(s.getId())).thenReturn(s);
+        when(handler.update(s.getId(), s)).thenReturn(s);
+        when(mapper.toResponse(s)).thenReturn(expectedResponse);
+
+        SolicitudResponse result = svc.recalculateSla(s.getId());
+
+        assertThat(result).isEqualTo(expectedResponse);
+        assertThat(s.getFechaLimiteSLA()).isEqualTo(s.getFechaRegistro().plusSeconds(48 * 3600));
+
+        verify(handler).get(s.getId());
+        verify(handler).update(s.getId(), s);
+        verify(mapper).toResponse(s);
+    }
+
+    @Test
+    void assignUpdatesAgenteAsignado() {
+        Solicitud s = buildSolicitud();
+        SolicitudResponse expectedResponse = toResponse(s);
+        String agenteId = "AGENTE123";
+
+        when(handler.get(s.getId())).thenReturn(s);
+        when(handler.update(s.getId(), s)).thenReturn(s);
+        when(mapper.toResponse(s)).thenReturn(expectedResponse);
+
+        SolicitudResponse result = svc.assign(s.getId(), agenteId);
+
+        assertThat(result).isEqualTo(expectedResponse);
+        assertThat(s.getAgenteAsignado()).isEqualTo(agenteId);
+
+        verify(handler).get(s.getId());
+        verify(handler).update(s.getId(), s);
+        verify(mapper).toResponse(s);
+    }
+
+    @Test
+    void searchDelegatesToHandler() {
+        Solicitud s = buildSolicitud();
+        SolicitudResponse expectedResponse = toResponse(s);
+        SolicitudSearchFilter filter = new SolicitudSearchFilter();
+
+        when(handler.search(filter)).thenReturn(List.of(s));
+        when(mapper.toResponse(s)).thenReturn(expectedResponse);
+
+        List<SolicitudResponse> result = svc.search(filter);
+
+        assertThat(result).containsExactly(expectedResponse);
+        verify(handler).search(filter);
+        verify(mapper).toResponse(s);
+    }
+
+    @Test
+    void classifyAutoAssignsDefaultClasificacionIfNull() {
+        Solicitud s = buildSolicitud();
+        s.setClasificacion(null);
+        SolicitudResponse expectedResponse = toResponse(s);
+
+        when(handler.get(s.getId())).thenReturn(s);
+        when(handler.getDefaultClasificacion()).thenReturn(
+                new Clasificacion() {{ setId(UUID.randomUUID()); setNombre("GENERICA"); }}
+        );
+        when(handler.update(s.getId(), s)).thenReturn(s);
+        when(mapper.toResponse(s)).thenReturn(expectedResponse);
+
+        SolicitudResponse result = svc.classifyAuto(s.getId());
+
+        assertThat(result).isEqualTo(expectedResponse);
+        assertThat(s.getClasificacion()).isNotNull();
+        assertThat(s.getClasificacion().getNombre()).isEqualTo("GENERICA");
+
+        verify(handler).get(s.getId());
+        verify(handler).getDefaultClasificacion();
+        verify(handler).update(s.getId(), s);
+        verify(mapper).toResponse(s);
     }
 }
