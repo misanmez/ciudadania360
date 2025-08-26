@@ -1,9 +1,0 @@
-com\ciudadania360\gestionrolespermisos\controller\PermisoControllerTest.class
-com\ciudadania360\gestionrolespermisos\controller\RolControllerTest.class
-com\ciudadania360\gestionrolespermisos\domain\handler\RolHandlerTest.class
-com\ciudadania360\gestionrolespermisos\controller\UsuarioRolControllerTest.class
-com\ciudadania360\gestionrolespermisos\domain\handler\PermisoHandlerTest.class
-com\ciudadania360\gestionrolespermisos\application\service\UsuarioRolServiceTest.class
-com\ciudadania360\gestionrolespermisos\application\service\PermisoServiceTest.class
-com\ciudadania360\gestionrolespermisos\application\service\RolServiceTest.class
-com\ciudadania360\gestionrolespermisos\domain\handler\UsuarioRolHandlerTest.class
