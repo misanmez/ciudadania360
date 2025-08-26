@@ -1,15 +1,17 @@
-# Compiled class file
+# Compiled class files
 *.class
 
 # Maven
-*/target/
 target/
 !.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
 
-# Log file
+# Logs
 *.log
+jacoco.exec
+
+# Coverage / Reports
+/coverage/
+/site/
 
 # BlueJ files
 *.ctxt
@@ -17,7 +19,7 @@ target/
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
-# Package Files #
+# Package archives
 *.jar
 *.war
 *.nar
@@ -26,20 +28,20 @@ target/
 *.tar.gz
 *.rar
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+# VM crash logs
 hs_err_pid*
 
-### STS ###
+### Eclipse / STS ###
 .apt_generated
 .classpath
 .factorypath
 .project
-.settings
+.settings/
 .springBeans
 .sts4-cache
 
 ### IntelliJ IDEA ###
-.idea
+.idea/
 *.iws
 *.iml
 *.ipr
@@ -51,11 +53,23 @@ hs_err_pid*
 /nbdist/
 /.nb-gradle/
 build/
-!**/src/main/**/build/
-!**/src/test/**/build/
 
 ### VS Code ###
 .vscode/
 
+# OS generated files
 .DS_Store
-jacoco.exec
+Thumbs.db
+ehthumbs.db
+
+# Vim / Nano swap
+*.swp
+*.swo
+
+# Docker
+*.pid
+.docker/
+
+# Local Spring Boot configs (opcionales, si los usas)
+application-local.yml
+application-*.local.yml
