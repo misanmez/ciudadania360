@@ -13,8 +13,8 @@ import java.util.UUID;
 public interface InteraccionMapper {
 
     // Request -> Entity
-    @Mapping(target = "solicitud", source = "solicitudId")
-    @Mapping(target = "ciudadano", source = "ciudadanoId")
+    @Mapping(target = "solicitud", source = "solicitudId", qualifiedByName = "mapSolicitud")
+    @Mapping(target = "ciudadano", source = "ciudadanoId", qualifiedByName = "mapCiudadano")
     Interaccion toEntity(InteraccionRequest request);
 
     // Entity -> Response
@@ -24,11 +24,12 @@ public interface InteraccionMapper {
 
     // Update parcial (ignora nulls)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(target = "solicitud", source = "solicitudId")
-    @Mapping(target = "ciudadano", source = "ciudadanoId")
+    @Mapping(target = "solicitud", source = "solicitudId", qualifiedByName = "mapSolicitud")
+    @Mapping(target = "ciudadano", source = "ciudadanoId", qualifiedByName = "mapCiudadano")
     void updateEntity(@MappingTarget Interaccion existing, InteraccionRequest request);
 
     /* ==== Helpers para mapear UUID <-> Entidades ==== */
+    @Named("mapSolicitud")
     default Solicitud map(UUID id) {
         if (id == null) return null;
         Solicitud s = new Solicitud();
@@ -36,12 +37,13 @@ public interface InteraccionMapper {
         return s;
     }
 
+    @Named("mapCiudadano")
     default Ciudadano mapCiudadano(UUID id) {
         if (id == null) return null;
         Ciudadano c = new Ciudadano();
         c.setId(id);
         return c;
     }
-
 }
+
 

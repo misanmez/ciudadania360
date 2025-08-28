@@ -7,7 +7,7 @@ spring:
     password: Aqmdla04
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     show-sql: true
     properties:
       hibernate:
@@ -18,6 +18,10 @@ spring:
     schemas: ciudadano
     default_schema: ciudadano
     locations: classpath:db/migration
+    baseline-on-migrate: false
+    validate-on-migrate: true
+    clean-disabled: false
+    clean-on-validation-error: true
   security:
     oauth2:
       resourceserver:

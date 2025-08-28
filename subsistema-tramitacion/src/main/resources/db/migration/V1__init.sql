@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS tramitacion.carpeta (
   descripcion varchar(255),
   tipo varchar(255),
   ruta varchar(255),
-  permisos text,
+  permisos jsonb,
   numero_expediente varchar(255),
   estado varchar(255),
   version bigint
@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS tramitacion.documento (
   fecha_subida timestamp,
   origen varchar(255),
   firmado boolean,
-  metadatos text,
+  metadatos jsonb,
   version bigint
 );
 
@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS tramitacion.flujo (
   activo boolean,
   tipo varchar(255),
   sla_horas integer,
-  pasos_definition text,
+  pasos_definition jsonb,
   version bigint
 );
 
@@ -78,7 +78,7 @@ CREATE TABLE IF NOT EXISTS tramitacion.proceso_bpm (
   estado varchar(255),
   inicio timestamp,
   fin timestamp,
-  variables text,
+  variables jsonb,
   iniciador varchar(255),
   version bigint
 );
@@ -93,7 +93,7 @@ CREATE TABLE IF NOT EXISTS tramitacion.tarea_bpm (
   candidate_group varchar(255),
   dueDate timestamp,
   priority integer,
-  variables text,
+  variables jsonb,
   created timestamp,
   completed timestamp,
   version bigint

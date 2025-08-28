@@ -12,7 +12,7 @@ import java.util.*;
 public class IncidenciaContrata {
   @Id
   private UUID id;
-  private java.util.UUID contrataId;
+  private UUID contrataId;
   private String descripcion;
   private String estado;
 

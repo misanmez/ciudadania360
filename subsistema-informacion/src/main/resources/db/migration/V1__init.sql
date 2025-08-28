@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS informacion.dataset (
   nombre varchar(255),
   descripcion text,
   fuente varchar(255),
-  esquema text,
+  esquema jsonb,
   periodicidad varchar(255),
   licencia varchar(255),
   urlPortalDatos varchar(255),
