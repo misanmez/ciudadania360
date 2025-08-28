@@ -2,10 +2,8 @@ package com.ciudadania360.subsistemaciudadano.domain.entity;
 
 import jakarta.persistence.*;
 import java.util.*;
-import java.util.UUID;
 import lombok.*;
 
-import lombok.*;
 
 @Entity
 @Table(name = "ciudadano", schema = "ciudadano")

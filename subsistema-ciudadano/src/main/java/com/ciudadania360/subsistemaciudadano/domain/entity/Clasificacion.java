@@ -5,7 +5,6 @@ import java.util.*;
 import java.util.UUID;
 import lombok.*;
 
-import lombok.*;
 
 @Entity
 @Table(name = "clasificacion", schema = "ciudadano")

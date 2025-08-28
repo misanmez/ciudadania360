@@ -2,10 +2,7 @@ package com.ciudadania360.subsistemavideoconferencia.domain.entity;
 
 import jakarta.persistence.*;
 import java.time.Instant;
-import java.util.*;
 import java.util.UUID;
-import lombok.*;
-
 import lombok.*;
 
 @Entity
