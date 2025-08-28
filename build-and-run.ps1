@@ -151,4 +151,3 @@ switch ($Mode) {
 
 Write-Host ""
 Write-Host "🎉 ¡Proceso completado!" -ForegroundColor Green
-
