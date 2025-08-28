@@ -1,0 +1,19 @@
+server:
+  port: 8090
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://auth.local/realms/ciudadania360
+ia:
+  base-url: https://api.openai.com/v1
+  api-key: ${OPENAI_API_KEY:}
+  chat-model: gpt-4o-mini
+  embeddings-model: text-embedding-3-small
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
