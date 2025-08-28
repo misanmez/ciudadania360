@@ -1,0 +1,18 @@
+server:
+  port: 8090
+
+spring:
+  application:
+    name: subsistema-ia
+
+ia:
+  provider-base-url: ${IA_BASE_URL:https://api.openai.com}
+  api-key: ${IA_API_KEY:change-me}
+  model: ${IA_MODEL:gpt-4o-mini}
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
+

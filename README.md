@@ -77,6 +77,7 @@ mvn verify -Pintegration
 | subsistema-analitica           | 8087   | [Swagger](http://localhost:8087/swagger-ui.html) |
 | subsistema-informacion         | 8088   | [Swagger](http://localhost:8088/swagger-ui.html) |
 | gestion-roles-permisos         | 8089   | [Swagger](http://localhost:8089/swagger-ui.html) |
+| subsistema-ia                  | 8090   | [Swagger](http://localhost:8090/swagger-ui.html) |
 
 ---
 
@@ -90,3 +91,30 @@ mvn verify -Pintegration
 - **subsistema-analitica** → Métricas, cuadros de mando y analítica de uso.
 - **subsistema-informacion** → Gestión de datasets, sugerencias y fuentes de datos externas.
 - **gestion-roles-permisos** → Seguridad, control de accesos y perfiles de usuario.
+- **subsistema-ia** → Integración de modelos de lenguaje (LLM) mediante un endpoint REST.
+
+---
+
+## Subsistema IA
+
+### Arranque
+
+```bash
+mvn spring-boot:run -pl subsistema-ia \
+  -Dspring-boot.run.jvmArguments="-DIA_API_KEY=$IA_API_KEY -DIA_BASE_URL=${IA_BASE_URL:-https://api.openai.com} -DIA_MODEL=${IA_MODEL:-gpt-4o-mini}"
+```
+
+Variables de entorno admitidas:
+
+- `IA_API_KEY` (obligatoria): clave del proveedor LLM.
+- `IA_BASE_URL` (opcional): por defecto `https://api.openai.com`.
+- `IA_MODEL` (opcional): por defecto `gpt-4o-mini`.
+
+Endpoint principal:
+
+```bash
+curl -s http://localhost:8090/api/v1/ia/chat \
+  -H 'Content-Type: application/json' \
+  -d '{"prompt":"Escribe un resumen de Ciudadano 360"}'
+```
+
