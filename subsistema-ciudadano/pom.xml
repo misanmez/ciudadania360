@@ -27,6 +27,13 @@
       <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
     </dependency>
 
+    <!-- Hibernate Spatial + PostGIS -->
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-spatial</artifactId>
+      <version>6.5.2.Final</version>
+    </dependency>
+
     <!-- OpenAPI docs -->
     <dependency>
       <groupId>org.springdoc</groupId>

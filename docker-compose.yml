@@ -21,6 +21,33 @@ services:
       timeout: 10s
       retries: 5
 
+  # Subsistema Ciudadanía360 (Agregador principal)
+  ciudadania360:
+    build: ./ciudadania360
+    container_name: ciudadania360
+    ports:
+      - "8080:8080"   # Puerto único para acceder al agregador
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+      postgres:
+        condition: service_healthy
+      subsistema-ciudadano:
+        condition: service_started
+      subsistema-tramitacion:
+        condition: service_started
+      subsistema-comunicaciones:
+        condition: service_started
+      subsistema-videoconferencia:
+        condition: service_started
+      subsistema-informacion:
+        condition: service_started
+      gestion-roles-permisos:
+        condition: service_started
+      subsistema-ia:
+        condition: service_started
+    restart: unless-stopped
+
   # Subsistema Ciudadano
   subsistema-ciudadano:
     build: ./subsistema-ciudadano

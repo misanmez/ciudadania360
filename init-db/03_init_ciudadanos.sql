@@ -41,8 +41,8 @@ CREATE TABLE ciudadano.ubicacion (
   municipio varchar(120),
   provincia varchar(120),
   cp varchar(10),
-  lat numeric(10,8),
-  lon numeric(11,8),
+  lat float(53),
+  lon float(53),
   precision integer,
   fuente varchar(50),
   version bigint DEFAULT 0
@@ -70,6 +70,7 @@ CREATE TABLE ciudadano.solicitud (
   encuesta_enviada boolean DEFAULT false,
   referencia_externa varchar(255),
   metadata jsonb,
+  agente_asignado varchar(255),
   version bigint DEFAULT 0,
   CONSTRAINT fk_solicitud_ciudadano FOREIGN KEY(ciudadano_id) REFERENCES ciudadano.ciudadano(id),
   CONSTRAINT fk_solicitud_clasificacion FOREIGN KEY(clasificacion_id) REFERENCES ciudadano.clasificacion(id),
@@ -144,16 +145,3 @@ CREATE INDEX idx_interaccion_solicitud_id ON ciudadano.interaccion(solicitud_id)
 CREATE INDEX idx_interaccion_fecha ON ciudadano.interaccion(fecha);
 CREATE INDEX idx_ciudadano_nif_nie ON ciudadano.ciudadano(nif_nie);
 CREATE INDEX idx_ciudadano_email ON ciudadano.ciudadano(email);
-
--- Datos de prueba
-INSERT INTO ciudadano.ciudadano (id, nif_nie, nombre, apellidos, email, estado, consentimiento_lopd) 
-VALUES ('7cfaf1e8-b41d-4599-8014-26fdec12406a','X1234567A','Juan','Perez','juan@example.com','ACTIVO', true) 
-ON CONFLICT (id) DO NOTHING;
-
-INSERT INTO ciudadano.clasificacion (id, codigo, nombre, tipo) 
-VALUES ('b0880483-36d2-4047-8f6a-b51d195c64d0','GEN','General','CATEGORIA') 
-ON CONFLICT (id) DO NOTHING;
-
-INSERT INTO ciudadano.solicitud (id, ciudadano_id, titulo, descripcion, estado, tipo, canal_entrada) 
-VALUES ('4ea4540a-e1ed-4f08-ae78-2b8063401c89','7cfaf1e8-b41d-4599-8014-26fdec12406a','Incidencia ejemplo','Descripción de prueba','REGISTRADA','INCIDENCIA','WEB') 
-ON CONFLICT (id) DO NOTHING;

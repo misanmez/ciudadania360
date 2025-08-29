@@ -1,8 +1,16 @@
+server:
+  port: ${SERVER_PORT:8080}
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain
+
 spring:
+  application:
+    name: ciudadania360
   datasource:
-    url: ${SPRING_DATASOURCE_URL}
-    username: ${SPRING_DATASOURCE_USERNAME}
-    password: ${SPRING_DATASOURCE_PASSWORD}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/ciudadania360}
+    username: ${SPRING_DATASOURCE_USERNAME:ciudadania}
+    password: ${SPRING_DATASOURCE_PASSWORD:ciudadania}
     hikari:
       maximum-pool-size: 10
       minimum-idle: 5
@@ -22,16 +30,16 @@ spring:
         order_updates: true
   flyway:
     enabled: true
-    schemas: tramitacion
-    default_schema: tramitacion
     locations: classpath:init-db
+    schemas: ciudadano, tramitacion, comunicaciones, videoconferencia, informacion, roles
+    default-schema: ciudadano
     baseline-on-migrate: true
     validate-on-migrate: true
   security:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: http://localhost:8080/.well-known/jwks.json
+          jwk-set-uri: ${OAUTH2_JWK_SET_URI:http://localhost:8080/.well-known/jwks.json}
 
 logging:
   level:
@@ -43,7 +51,7 @@ logging:
 
 cors:
   allowed-origins: "*"
-  allowed-methods: GET,POST,PUT,DELETE
+  allowed-methods: GET,POST,PUT,DELETE,PATCH,OPTIONS
 
 management:
   endpoints:
@@ -58,8 +66,15 @@ management:
       prometheus:
         enabled: true
 
-server:
-  port: 8083
-  compression:
-    enabled: true
-    mime-types: application/json,application/xml,text/html,text/xml,text/plain
+# ---------- Swagger / OpenAPI ----------
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    deep-linking: true
+    display-request-duration: true
+    filter: true
+    operations-sorter: alpha
+    tags-sorter: alpha
+    doc-expansion: none
