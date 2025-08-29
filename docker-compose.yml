@@ -6,8 +6,8 @@ services:
     image: postgis/postgis:15-3.3
     container_name: postgres_ciudadania360
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: Aqmdla04
+      POSTGRES_USER: ciudadania
+      POSTGRES_PASSWORD: ciudadania
       POSTGRES_DB: ciudadania360
     ports:
       - "5432:5432"
@@ -16,10 +16,10 @@ services:
       - ./init-db:/docker-entrypoint-initdb.d
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U ciudadania"]
       interval: 30s
       timeout: 10s
-      retries: 3
+      retries: 5
 
   # Subsistema Ciudadano
   subsistema-ciudadano:
@@ -30,8 +30,8 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: docker
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ciudadania360
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: Aqmdla04
+      SPRING_DATASOURCE_USERNAME: ciudadania
+      SPRING_DATASOURCE_PASSWORD: ciudadania
     depends_on:
       postgres:
         condition: service_healthy
@@ -46,8 +46,8 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: docker
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ciudadania360
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: Aqmdla04
+      SPRING_DATASOURCE_USERNAME: ciudadania
+      SPRING_DATASOURCE_PASSWORD: ciudadania
     depends_on:
       postgres:
         condition: service_healthy
@@ -62,8 +62,8 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: docker
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ciudadania360
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: Aqmdla04
+      SPRING_DATASOURCE_USERNAME: ciudadania
+      SPRING_DATASOURCE_PASSWORD: ciudadania
     depends_on:
       postgres:
         condition: service_healthy
@@ -78,8 +78,8 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: docker
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ciudadania360
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: Aqmdla04
+      SPRING_DATASOURCE_USERNAME: ciudadania
+      SPRING_DATASOURCE_PASSWORD: ciudadania
     depends_on:
       postgres:
         condition: service_healthy
@@ -94,8 +94,8 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: docker
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ciudadania360
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: Aqmdla04
+      SPRING_DATASOURCE_USERNAME: ciudadania
+      SPRING_DATASOURCE_PASSWORD: ciudadania
     depends_on:
       postgres:
         condition: service_healthy
@@ -110,8 +110,24 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: docker
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ciudadania360
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: Aqmdla04
+      SPRING_DATASOURCE_USERNAME: ciudadania
+      SPRING_DATASOURCE_PASSWORD: ciudadania
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Subsistema IA
+  subsistema-ia:
+    build: ./subsistema-ia
+    container_name: subsistema_ia
+    ports:
+      - "8090:8090"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ciudadania360
+      SPRING_DATASOURCE_USERNAME: ciudadania
+      SPRING_DATASOURCE_PASSWORD: ciudadania
     depends_on:
       postgres:
         condition: service_healthy
