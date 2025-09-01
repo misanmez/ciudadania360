@@ -155,10 +155,13 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ciudadania360
       SPRING_DATASOURCE_USERNAME: ciudadania
       SPRING_DATASOURCE_PASSWORD: ciudadania
+      IA_PROVIDER_ENDPOINT: ${IA_PROVIDER_ENDPOINT}
+      IA_PROVIDER_API_KEY: ${IA_PROVIDER_API_KEY}
     depends_on:
       postgres:
         condition: service_healthy
     restart: unless-stopped
+
 
 volumes:
   postgres_data:

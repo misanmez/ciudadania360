@@ -54,4 +54,13 @@ public class OpenApiConfig {
                 .packagesToScan("com.ciudadania360.gestionrolespermisos")
                 .build();
     }
+
+    @Bean
+    public GroupedOpenApi iaApi() {
+        return GroupedOpenApi.builder()
+                .group("07-IA")
+                .packagesToScan("com.ciudadania360.subsistemaia")
+                .build();
+    }
+
 }

@@ -1,0 +1,16 @@
+server:
+  port: 8090
+
+spring:
+  application:
+    name: subsistema-ia
+  datasource:
+    url: jdbc:postgresql://postgres:5432/ciudadania360
+    username: ciudadania
+    password: ciudadania
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+  flyway:
+    enabled: false

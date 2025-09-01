@@ -4,8 +4,6 @@ Proyecto multi-módulo basado en **Spring Boot 3**, **Java 17** y **PostgreSQL/P
 
 El sistema sigue una arquitectura de **microlitos**: cada subsistema es un módulo Maven independiente y se despliega en un puerto distinto, pero todos comparten una **base de datos única** con esquemas separados. Esto aporta modularidad sin la complejidad de microservicios puros.
 
-El agregador principal `ciudadania360-app` actúa como **front controller**, levantando todos los microlitos y ofreciendo un punto central de acceso en el puerto **8080**.
-
 ---
 
 ## 🚀 Inicio Rápido
@@ -20,14 +18,14 @@ El agregador principal `ciudadania360-app` actúa como **front controller**, lev
 **Windows (PowerShell):**
 ```powershell
 .\build-and-run.ps1 dev      # Solo base de datos
-.\build-and-run.ps1 docker   # Todos los servicios y agregador
+.\build-and-run.ps1 docker   # Todos los servicios
 .\build-and-run.ps1 prod     # Construcción para producción
 ```
 
 **Linux/Mac:**
 ```bash
 ./build-and-run.sh dev       # Solo base de datos
-./build-and-run.sh docker    # Todos los servicios y agregador
+./build-and-run.sh docker    # Todos los servicios
 ./build-and-run.sh prod      # Construcción para producción
 ```
 
@@ -48,88 +46,13 @@ Swagger disponible en:
 
 ---
 
-## Justificación: Microlitos vs Microservicios
-
-### Microlitos (implementado aquí)
-- Cada subsistema tiene sus entidades, controladores, servicios, handlers y repositorios propios.
-- Una única base de datos PostgreSQL con esquemas separados (`ciudadano`, `tramitacion`, `comunicaciones`, `videoconferencia`, `informacion`, `roles`).
-- Swagger/OpenAPI por cada subsistema y agrupación automática por paquetes.
-- Despliegue más simple, con menor sobrecarga operativa.
-
-### Microservicios puros (descartado)
-- Independencia total de BD y despliegue.
-- Mayor complejidad de orquestación, monitorización y resiliencia.
-
-**Conclusión:** La solución de **microlitos** cumple el pliego, reduce riesgos y costes de operación, y permite evolución modular.
-
----
-
-## Levantar Base de Datos
-
-```bash
-docker compose up -d
-```
-
----
-
-## Ejecutar el agregador principal
-
-```bash
-mvn spring-boot:run -pl ciudadania360-app
-```
-
-Swagger central disponible en:  
-[http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
-
----
-
-## Tests
-
-### Unitarios
-```bash
-mvn test
-```
-
-### Unitarios + Integración
-```bash
-mvn verify -Pintegration
-```
-
----
-
-## Puertos y Swagger
-
-| Servicio / Subsistema         | Puerto | Swagger URL |
-|-------------------------------|--------|-------------|
-| ciudadania360-app             | 8080   | [Swagger](http://localhost:8080/swagger-ui.html) |
-| subsistema-ciudadano           | 8082   | [Swagger](http://localhost:8082/swagger-ui.html) |
-| subsistema-tramitacion         | 8083   | [Swagger](http://localhost:8083/swagger-ui.html) |
-| subsistema-comunicaciones      | 8084   | [Swagger](http://localhost:8084/swagger-ui.html) |
-| subsistema-videoconferencia    | 8085   | [Swagger](http://localhost:8085/swagger-ui.html) |
-| subsistema-informacion         | 8088   | [Swagger](http://localhost:8088/swagger-ui.html) |
-| gestion-roles-permisos         | 8089   | [Swagger](http://localhost:8089/swagger-ui.html) |
-
----
-
-## Subsistemas
-
-- **ciudadania360-app** → Agregador principal que coordina todos los microlitos.
-- **subsistema-ciudadano** → Gestión de ciudadanos, solicitudes, interacciones, clasificaciones y ubicaciones.
-- **subsistema-tramitacion** → Gestión de expedientes, procesos BPM y tareas BPM.
-- **subsistema-comunicaciones** → Envío de notificaciones multicanal (email, SMS, push).
-- **subsistema-videoconferencia** → Planificación y gestión de videollamadas con ciudadanos.
-- **subsistema-informacion** → Gestión de datasets, sugerencias y fuentes de datos externas.
-- **gestion-roles-permisos** → Seguridad, control de accesos y perfiles de usuario.
-
----
-
-## 🏗️ Arquitectura Técnica
+## 💻 Arquitectura Técnica
 
 ### Stack Tecnológico
 - **Backend**: Spring Boot 3.3.3, Java 17
 - **Base de Datos**: PostgreSQL 15 + PostGIS
 - **Migraciones**: Flyway
-- **Documentación**: SpringDoc OpenAPI (Swagger) con agrupación por paquetes
+- **Documentación**: SpringDoc OpenAPI (Swagger)
 - **Mapeo**: MapStruct
 - **Utilidades**: Lombok
 - **Cobertura**: JaCoCo
@@ -146,19 +69,48 @@ mvn verify -Pintegration
 
 ---
 
+## 📦 Subsistemas y Puertos
+
+| Subsistema                     | Puerto | Swagger URL |
+|--------------------------------|--------|-------------|
+| ciudadania360-app (agregador) | 8080   | [Swagger](http://localhost:8080/swagger-ui.html) |
+| subsistema-ciudadano           | 8082   | [Swagger](http://localhost:8082/swagger-ui.html) |
+| subsistema-tramitacion         | 8083   | [Swagger](http://localhost:8083/swagger-ui.html) |
+| subsistema-comunicaciones      | 8084   | [Swagger](http://localhost:8084/swagger-ui.html) |
+| subsistema-videoconferencia    | 8085   | [Swagger](http://localhost:8085/swagger-ui.html) |
+| subsistema-informacion         | 8088   | [Swagger](http://localhost:8088/swagger-ui.html) |
+| gestion-roles-permisos         | 8089   | [Swagger](http://localhost:8089/swagger-ui.html) |
+| subsistema-ia                  | 8090   | [Swagger](http://localhost:8090/swagger-ui.html) |
+
+---
+
+## 🗂️ Subsistemas
+
+- **ciudadania360-app** → Agregador principal que coordina todos los microlitos.
+- **subsistema-ciudadano** → Gestión de ciudadanos, solicitudes, interacciones, clasificaciones y ubicaciones.
+- **subsistema-tramitacion** → Gestión de expedientes, procesos BPM y tareas BPM.
+- **subsistema-comunicaciones** → Envío de notificaciones multicanal (email, SMS, push).
+- **subsistema-videoconferencia** → Planificación y gestión de videollamadas con ciudadanos.
+- **subsistema-informacion** → Gestión de datasets, sugerencias y fuentes de datos externas.
+- **gestion-roles-permisos** → Seguridad, control de accesos y perfiles de usuario.
+- **subsistema-ia** → Procesamiento y análisis de datos mediante IA (NLP, LLM, clasificación, resumen).
+    - **IAClient**: librería / cliente que consumen los demás microlitos para invocar los servicios de IA.
+
+---
+
 ## 🔧 Desarrollo
 
 ### Estructura del Proyecto
 ```
-ciudadania360/
+ciudadania360-app/
 ├── shared/                          # DTOs y utilidades comunes
-├── ciudadania360-app/               # Agregador principal
 ├── subsistema-ciudadano/            # Gestión de ciudadanos
 ├── subsistema-tramitacion/          # Procesos BPM
 ├── subsistema-comunicaciones/       # Notificaciones
 ├── subsistema-videoconferencia/     # Videollamadas
 ├── subsistema-informacion/          # Contenidos y datasets
 ├── gestion-roles-permisos/          # Seguridad
+├── subsistema-ia/                   # IA y LLM
 ├── docker-compose.yml               # Infraestructura
 ├── build-and-run.ps1                # Script Windows
 └── build-and-run.sh                  # Script Linux/Mac
@@ -168,7 +120,7 @@ ciudadania360/
 
 **Construir proyecto completo:**
 ```bash
-mvn clean install
+mvn clean install -DskipTests
 ```
 
 **Ejecutar tests:**
@@ -189,19 +141,28 @@ docker compose logs -f subsistema-ciudadano
 
 ---
 
-## 📊 Estado del Proyecto
+## ✅ Estado del Proyecto
 
-- ✅ **Estructura base**: Completamente implementada
-- ✅ **Entidades y APIs**: Implementadas en todos los subsistemas
-- ✅ **Base de datos**: Configurada con esquemas separados
-- ✅ **Docker**: Configuración completa para desarrollo
-- ⚠️ **Tests**: Unitarios implementados, integración pendiente
-- ❌ **CI/CD**: Pendiente de implementación
-- ❌ **Monitoreo**: Configuración básica, falta centralización
-- ❌ **Seguridad**: OAuth2 configurado, falta Keycloak
-- ❌ **Integraciones externas**: BPM, LLM y otros proveedores
+| Funcionalidad                    | Estado |
+|---------------------------------|--------|
+| Estructura base                  | ✅ Completamente implementada |
+| Entidades y APIs                 | ✅ Implementadas en todos los subsistemas |
+| Base de datos con esquemas       | ✅ Configurada |
+| Docker                            | ✅ Configuración completa para desarrollo |
+| Swagger / OpenAPI                 | ✅ Cada subsistema documentado |
+| Subsistema IA + IAClient          | ✅ Implementado, endpoints disponibles |
+| Tests unitarios                   | ✅ Implementados |
+| Tests integración                 | ⚠️ Parcial, pendiente completar |
+| CI/CD                             | ❌ Pendiente de implementación |
+| Monitoreo centralizado            | ❌ Pendiente de integración |
+| Seguridad (OAuth2, Keycloak)      | ⚠️ OAuth2 configurado, Keycloak pendiente |
+| Integraciones externas (BPM, LLM, proveedores) | ❌ Pendientes |
 
 ---
+
+## 📊 Integración y Flujo de IA
+
+![img.png](img.png)
 
 ## 🤝 Contribución
 
@@ -216,3 +177,4 @@ docker compose logs -f subsistema-ciudadano
 ## 📝 Licencia
 
 Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
+

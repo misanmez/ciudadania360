@@ -1,4 +1,4 @@
-package com.ciudadania360.shared.dto;
+package com.ciudadania360.shared.application.dto;
 
 import java.util.UUID;
 import jakarta.validation.constraints.NotBlank;

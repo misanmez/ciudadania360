@@ -17,6 +17,7 @@
     <module>subsistema-tramitacion</module>
     <module>subsistema-videoconferencia</module>
     <module>gestion-roles-permisos</module>
+    <module>subsistema-ia</module>
     <module>ciudadania360-app</module>
   </modules>
 

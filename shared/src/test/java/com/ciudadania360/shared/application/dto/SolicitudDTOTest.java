@@ -1,4 +1,4 @@
-package com.ciudadania360.shared.dto;
+package com.ciudadania360.shared.application.dto;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;

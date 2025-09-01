@@ -1,0 +1,19 @@
+server:
+  port: 8090
+
+spring:
+  application:
+    name: subsistema-ia
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/ciudadania360}
+    username: ${SPRING_DATASOURCE_USERNAME:ciudadania}
+    password: ${SPRING_DATASOURCE_PASSWORD:ciudadania}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+
+logging:
+  level:
+    root: INFO
+    com.ciudadania360: DEBUG

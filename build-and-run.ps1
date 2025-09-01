@@ -87,6 +87,7 @@ function Start-DockerMode {
     Write-Host "   Videoconferencia: http://localhost:8085" -ForegroundColor Cyan
     Write-Host "   Información: http://localhost:8088" -ForegroundColor Cyan
     Write-Host "   Roles y Permisos: http://localhost:8089" -ForegroundColor Cyan
+    Write-Host "   IA: http://localhost:8090" -ForegroundColor Cyan
     Write-Host "📖 Swagger UI disponible en cada puerto + /swagger-ui.html" -ForegroundColor Yellow
 }
 
