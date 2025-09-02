@@ -1,7 +1,7 @@
 package com.ciudadania360.subsistemacomunicaciones.domain.handler;
 
 import com.ciudadania360.subsistemacomunicaciones.domain.entity.RespuestaEncuesta;
-import com.ciudadania360.subsistemacomunicaciones.domain.repository.RespuestaEncuestaRepositorio;
+import com.ciudadania360.subsistemacomunicaciones.domain.repository.RespuestaEncuestaRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 class RespuestaEncuestaHandlerTest {
 
     @Mock
-    private RespuestaEncuestaRepositorio repo;
+    private RespuestaEncuestaRepository repo;
 
     @InjectMocks
     private RespuestaEncuestaHandler handler;

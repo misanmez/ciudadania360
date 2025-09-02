@@ -1,7 +1,7 @@
 package com.ciudadania360.subsistemacomunicaciones.domain.handler;
 
 import com.ciudadania360.subsistemacomunicaciones.domain.entity.Notificacion;
-import com.ciudadania360.subsistemacomunicaciones.domain.repository.NotificacionRepositorio;
+import com.ciudadania360.subsistemacomunicaciones.domain.repository.NotificacionRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 class NotificacionHandlerTest {
 
     @Mock
-    private NotificacionRepositorio repo;
+    private NotificacionRepository repo;
 
     @InjectMocks
     private NotificacionHandler handler;

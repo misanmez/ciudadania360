@@ -1,7 +1,7 @@
 package com.ciudadania360.subsistemavideoconferencia.domain.handler;
 
 import com.ciudadania360.subsistemavideoconferencia.domain.entity.Planificacion;
-import com.ciudadania360.subsistemavideoconferencia.domain.repository.PlanificacionRepositorio;
+import com.ciudadania360.subsistemavideoconferencia.domain.repository.PlanificacionRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 class PlanificacionHandlerTest {
 
     @Mock
-    private PlanificacionRepositorio repo;
+    private PlanificacionRepository repo;
 
     @InjectMocks
     private PlanificacionHandler handler;

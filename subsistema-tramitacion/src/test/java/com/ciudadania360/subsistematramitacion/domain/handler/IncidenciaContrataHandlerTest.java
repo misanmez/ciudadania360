@@ -1,7 +1,7 @@
 package com.ciudadania360.subsistematramitacion.domain.handler;
 
 import com.ciudadania360.subsistematramitacion.domain.entity.IncidenciaContrata;
-import com.ciudadania360.subsistematramitacion.domain.repository.IncidenciaContrataRepositorio;
+import com.ciudadania360.subsistematramitacion.domain.repository.IncidenciaContrataRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 class IncidenciaContrataHandlerTest {
 
     @Mock
-    private IncidenciaContrataRepositorio repo;
+    private IncidenciaContrataRepository repo;
 
     @InjectMocks
     private IncidenciaContrataHandler handler;

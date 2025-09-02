@@ -1,7 +1,7 @@
 package com.ciudadania360.subsistemavideoconferencia.domain.handler;
 
 import com.ciudadania360.subsistemavideoconferencia.domain.entity.Dispositivo;
-import com.ciudadania360.subsistemavideoconferencia.domain.repository.DispositivoRepositorio;
+import com.ciudadania360.subsistemavideoconferencia.domain.repository.DispositivoRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 class DispositivoHandlerTest {
 
     @Mock
-    private DispositivoRepositorio repo;
+    private DispositivoRepository repo;
 
     @InjectMocks
     private DispositivoHandler handler;

@@ -1,7 +1,7 @@
 package com.ciudadania360.subsistematramitacion.domain.handler;
 
 import com.ciudadania360.subsistematramitacion.domain.entity.Carpeta;
-import com.ciudadania360.subsistematramitacion.domain.repository.CarpetaRepositorio;
+import com.ciudadania360.subsistematramitacion.domain.repository.CarpetaRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 class CarpetaHandlerTest {
 
     @Mock
-    private CarpetaRepositorio repo;
+    private CarpetaRepository repo;
 
     @InjectMocks
     private CarpetaHandler handler;

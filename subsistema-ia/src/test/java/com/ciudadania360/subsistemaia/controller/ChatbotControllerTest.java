@@ -9,10 +9,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.UUID;
+
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 class ChatbotControllerTest {
 
@@ -22,8 +23,9 @@ class ChatbotControllerTest {
     void sendMessage() throws Exception {
         ChatbotService svc = mock(ChatbotService.class);
 
-        ChatRequest request = new ChatRequest("conv1", "Hola chatbot");
-        ChatResponse response = new ChatResponse("Hola humano", "conv1", "raw");
+        UUID conversationId = UUID.randomUUID();
+        ChatRequest request = new ChatRequest(conversationId, "Hola chatbot");
+        ChatResponse response = new ChatResponse("Hola humano", conversationId, "raw");
 
         when(svc.sendMessage(request)).thenReturn(response);
 
@@ -35,7 +37,7 @@ class ChatbotControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.responseText").value("Hola humano"))
-                .andExpect(jsonPath("$.conversationId").value("conv1"));
+                .andExpect(jsonPath("$.conversationId").value(conversationId.toString())); // ✅ Usamos toString
 
         verify(svc).sendMessage(request);
     }

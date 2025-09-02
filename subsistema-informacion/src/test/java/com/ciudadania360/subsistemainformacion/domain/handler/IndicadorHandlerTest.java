@@ -1,7 +1,7 @@
 package com.ciudadania360.subsistemainformacion.domain.handler;
 
 import com.ciudadania360.subsistemainformacion.domain.entity.Indicador;
-import com.ciudadania360.subsistemainformacion.domain.repository.IndicadorRepositorio;
+import com.ciudadania360.subsistemainformacion.domain.repository.IndicadorRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 class IndicadorHandlerTest {
 
     @Mock
-    private IndicadorRepositorio repo;
+    private IndicadorRepository repo;
 
     @InjectMocks
     private IndicadorHandler handler;

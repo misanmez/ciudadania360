@@ -1,7 +1,7 @@
 package com.ciudadania360.subsistematramitacion.domain.handler;
 
 import com.ciudadania360.subsistematramitacion.domain.entity.TareaBPM;
-import com.ciudadania360.subsistematramitacion.domain.repository.TareaBPMRepositorio;
+import com.ciudadania360.subsistematramitacion.domain.repository.TareaBPMRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 class TareaBPMHandlerTest {
 
     @Mock
-    private TareaBPMRepositorio repo;
+    private TareaBPMRepository repo;
 
     @InjectMocks
     private TareaBPMHandler handler;

@@ -1,7 +1,7 @@
 package com.ciudadania360.subsistemacomunicaciones.domain.handler;
 
 import com.ciudadania360.subsistemacomunicaciones.domain.entity.Suscripcion;
-import com.ciudadania360.subsistemacomunicaciones.domain.repository.SuscripcionRepositorio;
+import com.ciudadania360.subsistemacomunicaciones.domain.repository.SuscripcionRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 class SuscripcionHandlerTest {
 
     @Mock
-    private SuscripcionRepositorio repo;
+    private SuscripcionRepository repo;
 
     @InjectMocks
     private SuscripcionHandler handler;

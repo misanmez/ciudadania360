@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: shared-module
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/ciudadania360}
+    username: ${SPRING_DATASOURCE_USERNAME:ciudadania}
+    password: ${SPRING_DATASOURCE_PASSWORD:ciudadania}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        default_schema: ia
+
+logging:
+  level:
+    root: INFO
+    com.ciudadania360: DEBUG

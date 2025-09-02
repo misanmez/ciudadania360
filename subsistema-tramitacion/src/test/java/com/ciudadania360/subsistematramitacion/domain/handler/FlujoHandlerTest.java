@@ -1,7 +1,7 @@
 package com.ciudadania360.subsistematramitacion.domain.handler;
 
 import com.ciudadania360.subsistematramitacion.domain.entity.Flujo;
-import com.ciudadania360.subsistematramitacion.domain.repository.FlujoRepositorio;
+import com.ciudadania360.subsistematramitacion.domain.repository.FlujoRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 class FlujoHandlerTest {
 
     @Mock
-    private FlujoRepositorio repo;
+    private FlujoRepository repo;
 
     @InjectMocks
     private FlujoHandler handler;

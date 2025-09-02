@@ -1,7 +1,7 @@
 package com.ciudadania360.subsistemavideoconferencia.domain.handler;
 
 import com.ciudadania360.subsistemavideoconferencia.domain.entity.CitaVideollamada;
-import com.ciudadania360.subsistemavideoconferencia.domain.repository.CitaVideollamadaRepositorio;
+import com.ciudadania360.subsistemavideoconferencia.domain.repository.CitaVideollamadaRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 class CitaVideollamadaHandlerTest {
 
     @Mock
-    private CitaVideollamadaRepositorio repo;
+    private CitaVideollamadaRepository repo;
 
     @InjectMocks
     private CitaVideollamadaHandler handler;

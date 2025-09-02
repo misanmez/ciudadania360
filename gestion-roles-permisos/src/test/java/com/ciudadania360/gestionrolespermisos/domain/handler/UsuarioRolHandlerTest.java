@@ -1,7 +1,7 @@
 package com.ciudadania360.gestionrolespermisos.domain.handler;
 
 import com.ciudadania360.gestionrolespermisos.domain.entity.UsuarioRol;
-import com.ciudadania360.gestionrolespermisos.domain.repository.UsuarioRolRepositorio;
+import com.ciudadania360.gestionrolespermisos.domain.repository.UsuarioRolRepository;
 import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Optional;
@@ -19,7 +19,7 @@ import static org.mockito.ArgumentMatchers.any;
 class UsuarioRolHandlerTest {
 
     @Mock
-    private UsuarioRolRepositorio repo;
+    private UsuarioRolRepository repo;
 
     @InjectMocks
     private UsuarioRolHandler handler;

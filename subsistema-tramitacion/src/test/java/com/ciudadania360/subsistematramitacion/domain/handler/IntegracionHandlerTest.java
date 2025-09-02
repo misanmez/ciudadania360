@@ -1,7 +1,7 @@
 package com.ciudadania360.subsistematramitacion.domain.handler;
 
 import com.ciudadania360.subsistematramitacion.domain.entity.Integracion;
-import com.ciudadania360.subsistematramitacion.domain.repository.IntegracionRepositorio;
+import com.ciudadania360.subsistematramitacion.domain.repository.IntegracionRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 class IntegracionHandlerTest {
 
     @Mock
-    private IntegracionRepositorio repo;
+    private IntegracionRepository repo;
 
     @InjectMocks
     private IntegracionHandler handler;

@@ -1,7 +1,7 @@
 package com.ciudadania360.gestionrolespermisos.domain.handler;
 
 import com.ciudadania360.gestionrolespermisos.domain.entity.Permiso;
-import com.ciudadania360.gestionrolespermisos.domain.repository.PermisoRepositorio;
+import com.ciudadania360.gestionrolespermisos.domain.repository.PermisoRepository;
 import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Optional;
@@ -21,7 +21,7 @@ import static org.mockito.ArgumentMatchers.any;
 class PermisoHandlerTest {
 
     @Mock
-    private PermisoRepositorio repo;
+    private PermisoRepository repo;
 
     @InjectMocks
     private PermisoHandler handler;

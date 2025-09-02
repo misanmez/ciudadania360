@@ -1,7 +1,7 @@
 package com.ciudadania360.subsistemainformacion.domain.handler;
 
 import com.ciudadania360.subsistemainformacion.domain.entity.Recomendacion;
-import com.ciudadania360.subsistemainformacion.domain.repository.RecomendacionRepositorio;
+import com.ciudadania360.subsistemainformacion.domain.repository.RecomendacionRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 class RecomendacionHandlerTest {
 
     @Mock
-    private RecomendacionRepositorio repo;
+    private RecomendacionRepository repo;
 
     @InjectMocks
     private RecomendacionHandler handler;

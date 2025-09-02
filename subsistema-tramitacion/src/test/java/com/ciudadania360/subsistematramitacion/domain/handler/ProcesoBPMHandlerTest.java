@@ -1,7 +1,7 @@
 package com.ciudadania360.subsistematramitacion.domain.handler;
 
 import com.ciudadania360.subsistematramitacion.domain.entity.ProcesoBPM;
-import com.ciudadania360.subsistematramitacion.domain.repository.ProcesoBPMRepositorio;
+import com.ciudadania360.subsistematramitacion.domain.repository.ProcesoBPMRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 class ProcesoBPMHandlerTest {
 
     @Mock
-    private ProcesoBPMRepositorio repo;
+    private ProcesoBPMRepository repo;
 
     @InjectMocks
     private ProcesoBPMHandler handler;

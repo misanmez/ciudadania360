@@ -1,7 +1,7 @@
 package com.ciudadania360.subsistemainformacion.domain.handler;
 
 import com.ciudadania360.subsistemainformacion.domain.entity.Duda;
-import com.ciudadania360.subsistemainformacion.domain.repository.DudaRepositorio;
+import com.ciudadania360.subsistemainformacion.domain.repository.DudaRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 class DudaHandlerTest {
 
     @Mock
-    private DudaRepositorio repo;
+    private DudaRepository repo;
 
     @InjectMocks
     private DudaHandler handler;

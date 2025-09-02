@@ -2,6 +2,7 @@ package com.ciudadania360.subsistemaia.client;
 
 import com.ciudadania360.shared.ia.client.IAClient;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
@@ -9,13 +10,17 @@ import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Component
+@Slf4j
+@Primary
 public class HttpIAClient implements IAClient {
 
     @Value("${ia.provider.endpoint:http://localhost:9000}")
@@ -78,7 +83,7 @@ public class HttpIAClient implements IAClient {
     }
 
     @Override
-    public String chat(String conversationId, String message) {
+    public String chat(UUID conversationId, String message) {
         Map<String, Object> body = new HashMap<>();
         body.put("conversationId", conversationId);
         body.put("message", message);
@@ -89,4 +94,17 @@ public class HttpIAClient implements IAClient {
     public String transcribe(byte[] audioContent, String language) {
         return executePost("/v1/transcribe?lang=" + language, audioContent, true);
     }
+
+    @Override
+    public void train(String prompt, String expectedResponse) {
+        // Si no tienes proveedor externo aún, puedes dejarlo simulado:
+        log.info("Entrenando modelo con prompt: " + prompt + " y respuesta esperada: " + expectedResponse);
+
+        // Si luego conectas a un proveedor externo, aquí harías la llamada HTTP correspondiente:
+        // Map<String, Object> body = new HashMap<>();
+        // body.put("prompt", prompt);
+        // body.put("expected", expectedResponse);
+        // executePost("/v1/train", body, false);
+    }
+
 }

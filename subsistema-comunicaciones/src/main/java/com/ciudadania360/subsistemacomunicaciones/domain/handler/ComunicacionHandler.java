@@ -1,15 +1,15 @@
 package com.ciudadania360.subsistemacomunicaciones.domain.handler;
 
 import com.ciudadania360.subsistemacomunicaciones.domain.entity.Comunicacion;
-import com.ciudadania360.subsistemacomunicaciones.domain.repository.ComunicacionRepositorio;
+import com.ciudadania360.subsistemacomunicaciones.domain.repository.ComunicacionRepository;
 import org.springframework.stereotype.Component;
 import java.util.*;
 
 @Component
 public class ComunicacionHandler {
-    private final ComunicacionRepositorio repo;
+    private final ComunicacionRepository repo;
 
-    public ComunicacionHandler(ComunicacionRepositorio repo) { this.repo = repo; }
+    public ComunicacionHandler(ComunicacionRepository repo) { this.repo = repo; }
 
     public List<Comunicacion> list() { return repo.findAll(); }
     public Comunicacion get(UUID id) { return repo.findById(id).orElseThrow(() -> new NoSuchElementException("Comunicacion no encontrado")); }

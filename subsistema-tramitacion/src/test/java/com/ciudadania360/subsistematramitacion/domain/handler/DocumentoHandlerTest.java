@@ -1,7 +1,7 @@
 package com.ciudadania360.subsistematramitacion.domain.handler;
 
 import com.ciudadania360.subsistematramitacion.domain.entity.Documento;
-import com.ciudadania360.subsistematramitacion.domain.repository.DocumentoRepositorio;
+import com.ciudadania360.subsistematramitacion.domain.repository.DocumentoRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 class DocumentoHandlerTest {
 
     @Mock
-    private DocumentoRepositorio repo;
+    private DocumentoRepository repo;
 
     @InjectMocks
     private DocumentoHandler handler;

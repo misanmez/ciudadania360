@@ -1,7 +1,7 @@
 package com.ciudadania360.subsistemainformacion.domain.handler;
 
 import com.ciudadania360.subsistemainformacion.domain.entity.Dataset;
-import com.ciudadania360.subsistemainformacion.domain.repository.DatasetRepositorio;
+import com.ciudadania360.subsistemainformacion.domain.repository.DatasetRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 class DatasetHandlerTest {
 
     @Mock
-    private DatasetRepositorio repo;
+    private DatasetRepository repo;
 
     @InjectMocks
     private DatasetHandler handler;
