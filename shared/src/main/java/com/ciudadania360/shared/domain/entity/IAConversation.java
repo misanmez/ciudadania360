@@ -12,7 +12,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class IaConversation {
+public class IAConversation {
 
     @Id
     @GeneratedValue
@@ -23,6 +23,9 @@ public class IaConversation {
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @OneToMany(mappedBy = "conversation", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<IaChatMessage> messages;
+    private List<IAChatMessage> messages;
+
+    @Column(name = "closed")
+    private boolean closed = false;
 }
 

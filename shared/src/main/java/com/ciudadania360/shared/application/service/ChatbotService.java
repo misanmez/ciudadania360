@@ -2,10 +2,10 @@ package com.ciudadania360.shared.application.service;
 
 import com.ciudadania360.shared.application.dto.chatbot.ChatRequest;
 import com.ciudadania360.shared.application.dto.chatbot.ChatResponse;
-import com.ciudadania360.shared.domain.entity.IaChatMessage;
-import com.ciudadania360.shared.domain.entity.IaConversation;
-import com.ciudadania360.shared.domain.repository.IaChatMessageRepository;
-import com.ciudadania360.shared.domain.repository.IaConversationRepository;
+import com.ciudadania360.shared.domain.entity.IAChatMessage;
+import com.ciudadania360.shared.domain.entity.IAConversation;
+import com.ciudadania360.shared.domain.repository.IAChatMessageRepository;
+import com.ciudadania360.shared.domain.repository.IAConversationRepository;
 import com.ciudadania360.shared.ia.client.IAClient;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -20,15 +20,16 @@ public class ChatbotService {
 
     private static final Logger log = LoggerFactory.getLogger(ChatbotService.class);
 
-    private final IAClient iaClient; // se inyectará HttpIAClient por defecto (@Primary)
-    private final IaConversationRepository conversationRepository;
-    private final IaChatMessageRepository chatMessageRepository;
+    private final IAClient iaClient;
+    private final IAConversationRepository conversationRepository;
+    private final IAChatMessageRepository chatMessageRepository;
+    private final ChatbotTrainingService chatbotTrainingService;
 
     public ChatResponse sendMessage(ChatRequest request) {
         // 1️⃣ Buscar conversación o crear nueva
-        IaConversation conversation = conversationRepository.findByConversationId(request.getConversationId())
+        IAConversation conversation = conversationRepository.findByConversationId(request.getConversationId())
                 .orElseGet(() -> conversationRepository.save(
-                        IaConversation.builder()
+                        IAConversation.builder()
                                 .conversationId(request.getConversationId())
                                 .build()
                 ));
@@ -37,7 +38,7 @@ public class ChatbotService {
         String rawResponse = iaClient.chat(request.getConversationId(), request.getMessage());
 
         // 3️⃣ Guardar mensaje en BBDD
-        IaChatMessage chatMessage = IaChatMessage.builder()
+        IAChatMessage chatMessage = IAChatMessage.builder()
                 .conversation(conversation)
                 .userMessage(request.getMessage())
                 .response(rawResponse)
@@ -46,9 +47,13 @@ public class ChatbotService {
                 .build();
         chatMessageRepository.save(chatMessage);
 
+        // 4️⃣ Generar ejemplos de entrenamiento para este mensaje
+        chatbotTrainingService.generateTrainingData();
+
         log.info("Mensaje procesado para conversación {}", request.getConversationId());
 
-        // 4️⃣ Devolver DTO
+        // 5️⃣ Devolver DTO
         return new ChatResponse(rawResponse, request.getConversationId(), rawResponse);
     }
+
 }

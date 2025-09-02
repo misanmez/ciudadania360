@@ -6,8 +6,10 @@ CREATE SCHEMA IF NOT EXISTS ia AUTHORIZATION ciudadania;
 -- ----------------------------
 CREATE TABLE IF NOT EXISTS ia.conversation (
     conversation_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    created_at timestamptz DEFAULT now()
+    created_at timestamptz DEFAULT now(),
+    closed BOOLEAN DEFAULT FALSE
 );
+
 
 -- ----------------------------
 -- Tabla: IaChatMessage

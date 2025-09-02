@@ -1,84 +1,114 @@
 # Subsistema de Inteligencia Artificial (IA)
 
 ## 📌 Descripción General
-El **Subsistema de IA** de Ciudadanía 360 es un módulo transversal que proporciona capacidades de **análisis avanzado, predicción, asistencia inteligente y procesamiento de lenguaje natural (PLN)**.  
-Este subsistema no está pensado como una aplicación aislada para usuarios finales, sino como un **servicio centralizado** al que acceden otros subsistemas de la plataforma.
+El **Subsistema de IA** de Ciudadanía 360 es un módulo transversal que proporciona capacidades de **procesamiento de lenguaje natural (PLN), análisis de texto, clasificación de solicitudes y predicción**.  
+Este subsistema funciona como **servicio centralizado**, utilizado por otros subsistemas y no directamente por los ciudadanos.
 
-Puede funcionar en dos modos:
-- **Local (on-premise):** modelos entrenados y desplegados en nuestros servidores.
-- **Externo (SaaS/licencias):** integración con proveedores de IA (ej. Azure OpenAI, Google Vertex AI).
+Actualmente implementa:
+- **Chatbot ciudadano** con almacenamiento de conversaciones (`IAConversation`) y mensajes (`IAChatMessage`).
+- **Base de datos de entrenamiento** (`IATrainingExample`) para mejorar las respuestas.
+- Integración con **Subsistema SHARE** para obtener datos maestros y normalizados.
+- Pruebas unitarias y MockMvc para controladores REST.
 
-El modelo es **mixto** (híbrido), para aprovechar lo mejor de ambos mundos.
+El modelo es **híbrido**, permitiendo IA local y futura integración con proveedores externos (Azure OpenAI, Google Vertex AI).
 
 ---
 
 ## 👥 Usuarios y Clientes del Subsistema
-El subsistema de IA no lo usa directamente el ciudadano, sino que actúa como **backend de soporte** para:
-- **Ciudadano App** → asistentes virtuales, ayuda en formularios, lenguaje natural.
-- **Tramitación** → clasificación automática de expedientes, priorización de tareas, predicción de resoluciones.
-- **Comunicaciones** → análisis de mensajes, detección de spam, sugerencias automáticas de respuesta.
-- **Videoconferencia** → transcripción automática, resúmenes de reuniones, subtitulado en tiempo real.
-- **Información** → buscadores semánticos, recomendaciones personalizadas de contenido.
-- **Roles y Permisos** → detección de anomalías, patrones de acceso sospechosos.
-- **Subsistema Documental** → análisis de documentos, extracción de entidades.
-- **Subsistema de Analítica** → generación de insights avanzados con modelos predictivos.
+El subsistema de IA sirve como backend para:
+- **Chatbot ciudadano** → respuestas automáticas y predicciones.
+- **Tramitación** → clasificación de solicitudes y priorización de incidencias.
+- **Comunicaciones** → sugerencias automáticas de mensajes.
+- **Información** → búsqueda semántica y recomendaciones.
+- **SHARE** → datos maestros para entrenamiento y normalización.
 
 ---
 
-## 📌 Casos de Uso según el Pliego
-- **Chatbot ciudadano multicanal** con lenguaje natural.
-- **Asistente inteligente para tramitadores** (sugerencias en tiempo real).
-- **Clasificación automática de documentos y expedientes**.
-- **Análisis de sentimientos y opiniones** en encuestas y comunicaciones.
-- **Motor de recomendaciones** (información, trámites, contenido relevante).
-- **Predicción de cargas de trabajo** para optimizar recursos.
-- **Transcripción y subtitulado en tiempo real** de videoconferencias.
-- **Generación automática de resúmenes** de expedientes y actas.
-- **Soporte a accesibilidad** mediante lectura automática y comprensión simplificada de textos.
+## 📌 Casos de Uso Implementados
+- Registro y almacenamiento de conversaciones y mensajes.
+- Base de datos de ejemplos de entrenamiento.
+- Tests unitarios y de integración con MockMvc.
+- Preparado para IA predictiva y análisis semántico.
+- Integración con IAClient para centralizar llamadas a modelos.
+
+Próximas funcionalidades:
+- Integración con modelos externos de IA.
+- Clasificación automática avanzada de documentos y expedientes.
+- Análisis de sentimientos y motor de recomendaciones.
+- Transcripción y subtitulado de videoconferencias.
 
 ---
 
 ## 📡 Integración con la Plataforma
-- Cada subsistema se conecta al de IA mediante un **IAClient**.
-- El IAClient estandariza las peticiones y evita que cada módulo tenga que implementar su propia lógica de conexión.
-- El subsistema IA expone un **API REST** y eventualmente colas/eventos para tareas asíncronas.
+- Cada subsistema cliente utiliza **IAClient** para acceder al servicio de IA.
+- API REST expuesta para solicitudes sincrónicas.
+- Preparado para integración con colas/eventos para procesos asíncronos.
+- Acceso a datos normalizados de SHARE para entrenamiento y consultas.
 
 ---
 
-## 🗂️ Diagrama de Casos de Uso
+## 🧪 Ejemplo de Uso (Postman / Swagger)
 
-![imagen2.png](imagen2.png)
+### 1️⃣ Inicio de conversación (primera pregunta)
+**POST** `/api/ia/chat`
+
+**Request Body:**
+```json
+{
+  "message": "¿Cuáles son los requisitos para renovar el DNI?"
+}
+```
+
+**Response Body:**
+```json
+{
+  "conversationId": "c0a80123-4567-89ab-cdef-1234567890ab",
+  "response": "Para renovar el DNI necesitas: 1) Una foto reciente, 2) Pago de la tasa, 3) DNI anterior."
+}
+```
+
+### 2️⃣ Segundo mensaje (misma conversación)
+**POST** `/api/ia/chat`
+
+**Request Body:**
+```json
+{
+  "conversationId": "c0a80123-4567-89ab-cdef-1234567890ab",
+  "message": "¿Puedo renovar si estoy en el extranjero?"
+}
+```
+
+**Response Body:**
+```json
+{
+  "conversationId": "c0a80123-4567-89ab-cdef-1234567890ab",
+  "response": "Sí, pero deberás acudir al consulado correspondiente."
+}
+```
+
+> ✅ Nota: `conversationId` permite mantener el historial de la conversación y asociar todos los mensajes al mismo registro en la BBDD (`IAConversation` y `IAChatMessage`).
 
 ---
 
-## ✅ Beneficios de este enfoque
+## ✅ Beneficios
 - Reutilización de modelos y servicios IA en toda la plataforma.
-- Reducción de costes (evita duplicar integraciones en cada subsistema).
-- Flexibilidad para usar IA local o externa.
-- Mejor mantenimiento y seguridad centralizada.
+- Centralización y mantenimiento sencillo.
+- Base sólida para incorporar IA avanzada en todos los subsistemas.
+- Entrenamiento continuo mediante `IATrainingExample` y datos de SHARE.
 
 ---
 
 ## 🧪 Pruebas y Validación
-Para garantizar la calidad y estabilidad del subsistema, se han implementado **tests unitarios y de controlador** siguiendo la misma filosofía que los subsistemas existentes:
-
-- **IAService:** tests unitarios con Mockito que verifican la delegación hacia `IAClient` para predicción, clasificación de documentos, procesamiento de texto y transcripción.
-- **ChatbotService:** tests unitarios que aseguran que el envío de mensajes se delega correctamente al `IAClient`.
-- **IAController:** tests con MockMvc para comprobar que las rutas REST `/api/ia/generate` funcionan y devuelven los resultados esperados.
-- **ChatbotController:** tests con MockMvc para `/api/chatbot/message`, validando la respuesta y la asociación de conversación.
-
-**Buenas prácticas aplicadas:**
-- Uso de **DTOs** para separar capa de transporte de la lógica de negocio.
-- Mocking de servicios externos (`IAClient`) para tests unitarios.
-- Cobertura de métodos principales y de flujos críticos de comunicación.
-- Base lista para **tests de integración con mock server o proveedor de IA real**.
+- Tests unitarios con Mockito para `IAService` y `ChatbotService`.
+- MockMvc para `IAController` y `ChatbotController`.
+- Preparado para tests de integración con proveedor de IA real.
+- Cobertura de flujos críticos de comunicación y almacenamiento en BBDD.
 
 ---
 
 ## 🚀 Próximos Pasos
-1. Definir APIs expuestas por el subsistema IA.
-2. Implementar el **IAClient** en cada microservicio.
-3. Configurar `application-docker.yml` para conexión a BD y colas.
-4. Decidir el proveedor externo de IA (si aplica).
-5. Añadir **tests de integración** para el Chatbot y los servicios de IA.
-6. Monitorizar métricas de uso y rendimiento del Chatbot y servicios de IA en producción.
+1. Definir APIs completas expuestas por IA.
+2. Configurar conexiones a BBDD y colas en `application-docker.yml`.
+3. Integrar soporte para modelos externos de IA.
+4. Añadir análisis de sentimientos y motor de recomendaciones.
+5. Monitorizar métricas de uso y rendimiento en producción.

@@ -2,10 +2,10 @@ package com.ciudadania360.shared.application.service;
 
 import com.ciudadania360.shared.application.dto.chatbot.ChatRequest;
 import com.ciudadania360.shared.application.dto.chatbot.ChatResponse;
-import com.ciudadania360.shared.domain.entity.IaChatMessage;
-import com.ciudadania360.shared.domain.entity.IaConversation;
-import com.ciudadania360.shared.domain.repository.IaChatMessageRepository;
-import com.ciudadania360.shared.domain.repository.IaConversationRepository;
+import com.ciudadania360.shared.domain.entity.IAChatMessage;
+import com.ciudadania360.shared.domain.entity.IAConversation;
+import com.ciudadania360.shared.domain.repository.IAChatMessageRepository;
+import com.ciudadania360.shared.domain.repository.IAConversationRepository;
 import com.ciudadania360.shared.ia.client.IAClient;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,10 +27,13 @@ class ChatbotServiceTest {
     private IAClient iaClient;
 
     @Mock
-    private IaConversationRepository conversationRepository;
+    private IAConversationRepository conversationRepository;
 
     @Mock
-    private IaChatMessageRepository chatMessageRepository;
+    private IAChatMessageRepository chatMessageRepository;
+
+    @Mock
+    private ChatbotTrainingService chatbotTrainingService; // <-- mock agregado
 
     @InjectMocks
     private ChatbotService chatbotService;
@@ -45,11 +48,11 @@ class ChatbotServiceTest {
 
         // Mock repositorio de conversaciones -> no existe, se crea
         when(conversationRepository.findByConversationId(conversationId)).thenReturn(Optional.empty());
-        when(conversationRepository.save(any(IaConversation.class)))
+        when(conversationRepository.save(any(IAConversation.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
         // Mock repositorio de mensajes -> simplemente devuelve el mensaje guardado
-        when(chatMessageRepository.save(any(IaChatMessage.class)))
+        when(chatMessageRepository.save(any(IAChatMessage.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
         // Ejecutamos
@@ -60,8 +63,9 @@ class ChatbotServiceTest {
         assertThat(response.getConversationId()).isEqualTo(conversationId);
         verify(iaClient).chat(conversationId, "Hola chatbot");
         verify(conversationRepository).findByConversationId(conversationId);
-        verify(conversationRepository).save(any(IaConversation.class));
-        verify(chatMessageRepository).save(any(IaChatMessage.class));
+        verify(conversationRepository).save(any(IAConversation.class));
+        verify(chatMessageRepository).save(any(IAChatMessage.class));
+        verify(chatbotTrainingService).generateTrainingData(); // <-- verifica que se llame
     }
 
     @Test
@@ -69,7 +73,7 @@ class ChatbotServiceTest {
         UUID conversationId = UUID.randomUUID();
         ChatRequest request = new ChatRequest(conversationId, "Hola otra vez");
 
-        IaConversation existingConversation = IaConversation.builder()
+        IAConversation existingConversation = IAConversation.builder()
                 .conversationId(conversationId)
                 .build();
 
@@ -81,14 +85,15 @@ class ChatbotServiceTest {
                 .thenReturn(Optional.of(existingConversation));
 
         // Mock repositorio de mensajes
-        when(chatMessageRepository.save(any(IaChatMessage.class)))
+        when(chatMessageRepository.save(any(IAChatMessage.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
         ChatResponse response = chatbotService.sendMessage(request);
 
         assertThat(response.getResponseText()).isEqualTo("Respuesta IA");
         assertThat(response.getConversationId()).isEqualTo(conversationId);
-        verify(conversationRepository, never()).save(any(IaConversation.class));
-        verify(chatMessageRepository).save(any(IaChatMessage.class));
+        verify(conversationRepository, never()).save(any(IAConversation.class));
+        verify(chatMessageRepository).save(any(IAChatMessage.class));
+        verify(chatbotTrainingService).generateTrainingData(); // <-- verifica que se llame
     }
 }

@@ -1,9 +1,9 @@
 package com.ciudadania360.shared.application.service;
 
-import com.ciudadania360.shared.domain.entity.IaChatMessage;
-import com.ciudadania360.shared.domain.entity.IaTrainingExample;
-import com.ciudadania360.shared.domain.repository.IaChatMessageRepository;
-import com.ciudadania360.shared.domain.repository.IaTrainingExampleRepository;
+import com.ciudadania360.shared.domain.entity.IAChatMessage;
+import com.ciudadania360.shared.domain.entity.IATrainingExample;
+import com.ciudadania360.shared.domain.repository.IAChatMessageRepository;
+import com.ciudadania360.shared.domain.repository.IATrainingExampleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,17 +15,17 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ChatbotTrainingService {
 
-    private final IaChatMessageRepository chatMessageRepository;
-    private final IaTrainingExampleRepository trainingRepository;
+    private final IAChatMessageRepository chatMessageRepository;
+    private final IATrainingExampleRepository trainingRepository;
 
     @Transactional
     public void generateTrainingData() {
-        // 1️⃣ Leer todos los mensajes que aún no se han usado
-        List<IaChatMessage> messages = chatMessageRepository.findAll();
+        // 1️⃣ Leer mensajes no transformados en ejemplos
+        List<IAChatMessage> messages = chatMessageRepository.findAll();
 
-        for (IaChatMessage msg : messages) {
-            // 2️⃣ Guardar como ejemplo de entrenamiento si no existe
-            IaTrainingExample example = IaTrainingExample.builder()
+        for (IAChatMessage msg : messages) {
+            // 2️⃣ Crear ejemplo si no existe
+            IATrainingExample example = IATrainingExample.builder()
                     .id(msg.getConversation().getConversationId())
                     .userMessage(msg.getUserMessage())
                     .response(msg.getResponse())
@@ -37,8 +37,7 @@ public class ChatbotTrainingService {
 
     @Transactional
     public void markAsTrained(List<UUID> exampleIds) {
-        // Marcar ejemplos ya usados
-        List<IaTrainingExample> examples = trainingRepository.findAllById(exampleIds);
+        List<IATrainingExample> examples = trainingRepository.findAllById(exampleIds);
         examples.forEach(ex -> ex.setUsedForTraining(true));
         trainingRepository.saveAll(examples);
     }

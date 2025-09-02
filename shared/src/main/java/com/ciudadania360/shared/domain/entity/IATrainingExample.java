@@ -6,31 +6,27 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "chat_message", schema = "ia")
+@Table(name = "training_example", schema = "ia")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class IaChatMessage {
+public class IATrainingExample {
+
     @Id
     @GeneratedValue
+    @Column(name = "id")
     private UUID id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "conversation_id", nullable = false)
-    private IaConversation conversation;
 
     @Column(name = "user_message", nullable = false, columnDefinition = "TEXT")
     private String userMessage;
 
-    @Column(name = "response", columnDefinition = "TEXT")
+    @Column(name = "response", nullable = false, columnDefinition = "TEXT")
     private String response;
 
-    @Column(name = "raw_response", columnDefinition = "JSONB")
-    private String rawResponse;
+    @Column(name = "used_for_training")
+    private Boolean usedForTraining = false;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
 }
-
-
