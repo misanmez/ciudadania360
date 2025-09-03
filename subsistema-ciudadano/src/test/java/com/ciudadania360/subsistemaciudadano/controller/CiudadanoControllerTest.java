@@ -1,8 +1,10 @@
 package com.ciudadania360.subsistemaciudadano.controller;
 
-import com.ciudadania360.subsistemaciudadano.application.service.CiudadanoService;
 import com.ciudadania360.subsistemaciudadano.application.dto.ciudadano.CiudadanoRequest;
 import com.ciudadania360.subsistemaciudadano.application.dto.ciudadano.CiudadanoResponse;
+import com.ciudadania360.subsistemaciudadano.application.service.CiudadanoService;
+import com.ciudadania360.shared.exception.GlobalExceptionHandler;
+import com.ciudadania360.shared.exception.BadRequestException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -17,14 +19,14 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 class CiudadanoControllerTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
-    void listAndCreate() throws Exception {
+    void listAndCreateAndHandleError() throws Exception {
         CiudadanoService svc = mock(CiudadanoService.class);
 
         // Ciudadano de ejemplo (Response DTO)
@@ -51,13 +53,17 @@ class CiudadanoControllerTest {
         when(svc.update(eq(e.getId()), any(CiudadanoRequest.class))).thenReturn(e);
 
         CiudadanoController controller = new CiudadanoController(svc);
-        MockMvc mvc = MockMvcBuilders.standaloneSetup(controller).build();
+        MockMvc mvc = MockMvcBuilders.standaloneSetup(controller)
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
 
         // List
         mvc.perform(get("/api/ciudadanos"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(e.getId().toString()))
+                .andExpect(jsonPath("$[0].nombre").value("Juan"));
 
-        // Create
+        // Create (válido)
         CiudadanoRequest newCiudadano = CiudadanoRequest.builder()
                 .nombre("Juan")
                 .apellidos("Pérez")
@@ -76,11 +82,30 @@ class CiudadanoControllerTest {
         mvc.perform(post("/api/ciudadanos")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(newCiudadano)))
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(e.getId().toString()))
+                .andExpect(jsonPath("$.nombre").value("Juan"));
+
+        // Simular error de validación usando BadRequestException (se captura por GlobalExceptionHandler)
+        CiudadanoRequest badRequest = CiudadanoRequest.builder()
+                .nifNie("") // campo obligatorio vacío
+                .build();
+
+        when(svc.create(any(CiudadanoRequest.class)))
+                .thenThrow(new BadRequestException("Nombre es obligatorio"));
+
+        mvc.perform(post("/api/ciudadanos")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(badRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.message").value("Nombre es obligatorio"))
+                .andExpect(header().exists("X-Request-Id"));
 
         // Get by ID
         mvc.perform(get("/api/ciudadanos/" + e.getId()))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(e.getId().toString()));
 
         // Update
         CiudadanoRequest updatedCiudadano = CiudadanoRequest.builder()
@@ -101,11 +126,11 @@ class CiudadanoControllerTest {
         mvc.perform(put("/api/ciudadanos/" + e.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updatedCiudadano)))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(e.getId().toString()));
 
         // Delete
         mvc.perform(delete("/api/ciudadanos/" + e.getId()))
                 .andExpect(status().isNoContent());
     }
-
 }

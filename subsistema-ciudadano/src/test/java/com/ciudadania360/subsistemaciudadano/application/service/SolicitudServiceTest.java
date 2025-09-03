@@ -36,7 +36,8 @@ class SolicitudServiceTest {
                 .tipo("TipoA")
                 .canalEntrada("Web")
                 .estado("Abierta")
-                .prioridad("Alta")
+                // ✅ Aseguramos que la prioridad sea válida
+                .prioridad("ALTA")
                 .numeroExpediente("EXP123")
                 .fechaRegistro(Instant.parse("2025-01-01T10:00:00Z"))
                 .fechaLimiteSLA(Instant.parse("2025-01-01T11:00:00Z"))
@@ -50,6 +51,7 @@ class SolicitudServiceTest {
                 .version(1L)
                 .build();
     }
+
 
     private SolicitudRequest toRequest(Solicitud s) {
         SolicitudRequest request = new SolicitudRequest();
@@ -122,41 +124,46 @@ class SolicitudServiceTest {
         verify(mapper).toResponse(s);
     }
 
-    @Test void createDelegatesToHandler() {
-        Solicitud s = buildSolicitud();
-        SolicitudRequest request = toRequest(s);
-        SolicitudResponse expectedResponse = toResponse(s);
+    @Test
+    void createDelegatesToHandler() {
+        Solicitud e = buildSolicitud();
+        SolicitudRequest request = toRequest(e);
+        SolicitudResponse expectedResponse = toResponse(e);
 
-        when(mapper.toEntity(request)).thenReturn(s);
-        when(handler.create(s)).thenReturn(s);
-        when(mapper.toResponse(s)).thenReturn(expectedResponse);
+        when(mapper.toEntity(request)).thenReturn(e);
+        when(handler.create(e)).thenReturn(e);
+        when(mapper.toResponse(e)).thenReturn(expectedResponse);
 
         SolicitudResponse result = svc.create(request);
 
         assertThat(result).isEqualTo(expectedResponse);
         verify(mapper).toEntity(request);
-        verify(handler).create(s);
-        verify(mapper).toResponse(s);
+        verify(handler).create(e);
+        verify(mapper).toResponse(e);
     }
 
-    @Test void updateDelegatesToHandler() {
-        Solicitud s = buildSolicitud();
-        SolicitudRequest request = toRequest(s);
-        SolicitudResponse expectedResponse = toResponse(s);
+    @Test
+    void updateDelegatesToHandler() {
+        Solicitud e = buildSolicitud();
+        SolicitudRequest request = toRequest(e);
 
-        when(handler.get(s.getId())).thenReturn(s);
-        doNothing().when(mapper).updateEntity(s, request);
-        when(handler.update(s.getId(), s)).thenReturn(s);
-        when(mapper.toResponse(s)).thenReturn(expectedResponse);
+        // ⚡ Aseguramos prioridad válida
+        request.setPrioridad("MEDIA");
 
-        SolicitudResponse result = svc.update(s.getId(), request);
+        when(handler.get(e.getId())).thenReturn(e);
+        doNothing().when(mapper).updateEntity(any(Solicitud.class), eq(request));
+        when(handler.update(eq(e.getId()), any(Solicitud.class))).thenReturn(e);
+        when(mapper.toResponse(e)).thenReturn(toResponse(e));
 
-        assertThat(result).isEqualTo(expectedResponse);
-        verify(handler).get(s.getId());
-        verify(mapper).updateEntity(s, request);
-        verify(handler).update(s.getId(), s);
-        verify(mapper).toResponse(s);
+        SolicitudResponse result = svc.update(e.getId(), request);
+
+        assertThat(result).isEqualTo(toResponse(e));
+        verify(handler).get(e.getId());
+        verify(mapper).updateEntity(same(e), eq(request));
+        verify(handler).update(eq(e.getId()), same(e));
+        verify(mapper).toResponse(e);
     }
+
 
     @Test void deleteDelegatesToHandler() {
         UUID id = UUID.fromString("00000000-0000-0000-0000-000000000002");

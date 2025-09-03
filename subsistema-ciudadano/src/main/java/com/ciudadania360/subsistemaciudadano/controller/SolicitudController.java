@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/solicituds")
+@RequestMapping("/api/solicitudes")
 public class SolicitudController {
 
     private final SolicitudService service;

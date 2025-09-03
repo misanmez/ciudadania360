@@ -6,6 +6,7 @@ import com.ciudadania360.subsistemaciudadano.application.dto.solicitud.Solicitud
 import com.ciudadania360.subsistemaciudadano.application.mapper.SolicitudMapper;
 import com.ciudadania360.subsistemaciudadano.domain.entity.Solicitud;
 import com.ciudadania360.subsistemaciudadano.domain.handler.SolicitudHandler;
+import com.ciudadania360.shared.exception.BadRequestException;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -31,19 +32,26 @@ public class SolicitudService {
     }
 
     public SolicitudResponse get(UUID id) {
-        Solicitud e = handler.get(id);
-        return mapper.toResponse(e);
+        return mapper.toResponse(handler.get(id));
     }
 
     public SolicitudResponse create(SolicitudRequest request) {
+        validateRequest(request);
+
         Solicitud entity = mapper.toEntity(request);
+        entity.setId(UUID.randomUUID());
+        entity.setVersion(0L);
+
         Solicitud created = handler.create(entity);
         return mapper.toResponse(created);
     }
 
     public SolicitudResponse update(UUID id, SolicitudRequest request) {
+        validateRequest(request);
+
         Solicitud existing = handler.get(id);
-        mapper.updateEntity(existing, request); // MapStruct actualiza solo los campos no nulos
+        mapper.updateEntity(existing, request);
+
         Solicitud updated = handler.update(id, existing);
         return mapper.toResponse(updated);
     }
@@ -62,7 +70,7 @@ public class SolicitudService {
     public SolicitudResponse recalculateSla(UUID id) {
         Solicitud solicitud = handler.get(id);
         // lógica simple de ejemplo: SLA = registro + 48h
-        solicitud.setFechaLimiteSLA(solicitud.getFechaRegistro().plusSeconds(48 * 3600));
+        solicitud.setFechaLimiteSLA(solicitud.getFechaRegistro().plusSeconds(172800));
         return mapper.toResponse(handler.update(id, solicitud));
     }
 
@@ -85,5 +93,20 @@ public class SolicitudService {
             solicitud.setClasificacion(handler.getDefaultClasificacion());
         }
         return mapper.toResponse(handler.update(id, solicitud));
+    }
+
+    private void validateRequest(SolicitudRequest request) {
+        if (request.getTitulo() == null || request.getTitulo().isBlank()) {
+            throw new BadRequestException("El título de la solicitud es obligatorio");
+        }
+
+        if (request.getEstado() == null || request.getEstado().isBlank()) {
+            throw new BadRequestException("El estado de la solicitud es obligatorio");
+        }
+
+        if (request.getPrioridad() != null &&
+                !request.getPrioridad().matches("ALTA|MEDIA|BAJA")) {
+            throw new BadRequestException("Prioridad inválida, debe ser ALTA, MEDIA o BAJA");
+        }
     }
 }
