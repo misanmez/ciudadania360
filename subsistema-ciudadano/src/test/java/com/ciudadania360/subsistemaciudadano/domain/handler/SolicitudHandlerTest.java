@@ -1,9 +1,10 @@
 package com.ciudadania360.subsistemaciudadano.domain.handler;
 
-import com.ciudadania360.subsistemaciudadano.domain.entity.Ciudadano;
 import com.ciudadania360.subsistemaciudadano.domain.entity.Clasificacion;
 import com.ciudadania360.subsistemaciudadano.domain.entity.Solicitud;
+import com.ciudadania360.subsistemaciudadano.domain.entity.Ciudadano;
 import com.ciudadania360.subsistemaciudadano.domain.entity.Ubicacion;
+import com.ciudadania360.subsistemaciudadano.domain.repository.ClasificacionRepository;
 import com.ciudadania360.subsistemaciudadano.domain.repository.SolicitudRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,7 +19,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -28,7 +28,7 @@ class SolicitudHandlerTest {
     private SolicitudRepository repo;
 
     @Mock
-    private ClasificacionHandler clasificacionHandler;
+    private ClasificacionRepository clasificacionRepository;
 
     @InjectMocks
     private SolicitudHandler handler;
@@ -91,10 +91,16 @@ class SolicitudHandlerTest {
                 .build();
     }
 
+    private Clasificacion createDefaultClasificacion() {
+        Clasificacion defaultClasificacion = new Clasificacion();
+        defaultClasificacion.setId(UUID.randomUUID());
+        defaultClasificacion.setNombre("GENERICA");
+        return defaultClasificacion;
+    }
+
     @Test
     void listReturnsAllSolicitudes() {
         Solicitud e = createSolicitud(UUID.randomUUID());
-
         when(repo.findAll()).thenReturn(List.of(e));
 
         List<Solicitud> result = handler.list();
@@ -107,7 +113,6 @@ class SolicitudHandlerTest {
     void getReturnsSolicitudById() {
         UUID id = UUID.randomUUID();
         Solicitud e = createSolicitud(id);
-
         when(repo.findById(id)).thenReturn(Optional.of(e));
 
         Solicitud result = handler.get(id);
@@ -119,8 +124,7 @@ class SolicitudHandlerTest {
     @Test
     void createSavesSolicitud() {
         Solicitud e = createSolicitud(UUID.randomUUID());
-
-        when(repo.save(any())).thenReturn(e);
+        when(repo.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         Solicitud result = handler.create(e);
 
@@ -146,8 +150,6 @@ class SolicitudHandlerTest {
     @Test
     void deleteRemovesSolicitudById() {
         UUID id = UUID.randomUUID();
-
-        // Mock para que exista la solicitud
         when(repo.existsById(id)).thenReturn(true);
 
         handler.delete(id);
@@ -159,22 +161,18 @@ class SolicitudHandlerTest {
     void createAssignsDefaultClasificacionIfNull() {
         UUID id = UUID.randomUUID();
         Solicitud solicitud = createSolicitud(id);
-        solicitud.setClasificacion(null); // aseguramos que viene nula
+        solicitud.setClasificacion(null);
 
-        Clasificacion defaultClasificacion = new Clasificacion();
-        defaultClasificacion.setId(UUID.randomUUID());
-        defaultClasificacion.setNombre("GENERICA");
-
-        // Mockeamos el handler de clasificación
-        when(clasificacionHandler.getDefaultClasificacion()).thenReturn(defaultClasificacion);
+        // Stubbing solo para este test
+        Clasificacion defaultClasificacion = createDefaultClasificacion();
+        when(clasificacionRepository.findByNombreIgnoreCase("GENERICA"))
+                .thenReturn(Optional.of(defaultClasificacion));
         when(repo.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         Solicitud result = handler.create(solicitud);
 
         assertThat(result.getClasificacion()).isNotNull();
         assertThat(result.getClasificacion().getNombre()).isEqualTo("GENERICA");
-
-        verify(clasificacionHandler).getDefaultClasificacion();
         verify(repo).save(solicitud);
     }
 
@@ -184,21 +182,18 @@ class SolicitudHandlerTest {
         Solicitud cambios = createSolicitud(id);
         cambios.setClasificacion(null);
 
-        Clasificacion defaultClasificacion = new Clasificacion();
-        defaultClasificacion.setId(UUID.randomUUID());
-        defaultClasificacion.setNombre("GENERICA");
-
         when(repo.existsById(id)).thenReturn(true);
-        when(clasificacionHandler.getDefaultClasificacion()).thenReturn(defaultClasificacion);
+
+        // Stubbing solo para este test
+        Clasificacion defaultClasificacion = createDefaultClasificacion();
+        when(clasificacionRepository.findByNombreIgnoreCase("GENERICA"))
+                .thenReturn(Optional.of(defaultClasificacion));
         when(repo.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         Solicitud result = handler.update(id, cambios);
 
         assertThat(result.getClasificacion()).isNotNull();
         assertThat(result.getClasificacion().getNombre()).isEqualTo("GENERICA");
-
-        verify(clasificacionHandler).getDefaultClasificacion();
         verify(repo).save(cambios);
     }
-
 }

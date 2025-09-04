@@ -3,6 +3,8 @@ package com.ciudadania360.subsistemaciudadano.application.service;
 import com.ciudadania360.subsistemaciudadano.application.dto.reglaclasificacion.ReglaClasificacionRequest;
 import com.ciudadania360.subsistemaciudadano.application.dto.reglaclasificacion.ReglaClasificacionResponse;
 import com.ciudadania360.subsistemaciudadano.application.mapper.ReglaClasificacionMapper;
+import com.ciudadania360.subsistemaciudadano.application.validator.ReglaClasificacionValidator;
+import com.ciudadania360.subsistemaciudadano.domain.entity.Clasificacion;
 import com.ciudadania360.subsistemaciudadano.domain.entity.ReglaClasificacion;
 import com.ciudadania360.subsistemaciudadano.domain.handler.ReglaClasificacionHandler;
 import org.junit.jupiter.api.Test;
@@ -15,7 +17,6 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -25,19 +26,26 @@ class ReglaClasificacionServiceTest {
     private ReglaClasificacionHandler handler;
 
     @Mock
-    private ReglaClasificacionMapper mapper; // 🔑 Mock del mapper
+    private ReglaClasificacionMapper mapper;
+
+    @Mock
+    private ReglaClasificacionValidator validator;
 
     @InjectMocks
     private ReglaClasificacionService svc;
 
     private ReglaClasificacion buildRegla() {
+        Clasificacion clasificacion = Clasificacion.builder()
+                .id(UUID.randomUUID())
+                .build();
+
         return ReglaClasificacion.builder()
                 .id(UUID.randomUUID())
                 .nombre("Regla de prueba")
                 .expresion("x > 10")
                 .prioridad(1)
                 .activa(true)
-                .clasificacionId(UUID.randomUUID())
+                .clasificacion(clasificacion)
                 .condiciones("{}")
                 .fuente("Sistema")
                 .vigenciaDesde(Instant.now())
@@ -52,7 +60,7 @@ class ReglaClasificacionServiceTest {
                 e.getExpresion(),
                 e.getPrioridad(),
                 e.getActiva(),
-                e.getClasificacionId(),
+                e.getClasificacion().getId(),
                 e.getCondiciones(),
                 e.getFuente(),
                 e.getVigenciaDesde(),
@@ -67,11 +75,12 @@ class ReglaClasificacionServiceTest {
                 e.getExpresion(),
                 e.getPrioridad(),
                 e.getActiva(),
-                e.getClasificacionId(),
+                e.getClasificacion().getId(),
                 e.getCondiciones(),
                 e.getFuente(),
                 e.getVigenciaDesde(),
-                e.getVigenciaHasta()
+                e.getVigenciaHasta(),
+                e.getVersion()
         );
     }
 
@@ -113,46 +122,48 @@ class ReglaClasificacionServiceTest {
         ReglaClasificacionRequest request = toRequest(e);
         ReglaClasificacionResponse r = toResponse(e);
 
-        when(mapper.toEntity(request)).thenReturn(e); // 🔑 mapping request -> entity
-        when(handler.create(e)).thenReturn(e);        // 🔑 persiste
-        when(mapper.toResponse(e)).thenReturn(r);     // 🔑 mapping entity -> response
+        // Validación de negocio
+        doNothing().when(validator).validateCreate(request);
+
+        when(mapper.toEntity(request)).thenReturn(e);
+        when(handler.create(e)).thenReturn(e);
+        when(mapper.toResponse(e)).thenReturn(r);
 
         ReglaClasificacionResponse result = svc.create(request);
 
         assertThat(result).isEqualTo(r);
+        verify(validator).validateCreate(request);
         verify(mapper).toEntity(request);
         verify(handler).create(e);
         verify(mapper).toResponse(e);
-        verifyNoMoreInteractions(handler, mapper);
+        verifyNoMoreInteractions(handler, mapper, validator);
     }
 
     @Test
     void updateDelegatesToHandler() {
         ReglaClasificacion existing = buildRegla();
 
-        // Creamos un request con cambios para poder asertar el resultado
         ReglaClasificacionRequest request = new ReglaClasificacionRequest(
-                "Regla actualizada",                 // 🔁 nombre
-                "y < 5",                             // 🔁 expresión
-                2,                                   // 🔁 prioridad
-                false,                               // 🔁 activa
-                existing.getClasificacionId(),       // mismo clasificacionId
-                "{\"k\":\"v\"}",                     // 🔁 condiciones
-                "Manual",                            // 🔁 fuente
-                Instant.now(),                       // 🔁 vigenciaDesde
-                Instant.now().plusSeconds(7200)      // 🔁 vigenciaHasta
+                "Regla actualizada",
+                "y < 5",
+                2,
+                false,
+                existing.getClasificacion().getId(),
+                "{\"k\":\"v\"}",
+                "Manual",
+                Instant.now(),
+                Instant.now().plusSeconds(7200)
         );
 
-        // Lo que devuelve el handler tras actualizar
         ReglaClasificacion updated = ReglaClasificacion.builder()
                 .id(existing.getId())
-                .nombre("Regla actualizada")
-                .expresion("y < 5")
-                .prioridad(2)
-                .activa(false)
-                .clasificacionId(existing.getClasificacionId())
-                .condiciones("{\"k\":\"v\"}")
-                .fuente("Manual")
+                .nombre(request.getNombre())
+                .expresion(request.getExpresion())
+                .prioridad(request.getPrioridad())
+                .activa(request.getActiva())
+                .clasificacion(existing.getClasificacion())
+                .condiciones(request.getCondiciones())
+                .fuente(request.getFuente())
                 .vigenciaDesde(request.getVigenciaDesde())
                 .vigenciaHasta(request.getVigenciaHasta())
                 .version(existing.getVersion())
@@ -160,10 +171,11 @@ class ReglaClasificacionServiceTest {
 
         ReglaClasificacionResponse r = toResponse(updated);
 
-        // Flujo típico: get -> mapper.updateEntity -> handler.update -> mapper.toResponse
+        // Flujo típico: get -> validator -> mapper.updateEntity -> handler.update -> mapper.toResponse
         when(handler.get(existing.getId())).thenReturn(existing);
-        doNothing().when(mapper).updateEntity(same(existing), eq(request));
-        when(handler.update(eq(existing.getId()), same(existing))).thenReturn(updated);
+        doNothing().when(validator).validateUpdate(existing.getId(), request);
+        doNothing().when(mapper).updateEntity(existing, request);
+        when(handler.update(existing.getId(), existing)).thenReturn(updated);
         when(mapper.toResponse(updated)).thenReturn(r);
 
         ReglaClasificacionResponse result = svc.update(existing.getId(), request);
@@ -175,19 +187,29 @@ class ReglaClasificacionServiceTest {
         assertThat(result.getFuente()).isEqualTo("Manual");
 
         verify(handler).get(existing.getId());
-        verify(mapper).updateEntity(same(existing), eq(request));
-        verify(handler).update(eq(existing.getId()), same(existing));
+        verify(validator).validateUpdate(existing.getId(), request);
+        verify(mapper).updateEntity(existing, request);
+        verify(handler).update(existing.getId(), existing);
         verify(mapper).toResponse(updated);
-        verifyNoMoreInteractions(handler, mapper);
+        verifyNoMoreInteractions(handler, mapper, validator);
     }
 
     @Test
     void deleteDelegatesToHandler() {
-        UUID id = UUID.randomUUID();
+        ReglaClasificacion regla = buildRegla();
 
-        svc.delete(id);
+        // Stub para que handler devuelva la regla al hacer get(id)
+        when(handler.get(regla.getId())).thenReturn(regla);
 
-        verify(handler).delete(id);
-        verifyNoInteractions(mapper); // el mapper no participa en delete
+        // Validación de borrado
+        doNothing().when(validator).validateForDelete(regla);
+
+        svc.delete(regla.getId());
+
+        verify(handler).get(regla.getId());
+        verify(validator).validateForDelete(regla);
+        verify(handler).delete(regla.getId());
+        verifyNoMoreInteractions(handler, mapper, validator);
     }
+
 }

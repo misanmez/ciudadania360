@@ -1,10 +1,8 @@
 package com.ciudadania360.subsistemaciudadano.domain.entity;
 
 import jakarta.persistence.*;
-import java.util.*;
-import java.util.UUID;
 import lombok.*;
-
+import java.util.*;
 
 @Entity
 @Table(name = "clasificacion", schema = "ciudadano")
@@ -13,17 +11,28 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class Clasificacion {
+
     @Id
     private UUID id;
-    private String codigo;
-    private String nombre;
-    private String descripcion;
-    private String tipo;
+
+    private String codigo; // código único interno para clasificación
+
+    private String nombre; // nombre descriptivo
+
+    @Column(columnDefinition = "text")
+    private String descripcion; // descripción detallada
+
+    private String tipo; // puede ser: queja, incidencia, solicitud de información, felicitación, sugerencia
+
     @ManyToOne
     @JoinColumn(name = "padre_id")
-    private Clasificacion padre;
+    private Clasificacion padre; // relación jerárquica
+
     @OneToMany(mappedBy = "padre")
-    private List<Clasificacion> hijos;
+    private List<Clasificacion> hijos = new ArrayList<>();
+
+    @Column(columnDefinition = "jsonb")
+    private String metadata; // información adicional, reglas automáticas, etiquetas
 
     @Version
     private Long version;

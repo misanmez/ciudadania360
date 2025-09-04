@@ -1,8 +1,10 @@
-// CiudadanoResponse.java
 package com.ciudadania360.subsistemaciudadano.application.dto.ciudadano;
 
+import com.ciudadania360.subsistemaciudadano.application.dto.consentimiento.ConsentimientoResponse;
+import com.ciudadania360.subsistemaciudadano.application.dto.direccion.DireccionResponse;
+import com.ciudadania360.subsistemaciudadano.application.dto.solicitud.SolicitudResponse;
 import lombok.*;
-
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -23,4 +25,9 @@ public class CiudadanoResponse {
     private String estado;
     private String externalId;
     private String metadata;
+
+    // Nuevos campos
+    private List<DireccionResponse> direcciones;
+    private List<ConsentimientoResponse> consentimientos;
+    private List<SolicitudResponse> solicitudes; // historial completo de solicitudes
 }

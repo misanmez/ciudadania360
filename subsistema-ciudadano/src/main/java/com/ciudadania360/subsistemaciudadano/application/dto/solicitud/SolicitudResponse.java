@@ -1,4 +1,3 @@
-
 package com.ciudadania360.subsistemaciudadano.application.dto.solicitud;
 
 import lombok.*;
@@ -25,11 +24,12 @@ public class SolicitudResponse {
     private Instant fechaRegistro;
     private Instant fechaLimiteSLA;
     private Instant fechaCierre;
-    private BigDecimal scoreRelevancia;
+    private BigDecimal scoreRelevancia;  // Se calcula en el sistema
     private String origen;
     private Integer adjuntosCount;
     private Boolean encuestaEnviada;
     private String referenciaExterna;
     private String metadata;
-    private Long version;
+    private String agenteAsignado;
+    private Long version; // Control de concurrencia optimista
 }

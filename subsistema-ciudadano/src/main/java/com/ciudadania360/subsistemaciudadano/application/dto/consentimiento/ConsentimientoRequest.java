@@ -1,7 +1,7 @@
 package com.ciudadania360.subsistemaciudadano.application.dto.consentimiento;
 
 import lombok.*;
-
+import java.time.Instant;
 import java.util.UUID;
 
 @Data
@@ -9,7 +9,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 public class ConsentimientoRequest {
-    private UUID ciudadanoId;
-    private String tipo;
-    private Boolean otorgado;
+    private UUID ciudadanoId;          // ID del ciudadano al que pertenece
+    private String tipo;               // Tipo de consentimiento
+    private Boolean otorgado;          // Si está otorgado o no
+    private Instant fechaOtorgamiento; // Fecha de otorgamiento del consentimiento
 }

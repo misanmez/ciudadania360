@@ -1,24 +1,20 @@
 package com.ciudadania360.subsistemaciudadano.application.dto.direccion;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
+import lombok.*;
 import java.util.UUID;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class DireccionRequest {
-    private UUID ciudadanoId;
-    private String via;
-    private String numero;
-    private String cp;
-    private String municipio;
-    private String provincia;
-    private Double lat;
-    private Double lon;
-    private Boolean principal;
+    private UUID ciudadanoId;   // ID del ciudadano al que pertenece
+    private String via;         // Nombre de la calle o vía
+    private String numero;      // Número de la calle
+    private String cp;          // Código postal
+    private String municipio;   // Municipio
+    private String provincia;   // Provincia
+    private Double lat;         // Latitud geográfica
+    private Double lon;         // Longitud geográfica
+    private Boolean principal;  // Indica si es la dirección principal del ciudadano
 }

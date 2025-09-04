@@ -1,5 +1,6 @@
 package com.ciudadania360.subsistemaciudadano.domain.handler;
 
+import com.ciudadania360.subsistemaciudadano.domain.entity.Clasificacion;
 import com.ciudadania360.subsistemaciudadano.domain.entity.ReglaClasificacion;
 import com.ciudadania360.subsistemaciudadano.domain.repository.ReglaClasificacionRepository;
 import org.junit.jupiter.api.Test;
@@ -26,20 +27,34 @@ class ReglaClasificacionHandlerTest {
     @InjectMocks
     private ReglaClasificacionHandler handler;
 
-    @Test
-    void listReturnsAllReglas() {
-        ReglaClasificacion e = ReglaClasificacion.builder()
+    private Clasificacion buildClasificacion() {
+        return Clasificacion.builder()
+                .id(UUID.randomUUID())
+                .codigo("C001")
+                .nombre("Incidencia")
+                .descripcion("Reglas para incidencias")
+                .tipo("incidencia")
+                .build();
+    }
+
+    private ReglaClasificacion buildRegla() {
+        return ReglaClasificacion.builder()
                 .id(UUID.randomUUID())
                 .nombre("Regla X")
                 .expresion("expresion_test")
                 .prioridad(1)
                 .activa(true)
-                .clasificacionId(UUID.randomUUID())
+                .clasificacion(buildClasificacion())
                 .condiciones("{\"condicion\":\"valor\"}")
                 .fuente("Fuente A")
                 .vigenciaDesde(Instant.now())
                 .vigenciaHasta(Instant.now().plusSeconds(3600))
                 .build();
+    }
+
+    @Test
+    void listReturnsAllReglas() {
+        ReglaClasificacion e = buildRegla();
 
         when(repo.findAll()).thenReturn(List.of(e));
 
@@ -52,11 +67,8 @@ class ReglaClasificacionHandlerTest {
     @Test
     void getReturnsReglaById() {
         UUID id = UUID.randomUUID();
-        ReglaClasificacion e = ReglaClasificacion.builder()
-                .id(id)
-                .nombre("Regla X")
-                .expresion("expresion_test")
-                .build();
+        ReglaClasificacion e = buildRegla();
+        e.setId(id);
 
         when(repo.findById(id)).thenReturn(Optional.of(e));
 
@@ -68,11 +80,7 @@ class ReglaClasificacionHandlerTest {
 
     @Test
     void createSavesRegla() {
-        ReglaClasificacion e = ReglaClasificacion.builder()
-                .id(UUID.randomUUID())
-                .nombre("Regla X")
-                .expresion("expresion_test")
-                .build();
+        ReglaClasificacion e = buildRegla();
 
         when(repo.save(any())).thenReturn(e);
 
@@ -87,18 +95,14 @@ class ReglaClasificacionHandlerTest {
         UUID id = UUID.randomUUID();
 
         // Regla existente en la "BD"
-        ReglaClasificacion existente = ReglaClasificacion.builder()
-                .id(id)
-                .nombre("Regla X")
-                .expresion("expresion_test")
-                .build();
+        ReglaClasificacion existente = buildRegla();
+        existente.setId(id);
 
         // Cambios que vienen en la request
-        ReglaClasificacion cambios = ReglaClasificacion.builder()
-                .id(id)
-                .nombre("Regla Y")
-                .expresion("nueva_expresion")
-                .build();
+        ReglaClasificacion cambios = buildRegla();
+        cambios.setId(id);
+        cambios.setNombre("Regla Y");
+        cambios.setExpresion("nueva_expresion");
 
         when(repo.findById(id)).thenReturn(Optional.of(existente));
         when(repo.save(any())).thenReturn(existente);
@@ -113,13 +117,20 @@ class ReglaClasificacionHandlerTest {
         verify(repo).save(existente);
     }
 
-
     @Test
     void deleteRemovesReglaById() {
         UUID id = UUID.randomUUID();
+        ReglaClasificacion regla = buildRegla();
+        regla.setId(id);
+
+        // Stub para que get(id) no falle
+        when(repo.findById(id)).thenReturn(Optional.of(regla));
+        doNothing().when(repo).deleteById(id);
 
         handler.delete(id);
 
+        verify(repo).findById(id);
         verify(repo).deleteById(id);
     }
+
 }

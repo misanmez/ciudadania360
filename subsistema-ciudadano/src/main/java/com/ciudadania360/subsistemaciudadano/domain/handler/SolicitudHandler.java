@@ -5,6 +5,7 @@ import com.ciudadania360.subsistemaciudadano.domain.entity.Clasificacion;
 import com.ciudadania360.subsistemaciudadano.domain.entity.Solicitud;
 import com.ciudadania360.subsistemaciudadano.domain.repository.ClasificacionRepository;
 import com.ciudadania360.subsistemaciudadano.domain.repository.SolicitudRepository;
+import com.ciudadania360.shared.exception.BadRequestException;
 import org.springframework.stereotype.Component;
 import jakarta.persistence.criteria.Predicate;
 
@@ -14,14 +15,13 @@ import java.util.UUID;
 
 @Component
 public class SolicitudHandler {
-    private final SolicitudRepository repository;
-    private final ClasificacionHandler clasificacionHandler;
 
+    private final SolicitudRepository repository;
     private final ClasificacionRepository clasificacionRepository;
 
-    public SolicitudHandler(SolicitudRepository repository, ClasificacionHandler clasificacionHandler, ClasificacionRepository clasificacionRepository) {
+    public SolicitudHandler(SolicitudRepository repository,
+                            ClasificacionRepository clasificacionRepository) {
         this.repository = repository;
-        this.clasificacionHandler = clasificacionHandler;
         this.clasificacionRepository = clasificacionRepository;
     }
 
@@ -31,36 +31,38 @@ public class SolicitudHandler {
 
     public Solicitud get(UUID id) {
         return repository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Solicitud no encontrada con id: " + id));
+                .orElseThrow(() -> new BadRequestException("Solicitud no encontrada con id: " + id));
     }
 
     public Solicitud create(Solicitud solicitud) {
-        // Si la solicitud no trae clasificación → asignar la GENÉRICA
+        // Garantizar clasificación
         if (solicitud.getClasificacion() == null) {
-            Clasificacion defaultClasificacion = clasificacionHandler.getDefaultClasificacion();
-            solicitud.setClasificacion(defaultClasificacion);
+            solicitud.setClasificacion(getDefaultClasificacion());
         }
         return repository.save(solicitud);
     }
 
     public Solicitud update(UUID id, Solicitud solicitud) {
         if (!repository.existsById(id)) {
-            throw new IllegalArgumentException("Solicitud no encontrada con id: " + id);
+            throw new BadRequestException("Solicitud no encontrada con id: " + id);
         }
+
         solicitud.setId(id);
 
-        // Igual que en create → garantizar clasificación
         if (solicitud.getClasificacion() == null) {
-            Clasificacion defaultClasificacion = clasificacionHandler.getDefaultClasificacion();
-            solicitud.setClasificacion(defaultClasificacion);
+            solicitud.setClasificacion(getDefaultClasificacion());
         }
 
         return repository.save(solicitud);
     }
 
+    public boolean exists(UUID id) {
+        return repository.existsById(id);
+    }
+
     public void delete(UUID id) {
         if (!repository.existsById(id)) {
-            throw new IllegalArgumentException("Solicitud no encontrada con id: " + id);
+            throw new BadRequestException("Solicitud no encontrada con id: " + id);
         }
         repository.deleteById(id);
     }

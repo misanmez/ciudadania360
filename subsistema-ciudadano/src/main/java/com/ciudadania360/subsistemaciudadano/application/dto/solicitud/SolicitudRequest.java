@@ -11,22 +11,22 @@ import java.util.UUID;
 @Builder
 public class SolicitudRequest {
 
-    @NotNull
+    @NotNull(message = "El ciudadanoId es obligatorio")
     private UUID ciudadanoId;
 
-    @NotBlank
+    @NotBlank(message = "El título es obligatorio")
     private String titulo;
 
     private String descripcion;
 
-    @NotBlank
+    @NotBlank(message = "El tipo es obligatorio")
     private String tipo;
 
     private String canalEntrada;
 
     private String estado;
 
-    private String prioridad;
+    private String prioridad; // ALTA, MEDIA, BAJA
 
     private UUID clasificacionId;
 
@@ -37,6 +37,8 @@ public class SolicitudRequest {
     private Instant fechaRegistro;
 
     private Instant fechaLimiteSLA;
+
+    private Instant fechaCierre;
 
     private String origen;
 

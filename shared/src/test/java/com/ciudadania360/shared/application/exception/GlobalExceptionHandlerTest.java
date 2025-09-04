@@ -16,7 +16,7 @@ class GlobalExceptionHandlerTest {
 
     @RestController
     static class DummyController {
-        @PostMapping("/throw-validation")
+        @PostMapping("/throw-validator")
         public void throwValidation() {
             throw new ValidationException("Error de validación");
         }
@@ -28,7 +28,7 @@ class GlobalExceptionHandlerTest {
                 .setControllerAdvice(new GlobalExceptionHandler())
                 .build();
 
-        mvc.perform(post("/throw-validation")
+        mvc.perform(post("/throw-validator")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"))

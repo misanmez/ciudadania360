@@ -1,9 +1,8 @@
 package com.ciudadania360.subsistemaciudadano.domain.entity;
 
 import jakarta.persistence.*;
-import java.util.UUID;
 import lombok.*;
-
+import java.util.*;
 
 @Entity
 @Table(name = "ubicacion", schema = "ciudadano")
@@ -12,16 +11,21 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class Ubicacion {
+
     @Id
     private UUID id;
-    private String direccion;
-    private String municipio;
-    private String provincia;
-    private String cp;
-    private Double lat;
-    private Double lon;
-    private Integer precision;
-    private String fuente;
+
+    private String direccion;   // calle, número
+    private String municipio;   // municipio
+    private String provincia;   // provincia
+    private String cp;          // código postal
+    private Double lat;         // latitud geográfica
+    private Double lon;         // longitud geográfica
+    private Integer precision;  // precisión geográfica del dato
+    private String fuente;      // origen de la información (BDC, Padrón, ciudadano, etc.)
+
+    @Column(columnDefinition = "jsonb")
+    private String metadata;    // datos adicionales: notas, referencias internas
 
     @Version
     private Long version;

@@ -1,7 +1,10 @@
 package com.ciudadania360.subsistemaciudadano.application.dto.ciudadano;
 
+import com.ciudadania360.subsistemaciudadano.application.dto.consentimiento.ConsentimientoRequest;
+import com.ciudadania360.subsistemaciudadano.application.dto.direccion.DireccionRequest;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -33,4 +36,8 @@ public class CiudadanoRequest {
     private String estado;
     private String externalId;
     private String metadata;
+
+    // Nuevos campos relacionados con subsistema ciudadano ampliado
+    private List<DireccionRequest> direcciones; // lista de direcciones asociadas
+    private List<ConsentimientoRequest> consentimientos; // historial de consentimientos
 }

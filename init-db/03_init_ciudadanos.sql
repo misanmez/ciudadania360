@@ -1,25 +1,39 @@
--- V1__init_corrected.sql
--- Migración corregida para crear las tablas del esquema ciudadano
+-- V2__init_completo.sql
+-- Migración completa para el subsistema de ciudadanos con nuevas entidades
 
 -- Crear esquema
 CREATE SCHEMA IF NOT EXISTS ciudadano;
+
+-- Tabla ubicacion
+CREATE TABLE ciudadano.ubicacion (
+  id uuid PRIMARY KEY,
+  direccion varchar(255),
+  municipio varchar(120),
+  provincia varchar(120),
+  cp varchar(10),
+  lat double precision,
+  lon double precision,
+  precision integer,
+  fuente varchar(50),
+  version bigint DEFAULT 0
+);
 
 -- Tabla ciudadano
 CREATE TABLE ciudadano.ciudadano (
   id uuid PRIMARY KEY,
   nif_nie varchar(15),
-  nombre varchar(100),
-  apellidos varchar(150),
+  nombre varchar(100) NOT NULL,
+  apellidos varchar(150) NOT NULL,
   email varchar(150),
   telefono varchar(30),
   canal_preferido varchar(50),
   direccion_postal varchar(255),
   ubicacion_id uuid,
-  consentimiento_lopd boolean NOT NULL DEFAULT false,
   estado varchar(50) NOT NULL DEFAULT 'ACTIVO',
   external_id varchar(255),
   metadata jsonb,
-  version bigint DEFAULT 0
+  version bigint DEFAULT 0,
+  CONSTRAINT fk_ciudadano_ubicacion FOREIGN KEY(ubicacion_id) REFERENCES ciudadano.ubicacion(id)
 );
 
 -- Tabla clasificacion
@@ -32,20 +46,6 @@ CREATE TABLE ciudadano.clasificacion (
   padre_id uuid,
   version bigint DEFAULT 0,
   CONSTRAINT fk_clasificacion_padre FOREIGN KEY(padre_id) REFERENCES ciudadano.clasificacion(id)
-);
-
--- Tabla ubicacion
-CREATE TABLE ciudadano.ubicacion (
-  id uuid PRIMARY KEY,
-  direccion varchar(255),
-  municipio varchar(120),
-  provincia varchar(120),
-  cp varchar(10),
-  lat float(53),
-  lon float(53),
-  precision integer,
-  fuente varchar(50),
-  version bigint DEFAULT 0
 );
 
 -- Tabla solicitud
@@ -136,6 +136,59 @@ CREATE TABLE ciudadano.direccion (
   CONSTRAINT fk_direccion_ciudadano FOREIGN KEY(ciudadano_id) REFERENCES ciudadano.ciudadano(id)
 );
 
+-- Nueva tabla SolicitudAgrupada
+CREATE TABLE ciudadano.solicitud_agrupada (
+  id uuid PRIMARY KEY,
+  solicitud_padre_id uuid NOT NULL,
+  solicitud_hija_id uuid NOT NULL,
+  metadata jsonb,
+  version bigint DEFAULT 0,
+  CONSTRAINT fk_solicitud_agrupada_padre FOREIGN KEY(solicitud_padre_id) REFERENCES ciudadano.solicitud(id),
+  CONSTRAINT fk_solicitud_agrupada_hija FOREIGN KEY(solicitud_hija_id) REFERENCES ciudadano.solicitud(id)
+);
+
+-- Nueva tabla Notificacion
+CREATE TABLE ciudadano.notificacion (
+  id uuid PRIMARY KEY,
+  solicitud_id uuid NOT NULL,
+  canal varchar(50) NOT NULL,
+  fecha_envio timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  estado varchar(50) NOT NULL DEFAULT 'PENDIENTE',
+  mensaje text,
+  metadata jsonb,
+  version bigint DEFAULT 0,
+  CONSTRAINT fk_notificacion_solicitud FOREIGN KEY(solicitud_id) REFERENCES ciudadano.solicitud(id)
+);
+
+-- Nueva tabla Encuesta
+CREATE TABLE ciudadano.encuesta (
+    id uuid PRIMARY KEY,
+    solicitud_id uuid NOT NULL,
+    tipo varchar(255) NOT NULL,              -- Tipo de encuesta
+    estado varchar(50) NOT NULL,             -- ENVIADA, PENDIENTE, COMPLETADA
+    fecha_envio timestamp,
+    fecha_respuesta timestamp,
+    respuestas jsonb,                        -- JSON con las respuestas
+    metadata jsonb,                           -- Datos adicionales
+    version bigint DEFAULT 0,
+    CONSTRAINT fk_encuesta_solicitud FOREIGN KEY(solicitud_id)
+        REFERENCES ciudadano.solicitud(id)
+);
+
+
+-- Nueva tabla SolicitudEstadoHistorial
+CREATE TABLE ciudadano.solicitud_estado_historial (
+  id uuid PRIMARY KEY,
+  solicitud_id uuid NOT NULL,
+  estado_anterior varchar(50),
+  estado_nuevo varchar(50),
+  fecha_cambio timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  agente varchar(255),
+  metadata jsonb,
+  version bigint DEFAULT 0,
+  CONSTRAINT fk_estado_historial_solicitud FOREIGN KEY(solicitud_id) REFERENCES ciudadano.solicitud(id)
+);
+
 -- Crear índices
 CREATE INDEX idx_solicitud_ciudadano_id ON ciudadano.solicitud(ciudadano_id);
 CREATE INDEX idx_solicitud_clasificacion_id ON ciudadano.solicitud(clasificacion_id);
@@ -145,3 +198,8 @@ CREATE INDEX idx_interaccion_solicitud_id ON ciudadano.interaccion(solicitud_id)
 CREATE INDEX idx_interaccion_fecha ON ciudadano.interaccion(fecha);
 CREATE INDEX idx_ciudadano_nif_nie ON ciudadano.ciudadano(nif_nie);
 CREATE INDEX idx_ciudadano_email ON ciudadano.ciudadano(email);
+CREATE INDEX idx_notificacion_solicitud_id ON ciudadano.notificacion(solicitud_id);
+CREATE INDEX idx_encuesta_solicitud_id ON ciudadano.encuesta(solicitud_id);
+CREATE INDEX idx_estado_historial_solicitud_id ON ciudadano.solicitud_estado_historial(solicitud_id);
+CREATE INDEX idx_solicitud_agrupada_padre_id ON ciudadano.solicitud_agrupada(solicitud_padre_id);
+CREATE INDEX idx_solicitud_agrupada_hija_id ON ciudadano.solicitud_agrupada(solicitud_hija_id);

@@ -90,11 +90,14 @@ class ClasificacionHandlerTest {
 
     @Test
     void testEliminar() {
+        // Stub: existe la clasificación
+        when(repository.existsById(id)).thenReturn(true);
         doNothing().when(repository).deleteById(id);
 
         handler.delete(id);
 
-        // Solo verificamos que deleteById se haya llamado
+        verify(repository, times(1)).existsById(id);
         verify(repository, times(1)).deleteById(id);
     }
+
 }

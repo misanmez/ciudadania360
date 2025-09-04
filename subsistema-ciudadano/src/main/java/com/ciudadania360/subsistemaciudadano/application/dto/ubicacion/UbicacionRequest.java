@@ -1,4 +1,3 @@
-
 package com.ciudadania360.subsistemaciudadano.application.dto.ubicacion;
 
 import lombok.AllArgsConstructor;

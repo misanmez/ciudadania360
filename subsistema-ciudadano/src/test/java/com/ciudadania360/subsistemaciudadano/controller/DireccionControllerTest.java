@@ -17,16 +17,15 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 class DireccionControllerTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
-    void listAndCreate() throws Exception {
+    void listAndCrudOperations() throws Exception {
         DireccionService svc = mock(DireccionService.class);
-
         UUID ciudadanoId = UUID.randomUUID();
 
         // Dirección de ejemplo (Response DTO)
@@ -41,6 +40,7 @@ class DireccionControllerTest {
                 .lat(39.4699)
                 .lon(-0.3763)
                 .principal(true)
+                .version(1L)
                 .build();
 
         // Mock del servicio
@@ -52,11 +52,13 @@ class DireccionControllerTest {
         DireccionController controller = new DireccionController(svc);
         MockMvc mvc = MockMvcBuilders.standaloneSetup(controller).build();
 
-        // List
+        // LIST
         mvc.perform(get("/api/direcciones"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(e.getId().toString()))
+                .andExpect(jsonPath("$[0].via").value("Calle Falsa"));
 
-        // Create
+        // CREATE
         DireccionRequest newDireccion = DireccionRequest.builder()
                 .ciudadanoId(ciudadanoId)
                 .via("Calle Falsa")
@@ -72,13 +74,16 @@ class DireccionControllerTest {
         mvc.perform(post("/api/direcciones")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(newDireccion)))
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(e.getId().toString()))
+                .andExpect(jsonPath("$.via").value("Calle Falsa"));
 
-        // Get by ID
+        // GET BY ID
         mvc.perform(get("/api/direcciones/" + e.getId()))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(e.getId().toString()));
 
-        // Update
+        // UPDATE
         DireccionRequest updatedDireccion = DireccionRequest.builder()
                 .ciudadanoId(ciudadanoId)
                 .via("Avenida Nueva")
@@ -94,9 +99,11 @@ class DireccionControllerTest {
         mvc.perform(put("/api/direcciones/" + e.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updatedDireccion)))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(e.getId().toString()))
+                .andExpect(jsonPath("$.via").value("Calle Falsa")); // Mock devuelve la misma entidad e
 
-        // Delete
+        // DELETE
         mvc.perform(delete("/api/direcciones/" + e.getId()))
                 .andExpect(status().isNoContent());
     }

@@ -1,7 +1,9 @@
 package com.ciudadania360.subsistemaciudadano.controller;
 
-import com.ciudadania360.subsistemaciudadano.application.dto.ciudadano.CiudadanoRequest;
-import com.ciudadania360.subsistemaciudadano.application.dto.ciudadano.CiudadanoResponse;
+import com.ciudadania360.subsistemaciudadano.application.dto.ciudadano.*;
+import com.ciudadania360.subsistemaciudadano.application.dto.consentimiento.ConsentimientoResponse;
+import com.ciudadania360.subsistemaciudadano.application.dto.direccion.DireccionResponse;
+import com.ciudadania360.subsistemaciudadano.application.dto.solicitud.SolicitudResponse;
 import com.ciudadania360.subsistemaciudadano.application.service.CiudadanoService;
 import com.ciudadania360.shared.exception.GlobalExceptionHandler;
 import com.ciudadania360.shared.exception.BadRequestException;
@@ -16,8 +18,7 @@ import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -44,6 +45,9 @@ class CiudadanoControllerTest {
                 .estado("Activo")
                 .externalId("EXT123")
                 .metadata("{}")
+                .direcciones(List.of(DireccionResponse.builder().id(UUID.randomUUID()).build()))
+                .consentimientos(List.of(ConsentimientoResponse.builder().id(UUID.randomUUID()).build()))
+                .solicitudes(List.of(SolicitudResponse.builder().id(UUID.randomUUID()).build()))
                 .build();
 
         // Mock del servicio
@@ -61,7 +65,10 @@ class CiudadanoControllerTest {
         mvc.perform(get("/api/ciudadanos"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(e.getId().toString()))
-                .andExpect(jsonPath("$[0].nombre").value("Juan"));
+                .andExpect(jsonPath("$[0].nombre").value("Juan"))
+                .andExpect(jsonPath("$[0].direcciones[0].id").exists())
+                .andExpect(jsonPath("$[0].consentimientos[0].id").exists())
+                .andExpect(jsonPath("$[0].solicitudes[0].id").exists());
 
         // Create (válido)
         CiudadanoRequest newCiudadano = CiudadanoRequest.builder()
@@ -77,6 +84,8 @@ class CiudadanoControllerTest {
                 .estado("Activo")
                 .externalId("EXT123")
                 .metadata("{}")
+                .direcciones(List.of())
+                .consentimientos(List.of())
                 .build();
 
         mvc.perform(post("/api/ciudadanos")
@@ -84,22 +93,24 @@ class CiudadanoControllerTest {
                         .content(objectMapper.writeValueAsString(newCiudadano)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(e.getId().toString()))
-                .andExpect(jsonPath("$.nombre").value("Juan"));
+                .andExpect(jsonPath("$.nombre").value("Juan"))
+                .andExpect(jsonPath("$.direcciones").isArray())
+                .andExpect(jsonPath("$.consentimientos").isArray());
 
-        // Simular error de validación usando BadRequestException (se captura por GlobalExceptionHandler)
+        // Simular error de validación usando BadRequestException
         CiudadanoRequest badRequest = CiudadanoRequest.builder()
                 .nifNie("") // campo obligatorio vacío
                 .build();
 
         when(svc.create(any(CiudadanoRequest.class)))
-                .thenThrow(new BadRequestException("Nombre es obligatorio"));
+                .thenThrow(new BadRequestException("NIF/NIE es obligatorio"));
 
         mvc.perform(post("/api/ciudadanos")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(badRequest)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.message").value("Nombre es obligatorio"))
+                .andExpect(jsonPath("$.message").value("NIF/NIE es obligatorio"))
                 .andExpect(header().exists("X-Request-Id"));
 
         // Get by ID
@@ -121,6 +132,8 @@ class CiudadanoControllerTest {
                 .estado("Inactivo")
                 .externalId("EXT456")
                 .metadata("{\"actualizado\":true}")
+                .direcciones(List.of())
+                .consentimientos(List.of())
                 .build();
 
         mvc.perform(put("/api/ciudadanos/" + e.getId())

@@ -1,11 +1,6 @@
-
 package com.ciudadania360.subsistemaciudadano.application.dto.interaccion;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
+import lombok.*;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -14,12 +9,12 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 public class InteraccionRequest {
-    private UUID solicitudId;
-    private UUID ciudadanoId;
-    private String canal;
-    private Instant fecha;
-    private String agente;
-    private String mensaje;
-    private String adjuntoUri;
-    private String visibilidad;
+    private UUID solicitudId;    // ID de la solicitud asociada
+    private UUID ciudadanoId;    // ID del ciudadano que genera la interacción
+    private String canal;        // Canal de comunicación (web, app, presencial, teléfono, redes sociales)
+    private Instant fecha;       // Fecha y hora de la interacción
+    private String agente;       // Nombre o identificador del agente que gestiona la interacción
+    private String mensaje;      // Contenido de la interacción
+    private String adjuntoUri;   // URI del archivo adjunto
+    private String visibilidad;  // Pública o privada
 }

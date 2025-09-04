@@ -1,11 +1,10 @@
 package com.ciudadania360.subsistemaciudadano.domain.entity;
 
 import jakarta.persistence.*;
-
+import lombok.*;
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.UUID;
-import lombok.*;
+import java.util.*;
 
 @Entity
 @Table(name = "solicitud", schema = "ciudadano")
@@ -14,45 +13,68 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class Solicitud {
+
     @Id
     private UUID id;
+
     @ManyToOne
-    @JoinColumn(name = "ciudadano_id")
+    @JoinColumn(name = "ciudadano_id", nullable = false)
     private Ciudadano ciudadano;
+
     private String titulo;
+    @Column(columnDefinition = "text")
     private String descripcion;
-    private String tipo;
+
+    private String tipo; // queja, sugerencia, felicitación, incidencia, solicitud de info
+
     @Column(name = "canal_entrada")
-    private String canalEntrada;
-    private String estado;
-    private String prioridad;
+    private String canalEntrada; // web, app, presencial, telefónico, redes sociales
+
+    private String estado; // pendiente, en_proceso, resuelta, cerrada
+
+    private String prioridad; // ALTA, MEDIA, BAJA
+
     @ManyToOne
     @JoinColumn(name = "clasificacion_id")
     private Clasificacion clasificacion;
+
     @ManyToOne
     @JoinColumn(name = "ubicacion_id")
     private Ubicacion ubicacion;
+
     @Column(name = "numero_expediente")
     private String numeroExpediente;
+
     @Column(name = "fecha_registro")
     private Instant fechaRegistro;
+
     @Column(name = "fecha_limite_sla")
     private Instant fechaLimiteSLA;
+
     @Column(name = "fecha_cierre")
     private Instant fechaCierre;
+
     @Column(name = "score_relevancia")
     private BigDecimal scoreRelevancia;
-    private String origen;
+
+    private String origen; // interno, externo, portal, app, etc.
+
     @Column(name = "adjuntos_count")
     private Integer adjuntosCount;
+
     @Column(name = "encuesta_enviada")
     private Boolean encuestaEnviada;
+
     @Column(name = "referencia_externa")
     private String referenciaExterna;
-    @Column(columnDefinition = "jsonb")
-    private String metadata;
 
-    private String agenteAsignado;    // quién lleva la solicitud
+    @Column(columnDefinition = "jsonb")
+    private String metadata; // para info dinámica, tags, historial de cambios, etc.
+
+    private String agenteAsignado; // quien lleva la solicitud
+
+    @OneToMany(mappedBy = "solicitud", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Interaccion> interacciones;
 
     @Version
     private Long version;

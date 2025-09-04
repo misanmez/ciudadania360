@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,16 +27,23 @@ class ConsentimientoControllerTest {
     private ConsentimientoController controller;
 
     private ConsentimientoResponse buildResponse() {
-        return new ConsentimientoResponse(
-                UUID.randomUUID(),
-                UUID.randomUUID(),
-                "LOPD",
-                true
-        );
+        return ConsentimientoResponse.builder()
+                .id(UUID.randomUUID())
+                .ciudadanoId(UUID.randomUUID())
+                .tipo("LOPD")
+                .otorgado(true)
+                .fechaOtorgamiento(Instant.now())
+                .version(1L)
+                .build();
     }
 
     private ConsentimientoRequest buildRequest() {
-        return new ConsentimientoRequest(UUID.randomUUID(), "GDPR", false );
+        return ConsentimientoRequest.builder()
+                .ciudadanoId(UUID.randomUUID())
+                .tipo("GDPR")
+                .otorgado(false)
+                .fechaOtorgamiento(Instant.now())
+                .build();
     }
 
     @Test

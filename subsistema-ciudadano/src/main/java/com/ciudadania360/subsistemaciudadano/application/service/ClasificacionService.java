@@ -5,6 +5,7 @@ import com.ciudadania360.subsistemaciudadano.application.dto.clasificacion.Clasi
 import com.ciudadania360.subsistemaciudadano.application.mapper.ClasificacionMapper;
 import com.ciudadania360.subsistemaciudadano.domain.entity.Clasificacion;
 import com.ciudadania360.subsistemaciudadano.domain.handler.ClasificacionHandler;
+import com.ciudadania360.subsistemaciudadano.application.validator.ClasificacionValidator;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,36 +19,43 @@ import java.util.stream.Collectors;
 public class ClasificacionService {
 
     private final ClasificacionHandler handler;
-    private final ClasificacionMapper clasificacionMapper;
+    private final ClasificacionMapper mapper;
+    private final ClasificacionValidator validator;
 
     public List<ClasificacionResponse> list() {
         return handler.list().stream()
-                .map(clasificacionMapper::toResponse)
+                .map(mapper::toResponse)
                 .collect(Collectors.toList());
     }
 
     public ClasificacionResponse get(UUID id) {
-        return clasificacionMapper.toResponse(handler.get(id));
+        return mapper.toResponse(handler.get(id));
     }
 
     public ClasificacionResponse create(ClasificacionRequest request) {
-        // MapStruct solo mapea los campos del request
-        Clasificacion entity = clasificacionMapper.toEntity(request);
+        // --- Validación de negocio ---
+        validator.validateCreate(request);
 
-        // Asignamos id y version aquí
+        // MapStruct mapea los campos del request
+        Clasificacion entity = mapper.toEntity(request);
         entity.setId(UUID.randomUUID());
         entity.setVersion(0L);
 
-        return clasificacionMapper.toResponse(handler.create(entity));
+        Clasificacion created = handler.create(entity);
+        return mapper.toResponse(created);
     }
 
     public ClasificacionResponse update(UUID id, ClasificacionRequest request) {
         Clasificacion existing = handler.get(id);
 
-        // Actualizamos solo los campos no nulos
-        clasificacionMapper.updateEntity(existing, request);
+        // --- Validación de negocio ---
+        validator.validateUpdate(id, request);
 
-        return clasificacionMapper.toResponse(handler.update(id, existing));
+        // MapStruct actualiza solo los campos no nulos
+        mapper.updateEntity(existing, request);
+
+        Clasificacion updated = handler.update(id, existing);
+        return mapper.toResponse(updated);
     }
 
     public void delete(UUID id) {

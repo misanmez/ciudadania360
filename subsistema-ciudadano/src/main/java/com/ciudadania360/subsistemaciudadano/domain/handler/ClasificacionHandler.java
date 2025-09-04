@@ -11,40 +11,41 @@ import java.util.UUID;
 @Component
 public class ClasificacionHandler {
 
-    private final ClasificacionRepository repository;
+    private final ClasificacionRepository repo;
 
     public ClasificacionHandler(ClasificacionRepository repo) {
-        this.repository = repo;
+        this.repo = repo;
     }
 
     public List<Clasificacion> list() {
-        return repository.findAll();
+        return repo.findAll();
     }
 
     public Clasificacion get(UUID id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Clasificación no encontrada"));
+        return repo.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Clasificación no encontrada con ID: " + id));
     }
 
     public Clasificacion create(Clasificacion e) {
-        if (e.getId() == null) {
-            e.setId(UUID.randomUUID());
-        }
-        return repository.save(e);
+        e.setId(UUID.randomUUID());
+        return repo.save(e);
     }
 
     public Clasificacion update(UUID id, Clasificacion e) {
-        Clasificacion actual = get(id); // asegura existencia
-        e.setId(actual.getId());
-        return repository.save(e);
+        Clasificacion existing = get(id);
+        e.setId(existing.getId());
+        return repo.save(e);
     }
 
     public void delete(UUID id) {
-        repository.deleteById(id);
+        if (!repo.existsById(id)) {
+            throw new NoSuchElementException("No se puede eliminar. Clasificación no encontrada con ID: " + id);
+        }
+        repo.deleteById(id);
     }
 
     public Clasificacion getDefaultClasificacion() {
-        return repository.findByCodigo("GENERICA")
+        return repo.findByCodigo("GENERICA")
                 .orElseThrow(() -> new IllegalStateException("No existe la clasificación GENÉRICA en la BD"));
     }
 }

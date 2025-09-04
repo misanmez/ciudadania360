@@ -1,4 +1,3 @@
-
 package com.ciudadania360.subsistemaciudadano.application.dto.ubicacion;
 
 import lombok.AllArgsConstructor;
@@ -22,4 +21,5 @@ public class UbicacionResponse {
     private Double lon;
     private Integer precision;
     private String fuente;
+    private Long version; // Control de concurrencia optimista
 }
