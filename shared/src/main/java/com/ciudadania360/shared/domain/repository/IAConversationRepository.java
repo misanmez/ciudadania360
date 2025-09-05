@@ -7,6 +7,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface IAConversationRepository extends JpaRepository<IAConversation, UUID> {
-    Optional<IAConversation> findByConversationId(UUID conversationId);
+    Optional<IAConversation> findById(UUID id);
 }
 

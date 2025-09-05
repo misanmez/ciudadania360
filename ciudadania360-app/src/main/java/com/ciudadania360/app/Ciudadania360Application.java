@@ -14,7 +14,8 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
         "com.ciudadania360.subsistemainformacion.domain.repository",
         "com.ciudadania360.subsistematramitacion.domain.repository",
         "com.ciudadania360.subsistemavideoconferencia.domain.repository",
-        "com.ciudadania360.gestionrolespermisos.domain.repository"
+        "com.ciudadania360.gestionrolespermisos.domain.repository",
+        "com.ciudadania360.subsistemainterno.domain.repository"
 })
 @EntityScan(basePackages = {
         "com.ciudadania360.shared.domain.entity",
@@ -24,7 +25,8 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
         "com.ciudadania360.subsistemainformacion.domain.entity",
         "com.ciudadania360.subsistematramitacion.domain.entity",
         "com.ciudadania360.subsistemavideoconferencia.domain.entity",
-        "com.ciudadania360.gestionrolespermisos.domain.entity"
+        "com.ciudadania360.gestionrolespermisos.domain.entity",
+        "com.ciudadania360.subsistemainterno.domain.entity"
 })
 public class Ciudadania360Application {
     public static void main(String[] args) {

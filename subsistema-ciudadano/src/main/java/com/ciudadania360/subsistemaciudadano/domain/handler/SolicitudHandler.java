@@ -72,7 +72,7 @@ public class SolicitudHandler {
             List<Predicate> predicates = new ArrayList<>();
 
             if (filter.getCiudadanoId() != null) {
-                predicates.add(cb.equal(root.get("ciudadano").get("id"), filter.getCiudadanoId()));
+                predicates.add(cb.equal(root.get("empleado").get("id"), filter.getCiudadanoId()));
             }
             if (filter.getEstado() != null) {
                 predicates.add(cb.equal(root.get("estado"), filter.getEstado()));

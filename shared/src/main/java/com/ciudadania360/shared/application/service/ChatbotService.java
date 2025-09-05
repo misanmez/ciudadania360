@@ -27,10 +27,10 @@ public class ChatbotService {
 
     public ChatResponse sendMessage(ChatRequest request) {
         // 1️⃣ Buscar conversación o crear nueva
-        IAConversation conversation = conversationRepository.findByConversationId(request.getConversationId())
+        IAConversation conversation = conversationRepository.findById(request.getConversationId())
                 .orElseGet(() -> conversationRepository.save(
                         IAConversation.builder()
-                                .conversationId(request.getConversationId())
+                                .id(request.getConversationId())
                                 .build()
                 ));
 

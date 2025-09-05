@@ -88,6 +88,7 @@ function Start-DockerMode {
     Write-Host "   Información: http://localhost:8088" -ForegroundColor Cyan
     Write-Host "   Roles y Permisos: http://localhost:8089" -ForegroundColor Cyan
     Write-Host "   IA: http://localhost:8090" -ForegroundColor Cyan
+    Write-Host "   Interno: http://localhost:8091" -ForegroundColor Cyan
     Write-Host "📖 Swagger UI disponible en cada puerto + /swagger-ui.html" -ForegroundColor Yellow
 }
 

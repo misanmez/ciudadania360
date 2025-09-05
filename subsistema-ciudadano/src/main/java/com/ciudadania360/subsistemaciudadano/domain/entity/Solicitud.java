@@ -1,5 +1,6 @@
 package com.ciudadania360.subsistemaciudadano.domain.entity;
 
+import com.ciudadania360.shared.domain.entity.Empleado;
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
@@ -22,17 +23,18 @@ public class Solicitud {
     private Ciudadano ciudadano;
 
     private String titulo;
+
     @Column(columnDefinition = "text")
     private String descripcion;
 
-    private String tipo; // queja, sugerencia, felicitación, incidencia, solicitud de info
+    private String tipo;
 
     @Column(name = "canal_entrada")
-    private String canalEntrada; // web, app, presencial, telefónico, redes sociales
+    private String canalEntrada;
 
-    private String estado; // pendiente, en_proceso, resuelta, cerrada
+    private String estado;
 
-    private String prioridad; // ALTA, MEDIA, BAJA
+    private String prioridad;
 
     @ManyToOne
     @JoinColumn(name = "clasificacion_id")
@@ -57,7 +59,7 @@ public class Solicitud {
     @Column(name = "score_relevancia")
     private BigDecimal scoreRelevancia;
 
-    private String origen; // interno, externo, portal, app, etc.
+    private String origen;
 
     @Column(name = "adjuntos_count")
     private Integer adjuntosCount;
@@ -69,9 +71,11 @@ public class Solicitud {
     private String referenciaExterna;
 
     @Column(columnDefinition = "jsonb")
-    private String metadata; // para info dinámica, tags, historial de cambios, etc.
+    private String metadata;
 
-    private String agenteAsignado; // quien lleva la solicitud
+    @ManyToOne
+    @JoinColumn(name = "agente_asignado_id")
+    private Empleado agenteAsignado; // apunta a shared
 
     @OneToMany(mappedBy = "solicitud", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Interaccion> interacciones;

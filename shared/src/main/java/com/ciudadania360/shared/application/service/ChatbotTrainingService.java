@@ -26,7 +26,7 @@ public class ChatbotTrainingService {
         for (IAChatMessage msg : messages) {
             // 2️⃣ Crear ejemplo si no existe
             IATrainingExample example = IATrainingExample.builder()
-                    .id(msg.getConversation().getConversationId())
+                    .id(msg.getConversation().getId())
                     .userMessage(msg.getUserMessage())
                     .response(msg.getResponse())
                     .usedForTraining(false)

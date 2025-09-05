@@ -12,6 +12,7 @@ COPY subsistema-videoconferencia/pom.xml ./subsistema-videoconferencia/
 COPY subsistema-informacion/pom.xml ./subsistema-informacion/
 COPY subsistema-ia/pom.xml ./subsistema-ia/
 COPY gestion-roles-permisos/pom.xml ./gestion-roles-permisos/
+COPY subsistema-interno/pom.xml ./subsistema-interno/
 COPY ciudadania360-app/pom.xml ./ciudadania360-app/
 
 # Descargar dependencias offline (cache)
@@ -26,6 +27,7 @@ COPY subsistema-videoconferencia/src ./subsistema-videoconferencia/src
 COPY subsistema-informacion/src ./subsistema-informacion/src
 COPY subsistema-ia/src ./subsistema-ia/src
 COPY gestion-roles-permisos/src ./gestion-roles-permisos/src
+COPY subsistema-interno/src ./subsistema-interno/src
 COPY ciudadania360-app/src ./ciudadania360-app/src
 
 # Construir solo el módulo agregador y sus dependencias

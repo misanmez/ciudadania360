@@ -32,7 +32,7 @@ public class IAClientDB implements IAClient {
         if (conv.isEmpty()) return "Conversación no encontrada";
 
         // Buscar la respuesta más cercana en chat messages
-        List<IAChatMessage> messages = chatMessageRepo.findByConversationId(conv.get().getConversationId());
+        List<IAChatMessage> messages = chatMessageRepo.findByConversation_Id(conv.get().getId());
         return messages.stream()
                 .filter(m -> m.getUserMessage().equalsIgnoreCase(message))
                 .map(IAChatMessage::getResponse)

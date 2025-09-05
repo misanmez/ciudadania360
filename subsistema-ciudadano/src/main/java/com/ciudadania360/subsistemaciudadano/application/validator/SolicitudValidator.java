@@ -7,6 +7,8 @@ import com.ciudadania360.shared.exception.BadRequestException;
 import com.ciudadania360.shared.exception.BusinessException;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 @Component
 public class SolicitudValidator {
 
@@ -47,11 +49,11 @@ public class SolicitudValidator {
             throw new BusinessException("No se puede cambiar el estado de una solicitud ya cerrada");
     }
 
-    public void validateAssign(Solicitud solicitud, String agenteId) {
+    public void validateAssign(Solicitud solicitud, UUID agenteId) {
         if (solicitud == null)
             throw new BadRequestException("Solicitud no encontrada");
 
-        if (agenteId == null || agenteId.isBlank())
+        if (agenteId == null)
             throw new BadRequestException("Agente obligatorio para asignar la solicitud");
 
         if ("CERRADA".equalsIgnoreCase(solicitud.getEstado()))
@@ -79,7 +81,7 @@ public class SolicitudValidator {
             throw new BadRequestException("Ciudadano obligatorio");
 
         if (!ciudadanoHandler.exists(request.getCiudadanoId()))
-            throw new BusinessException("El ciudadano indicado no existe");
+            throw new BusinessException("El empleado indicado no existe");
     }
 
     private void checkFormats(SolicitudRequest request) {

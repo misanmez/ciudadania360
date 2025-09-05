@@ -37,7 +37,7 @@ public class InteraccionValidator {
             throw new BadRequestException("Ciudadano asociado obligatorio");
 
         if (!ciudadanoHandler.exists(request.getCiudadanoId()))
-            throw new BusinessException("El ciudadano indicado no existe");
+            throw new BusinessException("El empleado indicado no existe");
 
         if (request.getCanal() != null && !CANALES_VALIDOS.contains(request.getCanal().toUpperCase()))
             throw new BadRequestException("Canal inválido. Valores válidos: " + CANALES_VALIDOS);

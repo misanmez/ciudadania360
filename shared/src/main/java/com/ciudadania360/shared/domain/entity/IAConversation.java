@@ -16,8 +16,7 @@ public class IAConversation {
 
     @Id
     @GeneratedValue
-    @Column(name = "conversation_id")
-    private UUID conversationId;
+    private UUID id;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();

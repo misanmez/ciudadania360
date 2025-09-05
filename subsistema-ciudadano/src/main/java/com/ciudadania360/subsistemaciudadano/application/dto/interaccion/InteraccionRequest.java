@@ -10,7 +10,8 @@ import java.util.UUID;
 @Builder
 public class InteraccionRequest {
     private UUID solicitudId;    // ID de la solicitud asociada
-    private UUID ciudadanoId;    // ID del ciudadano que genera la interacción
+    private UUID ciudadanoId;    // ID del empleado que genera la interacción
+    private UUID empleadoResponsableId; // ID del empleado responsable de la interacción
     private String canal;        // Canal de comunicación (web, app, presencial, teléfono, redes sociales)
     private Instant fecha;       // Fecha y hora de la interacción
     private String agente;       // Nombre o identificador del agente que gestiona la interacción

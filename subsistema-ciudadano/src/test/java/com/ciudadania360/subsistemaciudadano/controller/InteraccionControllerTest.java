@@ -1,8 +1,11 @@
 package com.ciudadania360.subsistemaciudadano.controller;
 
+import com.ciudadania360.subsistemaciudadano.application.dto.ciudadano.CiudadanoResponse;
 import com.ciudadania360.subsistemaciudadano.application.dto.interaccion.InteraccionRequest;
 import com.ciudadania360.subsistemaciudadano.application.dto.interaccion.InteraccionResponse;
+import com.ciudadania360.subsistemaciudadano.application.dto.solicitud.SolicitudResponse;
 import com.ciudadania360.subsistemaciudadano.application.service.InteraccionService;
+import com.ciudadania360.subsistemainterno.application.dto.empleado.EmpleadoResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,15 +49,37 @@ class InteraccionControllerTest {
 
         InteraccionResponse interaccionResponse = InteraccionResponse.builder()
                 .id(interaccionId)
-                .ciudadanoId(ciudadanoId)
-                .solicitudId(solicitudId)
+                .ciudadano(CiudadanoResponse.builder()
+                        .id(ciudadanoId)
+                        .nombre("Juan")
+                        .apellidos("Pérez")
+                        .email("juan@example.com")
+                        .telefono("600123456")
+                        .build())
+                .solicitud(SolicitudResponse.builder()
+                        .id(solicitudId)
+                        .titulo("Título ejemplo")
+                        .estado("pendiente")
+                        .prioridad("ALTA")
+                        .numeroExpediente("EXP-001")
+                        .build())
+                .empleadoResponsable(EmpleadoResponse.builder()
+                        .id(UUID.randomUUID())
+                        .nombre("Empleado")
+                        .apellidos("Responsable")
+                        .email("empleado@example.com")
+                        .telefono("600654321")
+                        .rol("Agente")
+                        .build())
                 .canal("Email")
                 .fecha(Instant.now())
                 .agente("Agente 1")
                 .mensaje("Mensaje inicial")
                 .adjuntoUri("http://example.com/adjunto")
                 .visibilidad("PUBLICA")
+                .version(1L)
                 .build();
+
 
         // Mock del servicio
         when(svc.list()).thenReturn(List.of(interaccionResponse));

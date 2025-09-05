@@ -92,6 +92,11 @@
             <artifactId>subsistema-ia</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>subsistema-interno</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

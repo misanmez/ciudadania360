@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class InteraccionService {
@@ -28,12 +27,11 @@ public class InteraccionService {
     public List<InteraccionResponse> list() {
         return handler.list().stream()
                 .map(mapper::toResponse)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public InteraccionResponse get(UUID id) {
-        Interaccion e = handler.get(id);
-        return mapper.toResponse(e);
+        return mapper.toResponse(handler.get(id));
     }
 
     public InteraccionResponse create(InteraccionRequest request) {
@@ -41,8 +39,8 @@ public class InteraccionService {
 
         Interaccion entity = mapper.toEntity(request);
         entity.setId(UUID.randomUUID());
-        Interaccion created = handler.create(entity);
 
+        Interaccion created = handler.create(entity);
         return mapper.toResponse(created);
     }
 
@@ -52,7 +50,6 @@ public class InteraccionService {
 
         mapper.updateEntity(existing, request);
         Interaccion updated = handler.update(id, existing);
-
         return mapper.toResponse(updated);
     }
 

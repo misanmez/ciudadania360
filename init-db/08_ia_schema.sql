@@ -5,7 +5,7 @@ CREATE SCHEMA IF NOT EXISTS ia AUTHORIZATION ciudadania;
 -- Tabla: IaConversation
 -- ----------------------------
 CREATE TABLE IF NOT EXISTS ia.conversation (
-    conversation_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     created_at timestamptz DEFAULT now(),
     closed BOOLEAN DEFAULT FALSE
 );
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS ia.training_example (
 -- ----------------------------
 
 -- Conversaciones de ejemplo
-INSERT INTO ia.conversation (conversation_id) VALUES
+INSERT INTO ia.conversation (id) VALUES
 (gen_random_uuid()),
 (gen_random_uuid()),
 (gen_random_uuid()),
@@ -48,30 +48,30 @@ INSERT INTO ia.conversation (conversation_id) VALUES
 
 -- Insertar mensajes asociando cada uno a una conversación
 WITH conv AS (
-    SELECT conversation_id FROM ia.conversation ORDER BY created_at
+    SELECT id FROM ia.conversation ORDER BY created_at
 )
 INSERT INTO ia.chat_message (conversation_id, user_message, response, raw_response)
-SELECT conv.conversation_id, '¿Cuáles son los requisitos para renovar el DNI?',
+SELECT conv.id, '¿Cuáles son los requisitos para renovar el DNI?',
        'Para renovar el DNI necesitas: 1) Una foto reciente, 2) El pago de la tasa, 3) El DNI anterior.',
        '{"confidence":0.95}' FROM conv LIMIT 1
 UNION ALL
-SELECT conv.conversation_id, '¿Puedo renovar si estoy en el extranjero?',
+SELECT conv.id, '¿Puedo renovar si estoy en el extranjero?',
        'Sí, pero deberás acudir al consulado correspondiente.',
        '{"confidence":0.9}' FROM conv LIMIT 1
 UNION ALL
-SELECT conv.conversation_id, '¿Cuál es el horario de atención?',
+SELECT conv.id, '¿Cuál es el horario de atención?',
        'El horario de atención es de lunes a viernes de 09:00 a 14:00.',
        '{"confidence":0.9}' FROM conv LIMIT 1
 UNION ALL
-SELECT conv.conversation_id, '¿Cómo solicito cita previa?',
+SELECT conv.id, '¿Cómo solicito cita previa?',
        'Puedes solicitarla online o por teléfono.',
        '{"confidence":0.9}' FROM conv OFFSET 1 LIMIT 1
 UNION ALL
-SELECT conv.conversation_id, '¿Qué documentos necesito para empadronarme?',
+SELECT conv.id, '¿Qué documentos necesito para empadronarme?',
        'Necesitas DNI/NIE y un justificante de domicilio.',
        '{"confidence":0.9}' FROM conv OFFSET 1 LIMIT 1
 UNION ALL
-SELECT conv.conversation_id, '¿Cuánto tarda en llegar un certificado?',
+SELECT conv.id, '¿Cuánto tarda en llegar un certificado?',
        'Generalmente 3-5 días hábiles.',
        '{"confidence":0.9}' FROM conv OFFSET 1 LIMIT 1;
 

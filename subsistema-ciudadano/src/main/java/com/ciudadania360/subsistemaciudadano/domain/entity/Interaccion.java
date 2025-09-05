@@ -1,9 +1,10 @@
 package com.ciudadania360.subsistemaciudadano.domain.entity;
 
+import com.ciudadania360.shared.domain.entity.Empleado;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.Instant;
-import java.util.*;
+import java.util.UUID;
 
 @Entity
 @Table(name = "interaccion", schema = "ciudadano")
@@ -24,22 +25,26 @@ public class Interaccion {
     @JoinColumn(name = "ciudadano_id", nullable = false)
     private Ciudadano ciudadano;
 
-    private String canal; // web, app, presencial, telefónico, redes sociales
+    @ManyToOne
+    @JoinColumn(name = "empleado_responsable_id", nullable = false)
+    private Empleado empleadoResponsable;
+
+    private String canal;
 
     private Instant fecha;
 
-    private String agente; // agente asignado que atiende
+    private String agente; // nombre del agente (opcional)
 
     @Column(columnDefinition = "text")
-    private String mensaje; // detalle de la interacción
+    private String mensaje;
 
     @Column(name = "adjunto_uri")
-    private String adjuntoUri; // enlace a documento o archivo asociado
+    private String adjuntoUri;
 
-    private String visibilidad; // interna, pública, restringida
+    private String visibilidad;
 
     @Column(columnDefinition = "jsonb")
-    private String metadata; // historial, etiquetas, acciones automáticas
+    private String metadata;
 
     @Version
     private Long version;

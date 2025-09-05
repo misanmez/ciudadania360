@@ -7,6 +7,7 @@ import com.ciudadania360.subsistemaciudadano.application.mapper.SolicitudMapper;
 import com.ciudadania360.subsistemaciudadano.application.validator.SolicitudValidator;
 import com.ciudadania360.subsistemaciudadano.domain.entity.Solicitud;
 import com.ciudadania360.subsistemaciudadano.domain.handler.SolicitudHandler;
+import com.ciudadania360.shared.domain.entity.Empleado;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -82,13 +83,18 @@ public class SolicitudService {
         return mapper.toResponse(handler.update(id, solicitud));
     }
 
-    public SolicitudResponse assign(UUID id, String agenteId) {
+    public SolicitudResponse assign(UUID id, UUID agenteId) {
         Solicitud solicitud = handler.get(id);
         validator.validateAssign(solicitud, agenteId);
 
-        solicitud.setAgenteAsignado(agenteId);
+        // Crear un objeto Empleado con el ID recibido
+        Empleado agente = new Empleado();
+        agente.setId(agenteId);
+
+        solicitud.setAgenteAsignado(agente);
         return mapper.toResponse(handler.update(id, solicitud));
     }
+
 
     public List<SolicitudResponse> search(SolicitudSearchFilter filter) {
         return handler.search(filter).stream()

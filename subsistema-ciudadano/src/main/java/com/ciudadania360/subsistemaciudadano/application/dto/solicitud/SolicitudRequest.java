@@ -50,5 +50,5 @@ public class SolicitudRequest {
 
     private String metadata;
 
-    private String agenteAsignado;
+    private UUID agenteAsignadoId;
 }

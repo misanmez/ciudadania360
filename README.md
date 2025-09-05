@@ -38,7 +38,7 @@ docker compose up -d postgres
 
 #### 2. Ejecutar un microlito
 ```bash
-mvn spring-boot:run -pl subsistema-ciudadano
+mvn spring-boot:run -pl subsistema-empleado
 ```
 
 Swagger disponible en:  
@@ -136,7 +136,7 @@ mvn clean
 
 **Ver logs de un servicio:**
 ```bash
-docker compose logs -f subsistema-ciudadano
+docker compose logs -f subsistema-empleado
 ```
 
 ---

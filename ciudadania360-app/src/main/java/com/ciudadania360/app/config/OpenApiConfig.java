@@ -63,4 +63,12 @@ public class OpenApiConfig {
                 .build();
     }
 
+    @Bean
+    public GroupedOpenApi internoApi() {
+        return GroupedOpenApi.builder()
+                .group("08-Interno")
+                .packagesToScan("com.ciudadania360.subsistemainterno")
+                .build();
+    }
+
 }

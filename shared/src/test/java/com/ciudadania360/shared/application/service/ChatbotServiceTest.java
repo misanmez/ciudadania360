@@ -47,7 +47,7 @@ class ChatbotServiceTest {
         when(iaClient.chat(conversationId, "Hola chatbot")).thenReturn("Hola humano");
 
         // Mock repositorio de conversaciones -> no existe, se crea
-        when(conversationRepository.findByConversationId(conversationId)).thenReturn(Optional.empty());
+        when(conversationRepository.findById(conversationId)).thenReturn(Optional.empty());
         when(conversationRepository.save(any(IAConversation.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -62,7 +62,7 @@ class ChatbotServiceTest {
         assertThat(response.getResponseText()).isEqualTo("Hola humano");
         assertThat(response.getConversationId()).isEqualTo(conversationId);
         verify(iaClient).chat(conversationId, "Hola chatbot");
-        verify(conversationRepository).findByConversationId(conversationId);
+        verify(conversationRepository).findById(conversationId);
         verify(conversationRepository).save(any(IAConversation.class));
         verify(chatMessageRepository).save(any(IAChatMessage.class));
         verify(chatbotTrainingService).generateTrainingData(); // <-- verifica que se llame
@@ -74,14 +74,14 @@ class ChatbotServiceTest {
         ChatRequest request = new ChatRequest(conversationId, "Hola otra vez");
 
         IAConversation existingConversation = IAConversation.builder()
-                .conversationId(conversationId)
+                .id(conversationId)
                 .build();
 
         // Mock IAClient
         when(iaClient.chat(conversationId, "Hola otra vez")).thenReturn("Respuesta IA");
 
         // Mock repositorio de conversaciones -> existe
-        when(conversationRepository.findByConversationId(conversationId))
+        when(conversationRepository.findById(conversationId))
                 .thenReturn(Optional.of(existingConversation));
 
         // Mock repositorio de mensajes

@@ -1,11 +1,15 @@
 package com.ciudadania360.subsistemaciudadano.application.service;
 
+import com.ciudadania360.subsistemaciudadano.application.dto.ciudadano.CiudadanoResponse;
+import com.ciudadania360.subsistemaciudadano.application.dto.clasificacion.ClasificacionResponse;
+import com.ciudadania360.subsistemaciudadano.application.dto.interaccion.InteraccionResponse;
 import com.ciudadania360.subsistemaciudadano.application.dto.solicitud.*;
 import com.ciudadania360.subsistemaciudadano.application.mapper.SolicitudMapper;
 import com.ciudadania360.subsistemaciudadano.application.validator.SolicitudValidator;
 import com.ciudadania360.subsistemaciudadano.domain.entity.Solicitud;
 import com.ciudadania360.subsistemaciudadano.domain.entity.Ciudadano;
 import com.ciudadania360.subsistemaciudadano.domain.handler.SolicitudHandler;
+import com.ciudadania360.subsistemainterno.application.dto.empleado.EmpleadoResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
@@ -74,30 +78,55 @@ class SolicitudServiceTest {
     }
 
     private SolicitudResponse toResponse(Solicitud s) {
-        return new SolicitudResponse(
-                s.getId(),
-                s.getCiudadano() != null ? s.getCiudadano().getId() : null,
-                s.getTitulo(),
-                s.getDescripcion(),
-                s.getTipo(),
-                s.getCanalEntrada(),
-                s.getEstado(),
-                s.getPrioridad(),
-                s.getClasificacion() != null ? s.getClasificacion().getId() : null,
-                s.getUbicacion() != null ? s.getUbicacion().getId() : null,
-                s.getNumeroExpediente(),
-                s.getFechaRegistro(),
-                s.getFechaLimiteSLA(),
-                s.getFechaCierre(),
-                s.getScoreRelevancia(),
-                s.getOrigen(),
-                s.getAdjuntosCount(),
-                s.getEncuestaEnviada(),
-                s.getReferenciaExterna(),
-                s.getMetadata(),
-                s.getAgenteAsignado(),
-                s.getVersion()
-        );
+        return SolicitudResponse.builder()
+                .id(s.getId())
+                .ciudadano(s.getCiudadano() != null ? CiudadanoResponse.builder()
+                        .id(s.getCiudadano().getId())
+                        .nombre(s.getCiudadano().getNombre())
+                        .apellidos(s.getCiudadano().getApellidos())
+                        .email(s.getCiudadano().getEmail())
+                        .telefono(s.getCiudadano().getTelefono())
+                        .build() : null)
+                .titulo(s.getTitulo())
+                .descripcion(s.getDescripcion())
+                .tipo(s.getTipo())
+                .canalEntrada(s.getCanalEntrada())
+                .estado(s.getEstado())
+                .prioridad(s.getPrioridad())
+                .clasificacion(s.getClasificacion() != null ? ClasificacionResponse.builder()
+                        .id(s.getClasificacion().getId())
+                        .nombre(s.getClasificacion().getNombre())
+                        .descripcion(s.getClasificacion().getDescripcion())
+                        .build() : null)
+                .ubicacionId(s.getUbicacion() != null ? s.getUbicacion().getId() : null)
+                .numeroExpediente(s.getNumeroExpediente())
+                .fechaRegistro(s.getFechaRegistro())
+                .fechaLimiteSLA(s.getFechaLimiteSLA())
+                .fechaCierre(s.getFechaCierre())
+                .scoreRelevancia(s.getScoreRelevancia())
+                .origen(s.getOrigen())
+                .adjuntosCount(s.getAdjuntosCount())
+                .encuestaEnviada(s.getEncuestaEnviada())
+                .referenciaExterna(s.getReferenciaExterna())
+                .metadata(s.getMetadata())
+                .agenteAsignado(s.getAgenteAsignado() != null ? EmpleadoResponse.builder()
+                        .id(s.getAgenteAsignado().getId())
+                        .nombre(s.getAgenteAsignado().getNombre())
+                        .apellidos(s.getAgenteAsignado().getApellidos())
+                        .email(s.getAgenteAsignado().getEmail())
+                        .telefono(s.getAgenteAsignado().getTelefono())
+                        .rol(s.getAgenteAsignado().getRol())
+                        .build() : null)
+                .interacciones(s.getInteracciones() != null ? s.getInteracciones().stream()
+                        .map(i -> InteraccionResponse.builder()
+                                .id(i.getId())
+                                .mensaje(i.getMensaje())
+                                .fecha(i.getFecha())
+                                .build())
+                        .toList() : null)
+                .version(s.getVersion())
+                .build();
+
     }
 
     @Test

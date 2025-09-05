@@ -46,6 +46,8 @@ services:
         condition: service_started
       subsistema-ia:
         condition: service_started
+      subsistema-interno:
+        condition: service_started
     restart: unless-stopped
 
   # Subsistema Ciudadano
@@ -157,6 +159,22 @@ services:
       SPRING_DATASOURCE_PASSWORD: ciudadania
       IA_PROVIDER_ENDPOINT: ${IA_PROVIDER_ENDPOINT}
       IA_PROVIDER_API_KEY: ${IA_PROVIDER_API_KEY}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Subsistema Interno
+  subsistema-interno:
+    build: ./subsistema-interno
+    container_name: subsistema_interno
+    ports:
+      - "8091:8091"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ciudadania360
+      SPRING_DATASOURCE_USERNAME: ciudadania
+      SPRING_DATASOURCE_PASSWORD: ciudadania
     depends_on:
       postgres:
         condition: service_healthy

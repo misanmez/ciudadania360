@@ -1,13 +1,16 @@
 package com.ciudadania360.subsistemaciudadano.application.service;
 
+import com.ciudadania360.subsistemaciudadano.application.dto.ciudadano.CiudadanoResponse;
 import com.ciudadania360.subsistemaciudadano.application.dto.interaccion.InteraccionRequest;
 import com.ciudadania360.subsistemaciudadano.application.dto.interaccion.InteraccionResponse;
+import com.ciudadania360.subsistemaciudadano.application.dto.solicitud.SolicitudResponse;
 import com.ciudadania360.subsistemaciudadano.application.mapper.InteraccionMapper;
 import com.ciudadania360.subsistemaciudadano.application.validator.InteraccionValidator;
 import com.ciudadania360.subsistemaciudadano.domain.entity.Ciudadano;
 import com.ciudadania360.subsistemaciudadano.domain.entity.Interaccion;
 import com.ciudadania360.subsistemaciudadano.domain.entity.Solicitud;
 import com.ciudadania360.subsistemaciudadano.domain.handler.InteraccionHandler;
+import com.ciudadania360.subsistemainterno.application.dto.empleado.EmpleadoResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
@@ -76,8 +79,28 @@ class InteraccionServiceTest {
     private InteraccionResponse toResponse(Interaccion entity) {
         return InteraccionResponse.builder()
                 .id(entity.getId())
-                .ciudadanoId(entity.getCiudadano().getId())
-                .solicitudId(entity.getSolicitud().getId())
+                .ciudadano(CiudadanoResponse.builder()
+                        .id(entity.getCiudadano().getId())
+                        .nombre(entity.getCiudadano().getNombre())
+                        .apellidos(entity.getCiudadano().getApellidos())
+                        .email(entity.getCiudadano().getEmail())
+                        .telefono(entity.getCiudadano().getTelefono())
+                        .build())
+                .solicitud(SolicitudResponse.builder()
+                        .id(entity.getSolicitud().getId())
+                        .titulo(entity.getSolicitud().getTitulo())
+                        .estado(entity.getSolicitud().getEstado())
+                        .prioridad(entity.getSolicitud().getPrioridad())
+                        .numeroExpediente(entity.getSolicitud().getNumeroExpediente())
+                        .build())
+                .empleadoResponsable(EmpleadoResponse.builder()
+                        .id(entity.getEmpleadoResponsable() != null ? entity.getEmpleadoResponsable().getId() : null)
+                        .nombre(entity.getEmpleadoResponsable() != null ? entity.getEmpleadoResponsable().getNombre() : null)
+                        .apellidos(entity.getEmpleadoResponsable() != null ? entity.getEmpleadoResponsable().getApellidos() : null)
+                        .email(entity.getEmpleadoResponsable() != null ? entity.getEmpleadoResponsable().getEmail() : null)
+                        .telefono(entity.getEmpleadoResponsable() != null ? entity.getEmpleadoResponsable().getTelefono() : null)
+                        .rol(entity.getEmpleadoResponsable() != null ? entity.getEmpleadoResponsable().getRol() : null)
+                        .build())
                 .canal(entity.getCanal())
                 .fecha(entity.getFecha())
                 .agente(entity.getAgente())
@@ -87,6 +110,7 @@ class InteraccionServiceTest {
                 .version(entity.getVersion())
                 .build();
     }
+
 
     @Test
     void listDelegatesToHandler() {
