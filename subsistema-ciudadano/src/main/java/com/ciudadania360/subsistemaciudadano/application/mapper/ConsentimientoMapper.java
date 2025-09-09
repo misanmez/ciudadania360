@@ -1,7 +1,7 @@
 package com.ciudadania360.subsistemaciudadano.application.mapper;
 
-import com.ciudadania360.subsistemaciudadano.application.dto.consentimiento.ConsentimientoRequest;
-import com.ciudadania360.subsistemaciudadano.application.dto.consentimiento.ConsentimientoResponse;
+import com.ciudadania360.shared.application.dto.consentimiento.ConsentimientoRequest;
+import com.ciudadania360.shared.application.dto.consentimiento.ConsentimientoResponse;
 import com.ciudadania360.subsistemaciudadano.domain.entity.Consentimiento;
 import org.mapstruct.*;
 

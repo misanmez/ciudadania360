@@ -1,0 +1,33 @@
+package com.ciudadania360.shared.application.dto.ciudadano;
+
+import com.ciudadania360.shared.application.dto.consentimiento.ConsentimientoResponse;
+import com.ciudadania360.shared.application.dto.direccion.DireccionResponse;
+import com.ciudadania360.shared.application.dto.solicitud.SolicitudResponse;
+import lombok.*;
+import java.util.List;
+import java.util.UUID;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class CiudadanoResponse {
+    private UUID id;
+    private String nifNie;
+    private String nombre;
+    private String apellidos;
+    private String email;
+    private String telefono;
+    private String canalPreferido;
+    private String direccionPostal;
+    private UUID ubicacionId;
+    private Boolean consentimientoLOPD;
+    private String estado;
+    private String externalId;
+    private String metadata;
+
+    // Nuevos campos
+    private List<DireccionResponse> direcciones;
+    private List<ConsentimientoResponse> consentimientos;
+    private List<SolicitudResponse> solicitudes; // historial completo de solicitudes
+}

@@ -1,8 +1,8 @@
 package com.ciudadania360.subsistemainterno.controller;
 
 import com.ciudadania360.subsistemainterno.application.service.EmpleadoService;
-import com.ciudadania360.subsistemainterno.application.dto.empleado.EmpleadoRequest;
-import com.ciudadania360.subsistemainterno.application.dto.empleado.EmpleadoResponse;
+import com.ciudadania360.shared.application.dto.empleado.EmpleadoRequest;
+import com.ciudadania360.shared.application.dto.empleado.EmpleadoResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

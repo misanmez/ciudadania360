@@ -1,9 +1,6 @@
-version: "3.8"
-
 services:
-  # Base de datos PostgreSQL con PostGIS
   postgres:
-    image: postgis/postgis:15-3.3
+    image: postgres:15
     container_name: postgres_ciudadania360
     environment:
       POSTGRES_USER: ciudadania
@@ -11,175 +8,30 @@ services:
       POSTGRES_DB: ciudadania360
     ports:
       - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./init-db:/docker-entrypoint-initdb.d
-    restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ciudadania"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
+      test: ["CMD-SHELL", "pg_isready -U ciudadania -d ciudadania360"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - pg_data:/var/lib/postgresql/data
 
-  # Subsistema Ciudadanía360 (Agregador principal)
-  ciudadania360:
-    build: ./ciudadania360
-    container_name: ciudadania360
+  ciudadania360-app:
+    build:
+      context: .
+      dockerfile: ciudadania360-app/Dockerfile
+    container_name: ciudadania360-app
     ports:
-      - "8080:8080"   # Puerto único para acceder al agregador
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
+      - "8080:8080"
     depends_on:
       postgres:
         condition: service_healthy
-      subsistema-ciudadano:
-        condition: service_started
-      subsistema-tramitacion:
-        condition: service_started
-      subsistema-comunicaciones:
-        condition: service_started
-      subsistema-videoconferencia:
-        condition: service_started
-      subsistema-informacion:
-        condition: service_started
-      gestion-roles-permisos:
-        condition: service_started
-      subsistema-ia:
-        condition: service_started
-      subsistema-interno:
-        condition: service_started
-    restart: unless-stopped
-
-  # Subsistema Ciudadano
-  subsistema-ciudadano:
-    build: ./subsistema-ciudadano
-    container_name: subsistema_ciudadano
-    ports:
-      - "8082:8082"
     environment:
-      SPRING_PROFILES_ACTIVE: docker
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ciudadania360
       SPRING_DATASOURCE_USERNAME: ciudadania
       SPRING_DATASOURCE_PASSWORD: ciudadania
-    depends_on:
-      postgres:
-        condition: service_healthy
-    restart: unless-stopped
-
-  # Subsistema Tramitación
-  subsistema-tramitacion:
-    build: ./subsistema-tramitacion
-    container_name: subsistema_tramitacion
-    ports:
-      - "8083:8083"
-    environment:
       SPRING_PROFILES_ACTIVE: docker
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ciudadania360
-      SPRING_DATASOURCE_USERNAME: ciudadania
-      SPRING_DATASOURCE_PASSWORD: ciudadania
-    depends_on:
-      postgres:
-        condition: service_healthy
     restart: unless-stopped
-
-  # Subsistema Comunicaciones
-  subsistema-comunicaciones:
-    build: ./subsistema-comunicaciones
-    container_name: subsistema_comunicaciones
-    ports:
-      - "8084:8084"
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ciudadania360
-      SPRING_DATASOURCE_USERNAME: ciudadania
-      SPRING_DATASOURCE_PASSWORD: ciudadania
-    depends_on:
-      postgres:
-        condition: service_healthy
-    restart: unless-stopped
-
-  # Subsistema Videoconferencia
-  subsistema-videoconferencia:
-    build: ./subsistema-videoconferencia
-    container_name: subsistema_videoconferencia
-    ports:
-      - "8085:8085"
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ciudadania360
-      SPRING_DATASOURCE_USERNAME: ciudadania
-      SPRING_DATASOURCE_PASSWORD: ciudadania
-    depends_on:
-      postgres:
-        condition: service_healthy
-    restart: unless-stopped
-
-  # Subsistema Información
-  subsistema-informacion:
-    build: ./subsistema-informacion
-    container_name: subsistema_informacion
-    ports:
-      - "8088:8088"
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ciudadania360
-      SPRING_DATASOURCE_USERNAME: ciudadania
-      SPRING_DATASOURCE_PASSWORD: ciudadania
-    depends_on:
-      postgres:
-        condition: service_healthy
-    restart: unless-stopped
-
-  # Gestión Roles y Permisos
-  gestion-roles-permisos:
-    build: ./gestion-roles-permisos
-    container_name: gestion_roles_permisos
-    ports:
-      - "8089:8089"
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ciudadania360
-      SPRING_DATASOURCE_USERNAME: ciudadania
-      SPRING_DATASOURCE_PASSWORD: ciudadania
-    depends_on:
-      postgres:
-        condition: service_healthy
-    restart: unless-stopped
-
-  # Subsistema IA
-  subsistema-ia:
-    build: ./subsistema-ia
-    container_name: subsistema_ia
-    ports:
-      - "8090:8090"
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ciudadania360
-      SPRING_DATASOURCE_USERNAME: ciudadania
-      SPRING_DATASOURCE_PASSWORD: ciudadania
-      IA_PROVIDER_ENDPOINT: ${IA_PROVIDER_ENDPOINT}
-      IA_PROVIDER_API_KEY: ${IA_PROVIDER_API_KEY}
-    depends_on:
-      postgres:
-        condition: service_healthy
-    restart: unless-stopped
-
-  # Subsistema Interno
-  subsistema-interno:
-    build: ./subsistema-interno
-    container_name: subsistema_interno
-    ports:
-      - "8091:8091"
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ciudadania360
-      SPRING_DATASOURCE_USERNAME: ciudadania
-      SPRING_DATASOURCE_PASSWORD: ciudadania
-    depends_on:
-      postgres:
-        condition: service_healthy
-    restart: unless-stopped
-
 
 volumes:
-  postgres_data:
+  pg_data:

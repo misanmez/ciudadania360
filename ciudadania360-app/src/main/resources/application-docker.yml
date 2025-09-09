@@ -1,33 +1,17 @@
 server:
   port: ${SERVER_PORT:8080}
-  compression:
-    enabled: true
-    mime-types: application/json,application/xml,text/html,text/xml,text/plain
 
 spring:
   application:
     name: ciudadania360
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/ciudadania360}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://postgres:5432/ciudadania360}
     username: ${SPRING_DATASOURCE_USERNAME:ciudadania}
     password: ${SPRING_DATASOURCE_PASSWORD:ciudadania}
-    hikari:
-      maximum-pool-size: 10
-      minimum-idle: 5
-      connection-timeout: 30000
-      idle-timeout: 600000
-      max-lifetime: 1800000
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        jdbc:
-          batch_size: 20
-        order_inserts: true
-        order_updates: true
   flyway:
     enabled: true
     locations: classpath:init-db
@@ -36,18 +20,14 @@ spring:
     baseline-on-migrate: true
     validate-on-migrate: true
   security:
-    oauth2:
-      resourceserver:
-        jwt:
-          jwk-set-uri: ${OAUTH2_JWK_SET_URI:http://localhost:8080/.well-known/jwks.json}
-
+    security:
+      oauth2:
+        resourceserver:
+          enabled: false
 logging:
   level:
     root: INFO
     com.ciudadania360: DEBUG
-    org.springframework.security: DEBUG
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 
 cors:
   allowed-origins: "*"
@@ -58,20 +38,12 @@ management:
     web:
       exposure:
         include: health,info,metrics,prometheus
-  endpoint:
-    health:
-      show-details: when-authorized
-  metrics:
-    export:
-      prometheus:
-        enabled: true
 
-# ---------- Swagger / OpenAPI ----------
 springdoc:
   api-docs:
     path: /v3/api-docs
   swagger-ui:
-    path: /swagger-ui.html
+    path: /swagger-ui
     deep-linking: true
     display-request-duration: true
     filter: true

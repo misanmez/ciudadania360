@@ -75,18 +75,10 @@
           <groupId>com.ciudadania360</groupId>
           <artifactId>shared</artifactId>
       </dependency>
+      <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-spatial</artifactId>
+        <version>6.5.2.Final</version>
+      </dependency>
   </dependencies>
-
-  <build>
-    <finalName>subsistema-ia</finalName>
-    <plugins>
-      <plugin>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-        <configuration>
-          <mainClass>com.ciudadania360.subsistemaia.SubsistemaIaApplication</mainClass>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 </project>

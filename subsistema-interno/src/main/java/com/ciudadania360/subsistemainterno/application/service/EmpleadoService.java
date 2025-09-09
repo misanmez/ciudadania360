@@ -1,6 +1,7 @@
 package com.ciudadania360.subsistemainterno.application.service;
 
-import com.ciudadania360.subsistemainterno.application.dto.empleado.*;
+import com.ciudadania360.shared.application.dto.empleado.EmpleadoRequest;
+import com.ciudadania360.shared.application.dto.empleado.EmpleadoResponse;
 import com.ciudadania360.subsistemainterno.application.mapper.EmpleadoMapper;
 import com.ciudadania360.subsistemainterno.application.validator.EmpleadoValidator;
 import com.ciudadania360.shared.domain.entity.Empleado;

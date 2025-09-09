@@ -98,17 +98,24 @@
             <version>${project.version}</version>
         </dependency>
     </dependencies>
-
     <build>
-        <finalName>ciudadania360</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring-boot.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
                 <configuration>
                     <mainClass>com.ciudadania360.app.Ciudadania360Application</mainClass>
                 </configuration>
             </plugin>
         </plugins>
     </build>
+
 </project>

@@ -1,7 +1,7 @@
 package com.ciudadania360.subsistemaciudadano.application.service;
 
-import com.ciudadania360.subsistemaciudadano.application.dto.clasificacion.ClasificacionRequest;
-import com.ciudadania360.subsistemaciudadano.application.dto.clasificacion.ClasificacionResponse;
+import com.ciudadania360.shared.application.dto.clasificacion.ClasificacionRequest;
+import com.ciudadania360.shared.application.dto.clasificacion.ClasificacionResponse;
 import com.ciudadania360.subsistemaciudadano.application.mapper.ClasificacionMapper;
 import com.ciudadania360.subsistemaciudadano.application.validator.ClasificacionValidator;
 import com.ciudadania360.subsistemaciudadano.domain.entity.Clasificacion;

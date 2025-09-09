@@ -1,6 +1,6 @@
 package com.ciudadania360.subsistemaciudadano.application.validator;
 
-import com.ciudadania360.subsistemaciudadano.application.dto.interaccion.InteraccionRequest;
+import com.ciudadania360.shared.application.dto.interaccion.InteraccionRequest;
 import com.ciudadania360.subsistemaciudadano.domain.entity.Interaccion;
 import com.ciudadania360.subsistemaciudadano.domain.handler.CiudadanoHandler;
 import com.ciudadania360.subsistemaciudadano.domain.handler.SolicitudHandler;

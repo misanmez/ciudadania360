@@ -1,6 +1,6 @@
 package com.ciudadania360.subsistemaciudadano.domain.handler;
 
-import com.ciudadania360.subsistemaciudadano.application.dto.solicitud.SolicitudSearchFilter;
+import com.ciudadania360.shared.application.dto.solicitud.SolicitudSearchFilter;
 import com.ciudadania360.subsistemaciudadano.domain.entity.Clasificacion;
 import com.ciudadania360.subsistemaciudadano.domain.entity.Solicitud;
 import com.ciudadania360.subsistemaciudadano.domain.repository.ClasificacionRepository;

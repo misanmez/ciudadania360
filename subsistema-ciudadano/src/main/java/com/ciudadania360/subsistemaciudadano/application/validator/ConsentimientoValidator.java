@@ -2,7 +2,7 @@ package com.ciudadania360.subsistemaciudadano.application.validator;
 
 import com.ciudadania360.shared.exception.BadRequestException;
 import com.ciudadania360.shared.exception.BusinessException;
-import com.ciudadania360.subsistemaciudadano.application.dto.consentimiento.ConsentimientoRequest;
+import com.ciudadania360.shared.application.dto.consentimiento.ConsentimientoRequest;
 import com.ciudadania360.subsistemaciudadano.domain.handler.ConsentimientoHandler;
 import jakarta.validation.ValidationException;
 import org.springframework.stereotype.Component;

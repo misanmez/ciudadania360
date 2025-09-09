@@ -1,33 +1,24 @@
--- Crear esquemas
-CREATE SCHEMA IF NOT EXISTS shared AUTHORIZATION ciudadania;
-CREATE SCHEMA IF NOT EXISTS ciudadano AUTHORIZATION ciudadania;
-CREATE SCHEMA IF NOT EXISTS tramitacion AUTHORIZATION ciudadania;
-CREATE SCHEMA IF NOT EXISTS comunicaciones AUTHORIZATION ciudadania;
-CREATE SCHEMA IF NOT EXISTS roles AUTHORIZATION ciudadania;
-CREATE SCHEMA IF NOT EXISTS informacion AUTHORIZATION ciudadania;
-CREATE SCHEMA IF NOT EXISTS videoconferencia AUTHORIZATION ciudadania;
-CREATE SCHEMA IF NOT EXISTS ia AUTHORIZATION ciudadania;
-CREATE SCHEMA IF NOT EXISTS interno AUTHORIZATION ciudadania;
+-- =========================
+-- Crear esquemas si no existen y asignar propietario
+-- =========================
+DO
+$$
+DECLARE
+    esquema TEXT;
+    esquemas TEXT[] := ARRAY[
+        'shared', 'ciudadano', 'tramitacion', 'comunicaciones',
+        'roles', 'informacion', 'videoconferencia', 'ia', 'interno'
+    ];
+BEGIN
+    FOREACH esquema IN ARRAY esquemas LOOP
+        EXECUTE format('CREATE SCHEMA IF NOT EXISTS %I AUTHORIZATION ciudadania;', esquema);
+        EXECUTE format('GRANT ALL PRIVILEGES ON SCHEMA %I TO ciudadania;', esquema);
+        EXECUTE format('GRANT USAGE ON SCHEMA %I TO ciudadania;', esquema);
+    END LOOP;
+END
+$$;
 
--- Privilegios básicos
-GRANT USAGE ON SCHEMA shared TO ciudadania;
-GRANT USAGE ON SCHEMA ciudadano TO ciudadania;
-GRANT USAGE ON SCHEMA tramitacion TO ciudadania;
-GRANT USAGE ON SCHEMA comunicaciones TO ciudadania;
-GRANT USAGE ON SCHEMA roles TO ciudadania;
-GRANT USAGE ON SCHEMA informacion TO ciudadania;
-GRANT USAGE ON SCHEMA videoconferencia TO ciudadania;
-GRANT USAGE ON SCHEMA ia TO ciudadania;
-GRANT USAGE ON SCHEMA interno TO ciudadania;
-
-GRANT ALL PRIVILEGES ON SCHEMA shared TO ciudadania;
-GRANT ALL PRIVILEGES ON SCHEMA ciudadano TO ciudadania;
-GRANT ALL PRIVILEGES ON SCHEMA tramitacion TO ciudadania;
-GRANT ALL PRIVILEGES ON SCHEMA comunicaciones TO ciudadania;
-GRANT ALL PRIVILEGES ON SCHEMA roles TO ciudadania;
-GRANT ALL PRIVILEGES ON SCHEMA informacion TO ciudadania;
-GRANT ALL PRIVILEGES ON SCHEMA videoconferencia TO ciudadania;
-GRANT ALL PRIVILEGES ON SCHEMA ia TO ciudadania;
-GRANT ALL PRIVILEGES ON SCHEMA interno TO ciudadania;
-
+-- =========================
+-- Crear extensión PostGIS si no existe
+-- =========================
 CREATE EXTENSION IF NOT EXISTS postgis;

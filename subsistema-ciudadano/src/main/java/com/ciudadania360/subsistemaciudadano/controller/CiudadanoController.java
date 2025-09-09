@@ -1,7 +1,7 @@
 package com.ciudadania360.subsistemaciudadano.controller;
 
-import com.ciudadania360.subsistemaciudadano.application.dto.ciudadano.CiudadanoRequest;
-import com.ciudadania360.subsistemaciudadano.application.dto.ciudadano.CiudadanoResponse;
+import com.ciudadania360.shared.application.dto.ciudadano.CiudadanoRequest;
+import com.ciudadania360.shared.application.dto.ciudadano.CiudadanoResponse;
 import com.ciudadania360.subsistemaciudadano.application.service.CiudadanoService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;

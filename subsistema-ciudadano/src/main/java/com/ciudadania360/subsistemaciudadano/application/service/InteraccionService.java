@@ -1,7 +1,7 @@
 package com.ciudadania360.subsistemaciudadano.application.service;
 
-import com.ciudadania360.subsistemaciudadano.application.dto.interaccion.InteraccionRequest;
-import com.ciudadania360.subsistemaciudadano.application.dto.interaccion.InteraccionResponse;
+import com.ciudadania360.shared.application.dto.interaccion.InteraccionRequest;
+import com.ciudadania360.shared.application.dto.interaccion.InteraccionResponse;
 import com.ciudadania360.subsistemaciudadano.application.mapper.InteraccionMapper;
 import com.ciudadania360.subsistemaciudadano.application.validator.InteraccionValidator;
 import com.ciudadania360.subsistemaciudadano.domain.entity.Interaccion;

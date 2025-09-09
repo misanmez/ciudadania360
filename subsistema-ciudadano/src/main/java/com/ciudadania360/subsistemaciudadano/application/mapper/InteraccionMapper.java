@@ -1,14 +1,14 @@
 package com.ciudadania360.subsistemaciudadano.application.mapper;
 
-import com.ciudadania360.subsistemaciudadano.application.dto.interaccion.InteraccionRequest;
-import com.ciudadania360.subsistemaciudadano.application.dto.interaccion.InteraccionResponse;
+import com.ciudadania360.shared.application.dto.ciudadano.CiudadanoResponse;
+import com.ciudadania360.shared.application.dto.interaccion.InteraccionRequest;
+import com.ciudadania360.shared.application.dto.interaccion.InteraccionResponse;
 import com.ciudadania360.subsistemaciudadano.domain.entity.Ciudadano;
 import com.ciudadania360.subsistemaciudadano.domain.entity.Interaccion;
 import com.ciudadania360.subsistemaciudadano.domain.entity.Solicitud;
 import com.ciudadania360.shared.domain.entity.Empleado;
-import com.ciudadania360.subsistemaciudadano.application.dto.ciudadano.CiudadanoResponse;
-import com.ciudadania360.subsistemaciudadano.application.dto.solicitud.SolicitudResponse;
-import com.ciudadania360.subsistemainterno.application.dto.empleado.EmpleadoResponse;
+import com.ciudadania360.shared.application.dto.solicitud.SolicitudResponse;
+import com.ciudadania360.shared.application.dto.empleado.EmpleadoResponse;
 import org.mapstruct.*;
 
 import java.util.UUID;

@@ -1,6 +1,6 @@
 package com.ciudadania360.subsistemaciudadano.application.validator;
 
-import com.ciudadania360.subsistemaciudadano.application.dto.clasificacion.ClasificacionRequest;
+import com.ciudadania360.shared.application.dto.clasificacion.ClasificacionRequest;
 import com.ciudadania360.subsistemaciudadano.domain.repository.ClasificacionRepository;
 import com.ciudadania360.shared.exception.BadRequestException;
 import com.ciudadania360.shared.exception.BusinessException;

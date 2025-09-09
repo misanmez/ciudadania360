@@ -1,6 +1,6 @@
 package com.ciudadania360.subsistemainterno.application.dto.partetrabajo;
 
-import com.ciudadania360.subsistemainterno.application.dto.empleado.EmpleadoResponse;
+import com.ciudadania360.shared.application.dto.empleado.EmpleadoResponse;
 import lombok.*;
 import java.util.Date;
 import java.util.UUID;

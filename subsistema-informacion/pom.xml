@@ -49,6 +49,12 @@
       <artifactId>flyway-database-postgresql</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.hibernate.orm</groupId>
+      <artifactId>hibernate-spatial</artifactId>
+      <version>6.5.2.Final</version>
+    </dependency>
+
     <!-- PostgreSQL -->
     <dependency>
       <groupId>org.postgresql</groupId>

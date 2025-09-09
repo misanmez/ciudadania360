@@ -4,13 +4,16 @@ import com.ciudadania360.gestionrolespermisos.application.dto.rol.RolRequest;
 import com.ciudadania360.gestionrolespermisos.application.dto.rol.RolResponse;
 import com.ciudadania360.gestionrolespermisos.application.service.RolService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.List;
 import java.util.UUID;
@@ -21,21 +24,27 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(RolController.class)
-@AutoConfigureMockMvc(addFilters = false)
+@ExtendWith(SpringExtension.class)
 class RolControllerTest {
 
-    @Autowired
     private MockMvc mvc;
 
-    @MockBean
+    @Mock
     private RolService rolService;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    @InjectMocks
+    private RolController rolController;
+
+    private ObjectMapper objectMapper = new ObjectMapper();
+
+    @BeforeEach
+    void setup() {
+        MockitoAnnotations.openMocks(this);
+        mvc = MockMvcBuilders.standaloneSetup(rolController).build();
+    }
 
     @Test
-    void listAndCreate() throws Exception {
+    void listAndCreateUpdateDelete() throws Exception {
         RolResponse sample = RolResponse.builder()
                 .id(UUID.randomUUID())
                 .nombre("ADMIN")

@@ -1,15 +1,16 @@
 package com.ciudadania360.subsistemaciudadano.application.service;
 
-import com.ciudadania360.subsistemaciudadano.application.dto.ciudadano.CiudadanoResponse;
-import com.ciudadania360.subsistemaciudadano.application.dto.clasificacion.ClasificacionResponse;
-import com.ciudadania360.subsistemaciudadano.application.dto.interaccion.InteraccionResponse;
-import com.ciudadania360.subsistemaciudadano.application.dto.solicitud.*;
+import com.ciudadania360.shared.application.dto.solicitud.SolicitudRequest;
+import com.ciudadania360.shared.application.dto.solicitud.SolicitudResponse;
+import com.ciudadania360.shared.application.dto.ciudadano.CiudadanoResponse;
+import com.ciudadania360.shared.application.dto.clasificacion.ClasificacionResponse;
+import com.ciudadania360.shared.application.dto.interaccion.InteraccionResponse;
 import com.ciudadania360.subsistemaciudadano.application.mapper.SolicitudMapper;
 import com.ciudadania360.subsistemaciudadano.application.validator.SolicitudValidator;
 import com.ciudadania360.subsistemaciudadano.domain.entity.Solicitud;
 import com.ciudadania360.subsistemaciudadano.domain.entity.Ciudadano;
 import com.ciudadania360.subsistemaciudadano.domain.handler.SolicitudHandler;
-import com.ciudadania360.subsistemainterno.application.dto.empleado.EmpleadoResponse;
+import com.ciudadania360.shared.application.dto.empleado.EmpleadoResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;

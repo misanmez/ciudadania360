@@ -1,57 +1,49 @@
-# ---------- Etapa de construcción ----------
-FROM eclipse-temurin:17-jdk AS builder
+# =========================
+# Etapa 1: Build con Maven
+# =========================
+FROM maven:3.9.3-eclipse-temurin-17 AS build
+
 WORKDIR /app
 
-# Copiamos POMs para aprovechar la cache de dependencias
-COPY pom.xml ./
+# Copiar solo los pom.xml para cachear dependencias
+COPY pom.xml .
+COPY ciudadania360-app/pom.xml ./ciudadania360-app/
 COPY shared/pom.xml ./shared/
 COPY subsistema-ciudadano/pom.xml ./subsistema-ciudadano/
 COPY subsistema-tramitacion/pom.xml ./subsistema-tramitacion/
 COPY subsistema-comunicaciones/pom.xml ./subsistema-comunicaciones/
 COPY subsistema-videoconferencia/pom.xml ./subsistema-videoconferencia/
 COPY subsistema-informacion/pom.xml ./subsistema-informacion/
-COPY subsistema-ia/pom.xml ./subsistema-ia/
 COPY gestion-roles-permisos/pom.xml ./gestion-roles-permisos/
+COPY subsistema-ia/pom.xml ./subsistema-ia/
 COPY subsistema-interno/pom.xml ./subsistema-interno/
-COPY ciudadania360-app/pom.xml ./ciudadania360-app/
 
-# Descargar dependencias offline (cache)
-RUN mvn -B -q -e -DskipTests dependency:go-offline
+# Descargar dependencias para acelerar futuros builds
+RUN mvn dependency:go-offline -B
 
-# Copiar código fuente completo
-COPY shared/src ./shared/src
-COPY subsistema-ciudadano/src ./subsistema-ciudadano/src
-COPY subsistema-tramitacion/src ./subsistema-tramitacion/src
-COPY subsistema-comunicaciones/src ./subsistema-comunicaciones/src
-COPY subsistema-videoconferencia/src ./subsistema-videoconferencia/src
-COPY subsistema-informacion/src ./subsistema-informacion/src
-COPY subsistema-ia/src ./subsistema-ia/src
-COPY gestion-roles-permisos/src ./gestion-roles-permisos/src
-COPY subsistema-interno/src ./subsistema-interno/src
-COPY ciudadania360-app/src ./ciudadania360-app/src
+# Copiar todo el código
+COPY . .
 
-# Construir solo el módulo agregador y sus dependencias
-RUN mvn -B -q -DskipTests clean package -pl ciudadania360-app -am
+# Compilar solo la app principal y sus dependencias
+RUN mvn clean package -pl ciudadania360-app -am -DskipTests
 
-# ---------- Etapa de ejecución ----------
-FROM eclipse-temurin:17-jre
+# =========================
+# Etapa 2: Imagen final
+# =========================
+FROM eclipse-temurin:17-jdk-jammy
+
 WORKDIR /app
 
-# Crear usuario no root
-RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
+# Copiar el jar construido, sin hardcodear versión
+COPY --from=build /app/ciudadania360-app/target/*.jar ./app.jar
 
-# Copiar jar construido desde el builder
-COPY --from=builder /app/ciudadania360-app/target/ciudadania360.jar app.jar
-RUN chown appuser:appgroup /app/app.jar
-
-# Usar usuario no root
-USER appuser
-
-# Exponer puerto
 EXPOSE 8080
 
-# Variables de entorno para Java
-ENV JAVA_OPTS="-Xms512m -Xmx1024m -XX:+UseG1GC -XX:+UseContainerSupport"
+# Variables de entorno flexibles para base de datos y perfil
+ENV SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/ciudadania360
+ENV SPRING_DATASOURCE_USERNAME=ciudadania
+ENV SPRING_DATASOURCE_PASSWORD=ciudadania
+ENV SPRING_PROFILES_ACTIVE=docker
 
-# Comando de inicio
-ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
+# Comando para arrancar la app
+ENTRYPOINT ["java", "-jar", "app.jar"]

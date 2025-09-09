@@ -1,6 +1,6 @@
 package com.ciudadania360.subsistemaciudadano.application.validator;
 
-import com.ciudadania360.subsistemaciudadano.application.dto.solicitud.SolicitudRequest;
+import com.ciudadania360.shared.application.dto.solicitud.SolicitudRequest;
 import com.ciudadania360.subsistemaciudadano.domain.entity.Solicitud;
 import com.ciudadania360.subsistemaciudadano.domain.handler.CiudadanoHandler;
 import com.ciudadania360.shared.exception.BadRequestException;

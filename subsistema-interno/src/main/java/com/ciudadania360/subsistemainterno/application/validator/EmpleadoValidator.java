@@ -2,7 +2,7 @@ package com.ciudadania360.subsistemainterno.application.validator;
 
 import com.ciudadania360.shared.exception.BadRequestException;
 import com.ciudadania360.shared.exception.BusinessException;
-import com.ciudadania360.subsistemainterno.application.dto.empleado.EmpleadoRequest;
+import com.ciudadania360.shared.application.dto.empleado.EmpleadoRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Component;
 

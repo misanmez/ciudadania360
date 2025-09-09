@@ -1,7 +1,7 @@
 package com.ciudadania360.subsistemaciudadano.controller;
 
-import com.ciudadania360.subsistemaciudadano.application.dto.direccion.DireccionRequest;
-import com.ciudadania360.subsistemaciudadano.application.dto.direccion.DireccionResponse;
+import com.ciudadania360.shared.application.dto.direccion.DireccionRequest;
+import com.ciudadania360.shared.application.dto.direccion.DireccionResponse;
 import com.ciudadania360.subsistemaciudadano.application.service.DireccionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;

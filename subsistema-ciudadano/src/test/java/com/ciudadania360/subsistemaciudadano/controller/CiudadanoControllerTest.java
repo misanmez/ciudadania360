@@ -1,9 +1,10 @@
 package com.ciudadania360.subsistemaciudadano.controller;
 
-import com.ciudadania360.subsistemaciudadano.application.dto.ciudadano.*;
-import com.ciudadania360.subsistemaciudadano.application.dto.consentimiento.ConsentimientoResponse;
-import com.ciudadania360.subsistemaciudadano.application.dto.direccion.DireccionResponse;
-import com.ciudadania360.subsistemaciudadano.application.dto.solicitud.SolicitudResponse;
+import com.ciudadania360.shared.application.dto.ciudadano.CiudadanoRequest;
+import com.ciudadania360.shared.application.dto.ciudadano.CiudadanoResponse;
+import com.ciudadania360.shared.application.dto.consentimiento.ConsentimientoResponse;
+import com.ciudadania360.shared.application.dto.direccion.DireccionResponse;
+import com.ciudadania360.shared.application.dto.solicitud.SolicitudResponse;
 import com.ciudadania360.subsistemaciudadano.application.service.CiudadanoService;
 import com.ciudadania360.shared.exception.GlobalExceptionHandler;
 import com.ciudadania360.shared.exception.BadRequestException;
