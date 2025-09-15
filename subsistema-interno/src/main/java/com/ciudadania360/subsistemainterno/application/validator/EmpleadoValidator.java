@@ -15,7 +15,6 @@ public class EmpleadoValidator {
     private final ObjectMapper objectMapper;
 
     private static final List<String> ROLES_VALIDOS = Arrays.asList("ADMIN", "USER", "GESTOR");
-    private static final List<String> ESTADOS_VALIDOS = Arrays.asList("ACTIVO", "INACTIVO", "SUSPENDIDO");
 
     public EmpleadoValidator(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;

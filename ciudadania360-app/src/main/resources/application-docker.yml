@@ -12,6 +12,7 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+    open-in-view: false
   flyway:
     enabled: true
     locations: classpath:init-db
@@ -28,6 +29,11 @@ logging:
   level:
     root: INFO
     com.ciudadania360: DEBUG
+    org.springframework.security: INFO
+    org.hibernate.spatial: WARN
+    org.springframework.security.authentication: WARN
+    org.springframework.security.web: WARN
+    org.apache.cxf: INFO
 
 cors:
   allowed-origins: "*"
@@ -50,3 +56,25 @@ springdoc:
     operations-sorter: alpha
     tags-sorter: alpha
     doc-expansion: none
+
+# Configuración AyWebFwk - Servicios Web SOAP para Docker
+cxf:
+  path: /services
+
+# Configuración de servicios web
+webservice:
+  ciudadano:
+    endpoint: /ciudadano
+    namespace: http://ciudadania360.com/aywebfwk/ws/ciudadano
+    service-name: CiudadanoWebService
+    port-name: CiudadanoWebServicePort
+  tramitacion:
+    endpoint: /tramitacion
+    namespace: http://ciudadania360.com/aywebfwk/ws/tramitacion
+    service-name: TramitacionWebService
+    port-name: TramitacionWebServicePort
+  comunicaciones:
+    endpoint: /comunicaciones
+    namespace: http://ciudadania360.com/aywebfwk/ws/comunicaciones
+    service-name: ComunicacionesWebService
+    port-name: ComunicacionesWebServicePort

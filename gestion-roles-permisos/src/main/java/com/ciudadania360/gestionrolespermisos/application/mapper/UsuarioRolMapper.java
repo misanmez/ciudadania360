@@ -5,7 +5,7 @@ import com.ciudadania360.gestionrolespermisos.application.dto.usuariorol.Usuario
 import com.ciudadania360.gestionrolespermisos.domain.entity.UsuarioRol;
 import org.mapstruct.*;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface UsuarioRolMapper {
 
     UsuarioRol toEntity(UsuarioRolRequest request);

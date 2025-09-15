@@ -42,14 +42,15 @@ resolve_compose() {
 
 show_help() {
   cat <<EOF
-Uso: $0 [dev|docker|prod|clean|reset|help]
+Uso: $0 [dev|docker|prod|clean|reset|verify|help]
 
 Opciones:
   dev     - Ejecutar en modo desarrollo (solo Postgres en Docker; ejecuta Ciudadanía 360 localmente)
-  docker  - Construir y ejecutar Ciudadanía 360 en Docker
+  docker  - Construir y ejecutar Ciudadanía 360 en Docker (incluye verificación SOAP)
   prod    - Construir para producción con Maven
   clean   - Parar y eliminar contenedores/volúmenes y limpiar Maven
   reset   - ELIMINA TODO Docker y levanta el stack limpio
+  verify  - Verificar solo los servicios SOAP (requiere que la app esté ejecutándose)
   help    - Mostrar esta ayuda
 EOF
 }
@@ -117,15 +118,71 @@ run_dev() {
   echo "   mvn spring-boot:run -pl ciudadania360-app -Dspring-boot.run.profiles=docker"
 }
 
+# ===== Verificar servicios SOAP =====
+verify_soap_services() {
+  info "🔍 Verificando servicios SOAP..."
+  local max_attempts=30
+  local attempt=1
+  
+  while [[ $attempt -le $max_attempts ]]; do
+    if curl -s http://localhost:8080/actuator/health >/dev/null 2>&1; then
+      ok "Aplicación ejecutándose correctamente"
+      break
+    fi
+    if [[ $attempt -eq $max_attempts ]]; then
+      warn "La aplicación no está respondiendo después de $max_attempts intentos"
+      return 1
+    fi
+    sleep 2
+    ((attempt++))
+  done
+  
+  # Verificar servicios SOAP
+  local soap_services=("ciudadano" "tramitacion" "comunicaciones")
+  local all_ok=true
+  
+  for service in "${soap_services[@]}"; do
+    if curl -s "http://localhost:8080/services/${service}?wsdl" | grep -q "${service^}WebService"; then
+      ok "${service^}WebService - WSDL disponible"
+    else
+      warn "${service^}WebService - WSDL no disponible"
+      all_ok=false
+    fi
+  done
+  
+  if [[ "$all_ok" == true ]]; then
+    ok "Todos los servicios SOAP funcionando correctamente"
+  else
+    warn "Algunos servicios SOAP no están disponibles"
+  fi
+  
+  echo -e "\n${BLUE}📋 Servicios SOAP disponibles:${NC}"
+  echo "  - Ciudadano: http://localhost:8080/services/ciudadano?wsdl"
+  echo "  - Tramitación: http://localhost:8080/services/tramitacion?wsdl"
+  echo "  - Comunicaciones: http://localhost:8080/services/comunicaciones?wsdl"
+}
+
 # ===== Modo Docker =====
 run_docker() {
   info "🐳 Construyendo y ejecutando Ciudadanía 360 en Docker..."
   "${COMPOSE[@]}" up -d --build
   wait_for_db "$POSTGRES_CONTAINER" "$WAIT_TIMEOUT"
+  
+  # Esperar un poco más para que la aplicación se inicie completamente
+  info "⏳ Esperando a que la aplicación se inicie completamente..."
+  sleep 15
+  
   ok "Ciudadanía 360 debería estar corriendo."
   "${COMPOSE[@]}" ps
-  echo -e "${YELLOW}Endpoint principal:${NC} http://localhost:8080"
-  echo -e "${YELLOW}📖 Swagger UI:${NC} http://localhost:8080/swagger-ui.html"
+  
+  # Verificar servicios SOAP
+  verify_soap_services
+  
+  echo -e "\n${YELLOW}🌐 Endpoints disponibles:${NC}"
+  echo -e "${YELLOW}  📊 Aplicación:${NC} http://localhost:8080"
+  echo -e "${YELLOW}  📖 Swagger UI:${NC} http://localhost:8080/swagger-ui.html"
+  echo -e "${YELLOW}  🔍 Health Check:${NC} http://localhost:8080/actuator/health"
+  echo -e "${YELLOW}  📋 API Docs:${NC} http://localhost:8080/v3/api-docs"
 }
 
 # ===== Modo producción =====
@@ -188,7 +245,8 @@ case "$MODE" in
   prod)           check_maven_if_needed "prod"; build_prod ;;
   clean)          cleanup ;;
   reset)          reset_docker ;;
-  *)              die "Opción no válida: $MODE. Usa: dev | docker | prod | clean | reset | help" ;;
+  verify)         verify_soap_services ;;
+  *)              die "Opción no válida: $MODE. Usa: dev | docker | prod | clean | reset | verify | help" ;;
 esac
 
 echo -e "\n${GREEN}🎉 ¡Proceso completado!${NC}"

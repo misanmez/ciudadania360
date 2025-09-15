@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.ciudadania360</groupId>
+        <artifactId>aywebfwk-backend</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>ws-basicos</artifactId>
+    <packaging>pom</packaging>
+    <name>ws-basicos</name>
+    <description>Servicios web básicos AyWebFwk</description>
+    
+    <modules>
+        <module>ws-ciudadano</module>
+        <module>ws-tramitacion</module>
+        <module>ws-comunicaciones</module>
+    </modules>
+</project>
+

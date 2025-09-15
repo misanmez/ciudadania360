@@ -19,6 +19,7 @@
     <module>gestion-roles-permisos</module>
     <module>subsistema-ia</module>
     <module>subsistema-interno</module>
+    <module>aywebfwk-backend</module>
     <module>ciudadania360-app</module>
   </modules>
 
@@ -34,6 +35,17 @@
     <lombok.version>1.18.32</lombok.version>
     <springdoc.version>2.5.0</springdoc.version>
     <swagger-core.version>2.2.22</swagger-core.version>
+
+    <!-- Versiones AyWebFwk -->
+    <cxf.version>4.0.3</cxf.version>
+    <jaxb.version>2.3.1</jaxb.version>
+    <hibernate.version>5.6.15.Final</hibernate.version>
+    <jasperreports.version>6.20.0</jasperreports.version>
+    
+    <!-- Versiones del Ayuntamiento -->
+    <gca.version>1.0.0</gca.version>
+    <ayhost.version>1.0.0</ayhost.version>
+    <aywebfwk.version>1.0.0</aywebfwk.version>
 
     <maven.compiler.parameters>true</maven.compiler.parameters>
   </properties>
@@ -127,6 +139,68 @@
         <version>2.21.0</version>
       </dependency>
       <!-- ================= -->
+
+      <!-- ===== AYWEBFWK ===== -->
+      <!-- AyWebFwk Framework -->
+      <!-- TODO: Disponible solo en repositorio del Ayuntamiento -->
+      <!-- <dependency>
+        <groupId>es.valencia.aywebfwk</groupId>
+        <artifactId>aywebfwk-core</artifactId>
+        <version>${aywebfwk.version}</version>
+      </dependency> -->
+      
+      <!-- CXF para servicios web -->
+      <dependency>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-rt-frontend-jaxws</artifactId>
+        <version>${cxf.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-rt-transports-http</artifactId>
+        <version>${cxf.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-spring-boot-starter-jaxws</artifactId>
+        <version>${cxf.version}</version>
+      </dependency>
+      
+      <!-- Hibernate -->
+      <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-core</artifactId>
+        <version>${hibernate.version}</version>
+      </dependency>
+      
+      <!-- JAXB -->
+      <dependency>
+        <groupId>javax.xml.bind</groupId>
+        <artifactId>jaxb-api</artifactId>
+        <version>${jaxb.version}</version>
+      </dependency>
+      
+      <!-- GCA (Gestión de Control de Accesos) - TODO: Disponible solo en repositorio del Ayuntamiento -->
+      <!-- <dependency>
+        <groupId>es.valencia.gca</groupId>
+        <artifactId>gca-core</artifactId>
+        <version>${gca.version}</version>
+      </dependency> -->
+      
+      <!-- AyHost para comunicación con host - TODO: Disponible solo en repositorio del Ayuntamiento -->
+      <!-- <dependency>
+        <groupId>es.valencia.ayhost</groupId>
+        <artifactId>ayhost</artifactId>
+        <version>${ayhost.version}</version>
+      </dependency> -->
+      
+      <!-- JasperReports -->
+      <dependency>
+        <groupId>net.sf.jasperreports</groupId>
+        <artifactId>jasperreports</artifactId>
+        <version>${jasperreports.version}</version>
+      </dependency>
+      <!-- =================== -->
     </dependencies>
   </dependencyManagement>
 

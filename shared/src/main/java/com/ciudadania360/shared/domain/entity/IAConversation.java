@@ -19,12 +19,14 @@ public class IAConversation {
     private UUID id;
 
     @Column(name = "created_at")
+    @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @OneToMany(mappedBy = "conversation", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<IAChatMessage> messages;
 
     @Column(name = "closed")
+    @Builder.Default
     private boolean closed = false;
 }
 

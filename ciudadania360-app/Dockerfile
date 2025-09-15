@@ -17,6 +17,11 @@ COPY subsistema-informacion/pom.xml ./subsistema-informacion/
 COPY gestion-roles-permisos/pom.xml ./gestion-roles-permisos/
 COPY subsistema-ia/pom.xml ./subsistema-ia/
 COPY subsistema-interno/pom.xml ./subsistema-interno/
+COPY aywebfwk-backend/pom.xml ./aywebfwk-backend/
+COPY aywebfwk-backend/ws-basicos/pom.xml ./aywebfwk-backend/ws-basicos/
+COPY aywebfwk-backend/ws-basicos/ws-ciudadano/pom.xml ./aywebfwk-backend/ws-basicos/ws-ciudadano/
+COPY aywebfwk-backend/ws-basicos/ws-tramitacion/pom.xml ./aywebfwk-backend/ws-basicos/ws-tramitacion/
+COPY aywebfwk-backend/ws-basicos/ws-comunicaciones/pom.xml ./aywebfwk-backend/ws-basicos/ws-comunicaciones/
 
 # Descargar dependencias para acelerar futuros builds
 RUN mvn dependency:go-offline -B

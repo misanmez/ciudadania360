@@ -51,6 +51,46 @@
             <version>42.6.0</version>
         </dependency>
 
+        <!-- CXF para servicios web SOAP -->
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-spring-boot-starter-jaxws</artifactId>
+        </dependency>
+        
+        <!-- JAX-WS API (Jakarta) -->
+        <dependency>
+            <groupId>jakarta.xml.ws</groupId>
+            <artifactId>jakarta.xml.ws-api</artifactId>
+            <version>4.0.1</version>
+        </dependency>
+        
+               <!-- JAXB Runtime -->
+               <dependency>
+                   <groupId>org.glassfish.jaxb</groupId>
+                   <artifactId>jaxb-runtime</artifactId>
+               </dependency>
+               
+               <!-- JAXB Implementation (user suggested) -->
+               <dependency>
+                   <groupId>com.sun.xml.bind</groupId>
+                   <artifactId>jaxb-impl</artifactId>
+                   <version>2.3.9</version>
+               </dependency>
+        
+        
+        <!-- Jakarta Annotation API -->
+        <dependency>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+        </dependency>
+        
+        <!-- javax.annotation-api for CXF compatibility -->
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+            <version>1.3.2</version>
+        </dependency>
+
         <!-- Trae TODOS los subsistemas al classpath -->
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -95,6 +135,25 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>subsistema-interno</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
+        <!-- AyWebFwk Backend -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>ws-ciudadano</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>ws-tramitacion</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>ws-comunicaciones</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

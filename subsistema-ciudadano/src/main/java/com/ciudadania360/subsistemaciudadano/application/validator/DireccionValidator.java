@@ -3,17 +3,10 @@ package com.ciudadania360.subsistemaciudadano.application.validator;
 import com.ciudadania360.shared.exception.BadRequestException;
 import com.ciudadania360.shared.application.dto.direccion.DireccionRequest;
 import com.ciudadania360.subsistemaciudadano.domain.entity.Direccion;
-import com.ciudadania360.subsistemaciudadano.domain.handler.DireccionHandler;
 import org.springframework.stereotype.Component;
 
 @Component
 public class DireccionValidator {
-
-    private final DireccionHandler handler;
-
-    public DireccionValidator(DireccionHandler handler) {
-        this.handler = handler;
-    }
 
     public void validate(DireccionRequest request, boolean isCreate) {
 

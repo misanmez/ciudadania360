@@ -43,7 +43,7 @@ public class CiudadanoService {
         entity.setId(UUID.randomUUID());
         entity.setVersion(0L);
 
-        Ciudadano created = handler.    create(entity);
+        Ciudadano created = handler.create(entity);
         return mapper.toResponse(created);
     }
 

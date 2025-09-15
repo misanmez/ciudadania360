@@ -29,6 +29,7 @@ public class Clasificacion {
     private Clasificacion padre; // relación jerárquica
 
     @OneToMany(mappedBy = "padre")
+    @Builder.Default
     private List<Clasificacion> hijos = new ArrayList<>();
 
     @Column(columnDefinition = "jsonb")

@@ -32,5 +32,6 @@ public class IAChatMessage {
     private String rawResponse;
 
     @Column(name = "created_at")
+    @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
 }

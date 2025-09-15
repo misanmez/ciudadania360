@@ -25,8 +25,10 @@ public class IATrainingExample {
     private String response;
 
     @Column(name = "used_for_training")
+    @Builder.Default
     private Boolean usedForTraining = false;
 
     @Column(name = "created_at")
+    @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
 }

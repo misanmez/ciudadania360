@@ -31,6 +31,9 @@ services:
       SPRING_DATASOURCE_USERNAME: ciudadania
       SPRING_DATASOURCE_PASSWORD: ciudadania
       SPRING_PROFILES_ACTIVE: docker
+      # Configuración SOAP para Docker
+      CXF_PATH: /services
+      SERVER_PORT: 8080
     restart: unless-stopped
 
 volumes:

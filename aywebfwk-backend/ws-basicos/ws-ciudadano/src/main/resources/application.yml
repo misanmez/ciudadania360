@@ -1,0 +1,50 @@
+server:
+  port: 8091
+
+spring:
+  application:
+    name: ws-ciudadano
+  profiles:
+    active: dev
+
+# Configuración CXF
+cxf:
+  path: /services
+  servlet:
+    init:
+      load-on-startup: 1
+
+# Logging
+logging:
+  level:
+    com.ciudadania360.aywebfwk: DEBUG
+    org.apache.cxf: INFO
+    org.springframework: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
+# Configuración de base de datos (heredada del subsistema-ciudadano)
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ciudadania360
+    username: ciudadania360
+    password: ciudadania360
+    driver-class-name: org.postgresql.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+# Configuración específica del servicio web
+webservice:
+  ciudadano:
+    endpoint: /ciudadano
+    namespace: http://ciudadania360.com/aywebfwk/ws/ciudadano
+    service-name: CiudadanoWebService
+    port-name: CiudadanoWebServicePort
+
